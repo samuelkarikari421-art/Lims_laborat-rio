@@ -6,30 +6,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        /* 🚀 MUDANÇA AQUI: Fonte padronizada para 11pt em todo o documento A4 */
-        .folha-a4 { background: white; width: 210mm; min-height: 297mm; margin: 20px auto; padding: 20mm; box-shadow: 0 5px 15px rgba(0,0,0,0.15); font-family: Arial, Helvetica, sans-serif; color: #000; font-size: 11pt; line-height: 1.5; }
-        .laudo-header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 15px; }
-        .laudo-logo img { max-height: 60px; margin-bottom: 5px; }
-        .laudo-title { text-align: center; font-weight: bold; margin-bottom: 25px; text-decoration: underline; font-size: 14pt; }
-        .laudo-table { border-color: #000 !important; font-size: 11pt; margin-bottom: 30px; }
-        .laudo-table th { background-color: #f1f1f1 !important; font-weight: bold; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        .laudo-conclusion { border: 2px solid #000; padding: 10px; text-align: center; font-size: 12pt; margin-top: 20px; font-weight: bold; text-transform: uppercase; }
-        .laudo-signature { margin-top: 60px; text-align: center; }
-        .laudo-signature-line { width: 300px; border-top: 1px solid #000; margin: 0 auto 5px auto; }
-
-        @media print {
-            body { background: white; }
-            body * { visibility: hidden; }
-            .folha-a4, .folha-a4 * { visibility: visible; }
-            .folha-a4 { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 10mm; box-shadow: none; border: none; }
-            .no-print { display: none !important; }
-        }
-    </style>
 </head>
 <body>
 
-    <nav class="sidebar no-print">
+    <nav class="sidebar">
         <button id="btnToggle" class="btn-toggle-sidebar"><i class="bi bi-list"></i></button>
         <div class="sidebar-header">
             <img src="assets/img/logo.png" alt="Logo Kari Kari" class="sidebar-logo">
@@ -52,129 +32,78 @@
     </nav>
 
     <div class="main-content">
-        <h2 class="fw-bold mb-4 no-print">Emissão de Laudos</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">Gestão de Laudos e Certificados</h2>
+            <div>
+                <button class="btn btn-dark shadow-sm fw-bold me-2" onclick="imprimirSelecionados()">
+                    <i class="bi bi-printer"></i> Imprimir Selecionados
+                </button>
+            </div>
+        </div>
 
-        <ul class="nav nav-tabs mb-4 no-print" id="laudosTab" role="tablist">
-            <li class="nav-item"><button class="nav-link active" id="lista-tab" data-bs-toggle="tab" data-bs-target="#lista-pane" type="button"><i class="bi bi-list-ul"></i> Laudos Emitidos</button></li>
-            <li class="nav-item"><button class="nav-link" id="visualizar-tab" data-bs-toggle="tab" data-bs-target="#visualizar-pane" type="button" disabled><i class="bi bi-file-text"></i> Visualização do Laudo</button></li>
-        </ul>
-
-        <div class="tab-content">
-            <div class="tab-pane fade show active no-print" id="lista-pane">
-                
-                <div class="row mb-3 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
-                    <div class="col-md-5">
-                        <label class="form-label fw-bold text-muted small mb-1">Buscar Laudo</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
-                            <input type="text" id="buscaLaudo" class="form-control" placeholder="Nº Laudo, Amostra ou Produto...">
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold text-muted small mb-1">Data de Modificação</label>
-                        <input type="date" id="filtroData" class="form-control">
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold text-muted small mb-1">Status do Laudo</label>
-                        <select id="filtroStatus" class="form-select">
-                            <option value="">Todos os Status</option>
-                            <option value="ASSINADOS">Somente Assinados (Todos)</option>
-                            <option value="CONFORME">Assinados: Conforme / Aprovado</option>
-                            <option value="REPROVADA">Assinados: Não Conforme / Reprovado</option>
-                            <option value="AGUARDANDO ASSINATURA">Aguardando Assinatura</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="card shadow-sm border-0">
-                    <div class="card-body p-0">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="ps-4">Nº Laudo</th>
-                                    <th>Amostra</th>
-                                    <th>Produto</th>
-                                    <th>Data Modificação</th>
-                                    <th>Status / Resultado</th>
-                                    <th class="text-end pe-4">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabelaLaudos"></tbody>
-                        </table>
-                    </div>
+        <div class="row mb-3 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-muted small mb-1">Buscar Laudo</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                    <input type="text" id="buscaLaudos" class="form-control border-start-0" placeholder="Nº do Laudo, Produto ou Cód. Amostra..." oninput="filtrarLaudos()">
                 </div>
             </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold text-muted small mb-1">Status</label>
+                <select id="filtroStatus" class="form-select" onchange="filtrarLaudos()">
+                    <option value="">Todos</option>
+                    <option value="AGUARDANDO ASSINATURA">Aguardando Assinatura</option>
+                    <option value="CONFORME">Conforme (Aprovado)</option>
+                    <option value="NÃO CONFORME">Não Conforme (Reprovado)</option>
+                </select>
+            </div>
+        </div>
 
-            <div class="tab-pane fade" id="visualizar-pane">
-                <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white rounded shadow-sm no-print border-top border-4 border-primary">
-                    <button class="btn btn-outline-secondary px-4" onclick="voltarLista()"><i class="bi bi-arrow-left"></i> Voltar</button>
-                    
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-outline-danger" onclick="cancelarLaudo()" id="btnCancelar" style="display: none;">
-                            <i class="bi bi-x-octagon"></i> Cancelar Laudo
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4" width="5%">
+                                <input class="form-check-input border-secondary" type="checkbox" id="checkAll" onchange="toggleSelectAll()">
+                            </th>
+                            <th>Nº do Laudo</th>
+                            <th>Amostra</th>
+                            <th>Produto</th>
+                            <th>Data</th>
+                            <th>Resultado Final</th>
+                            <th class="text-end pe-4">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaLaudos"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="printContainer" style="display: none;"></div>
+
+    <div class="modal fade" id="modalLaudo" tabindex="-1">
+        <div class="modal-dialog" style="max-width: 95vw; margin-top: 15px;">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h5 class="modal-title fw-bold" id="modalLaudoTitle"><i class="bi bi-file-earmark-text"></i> Detalhes do Laudo</h5>
+                    <div>
+                        <button id="btnImprimirModal" class="btn btn-info btn-sm fw-bold text-white me-2" style="display: none;" onclick="imprimirLaudoModal()">
+                            <i class="bi bi-printer"></i> Imprimir Laudo
                         </button>
                         
-                        <button class="btn btn-primary px-4 fw-bold shadow-sm" id="btnAssinarLaudo" onclick="assinarLaudo()">
-                            <i class="bi bi-pen"></i> Assinar Laudo
+                        <button id="btnAssinarModal" class="btn btn-success btn-sm fw-bold me-3" style="display: none;" onclick="assinarLaudo()">
+                            <i class="bi bi-pen"></i> Assinar Digitalmente
                         </button>
                         
-                        <button class="btn btn-dark px-4 shadow-sm" id="btnImprimir" onclick="window.print()">
-                            <i class="bi bi-printer"></i> Imprimir
-                        </button>
-                        <button class="btn btn-success px-4 fw-bold shadow-sm" id="btnBaixarPdf" onclick="baixarPDF()">
-                            <i class="bi bi-file-earmark-pdf"></i> Gerar PDF Oficial
-                        </button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                 </div>
-
-                <div class="folha-a4">
-                    <input type="hidden" id="laudoIdAtual">
-                    <div class="laudo-header">
-                        <div class="laudo-logo"><img src="assets/img/logo.png" alt="Kari Kari Alimentos"></div>
-                        <div style="color: #555; margin-top: 5px; font-size: 10pt;">Laboratório de Controle de Qualidade Físico-Químico</div>
-                    </div>
-
-                    <div class="laudo-title" id="viewNumero">CERTIFICADO DE ANÁLISE INTERNA Nº ---</div>
-
-                    <div class="row mb-4" style="font-size: 11pt;">
-                        <div class="col-7">
-                            <p class="mb-1"><strong>Produto:</strong> <span id="viewProduto">---</span></p>
-                            <p class="mb-0"><strong>Lote de Produção:</strong> <span id="viewLote">---</span></p>
+                <div class="modal-body p-0 bg-light" style="height: 90vh; overflow-y: auto;">
+                    <div id="previewLaudoArea" class="d-flex justify-content-center py-4">
                         </div>
-                        <div class="col-5 text-end">
-                            <p class="mb-1"><strong>Cód. Amostra:</strong> <span id="viewAmostra">---</span></p>
-                            <p class="mb-0"><strong>Data de Emissão:</strong> <span id="viewData">---</span></p>
-                        </div>
-                    </div>
-
-                    <div class="fw-bold mb-2" style="font-size: 11pt;">RESULTADOS ANALÍTICOS:</div>
-                    <table class="table table-bordered laudo-table">
-                        <thead>
-                            <tr>
-                                <th width="35%">Parâmetro Analisado</th>
-                                <th width="25%">Especificação Mín/Máx</th>
-                                <th width="20%" class="text-center">Resultado</th>
-                                <th width="20%" class="text-center">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="viewTabela"></tbody>
-                    </table>
-
-                    <div class="laudo-conclusion">
-                        PARECER TÉCNICO: <span id="viewResultado" class="ms-2">---</span>
-                    </div>
-
-                    <div class="laudo-signature">
-                        <div id="boxAssinaturaImg" style="height: 60px; margin-bottom: -15px; display: flex; justify-content: center; align-items: flex-end;"></div>
-                        <div class="laudo-signature-line"></div>
-                        <div id="viewResponsavel" class="fw-bold" style="font-size: 11pt;">---</div>
-                        <div id="viewCargoResponsavel" style="color: #666; font-size: 10pt;">---</div>
-                        <div class="mt-2" style="font-size: 9pt; color: #999;">
-                            <i class="bi bi-shield-check"></i> <span id="dataAssinaturaEletronica"></span>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -185,266 +114,280 @@
     
     <script>
         const API = window.location.origin + "/api";
-        const userLogado = JSON.parse(localStorage.getItem("limsUser"));
         let listaGlobalLaudos = [];
+        let laudoAbertoId = null;
 
-        document.getElementById("buscaLaudo").addEventListener("input", aplicarFiltrosLaudos);
-        document.getElementById("filtroData").addEventListener("change", aplicarFiltrosLaudos);
-        document.getElementById("filtroStatus").addEventListener("change", aplicarFiltrosLaudos);
+        let usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+        if (!usuarioLogado) { 
+            console.warn("⚠️ MODO DESENVOLVIMENTO: Usando usuário de teste.");
+            usuarioLogado = { id: 1, nome: "Samuel Kari Kari (Teste)", cargo: "Analista de Qualidade" };
+        }
 
         async function carregarLaudos() {
             try {
                 const res = await fetch(`${API}/laudos`);
                 listaGlobalLaudos = await res.json();
-                aplicarFiltrosLaudos(); 
-            } catch(e) { console.error(e); }
+                filtrarLaudos();
+            } catch (e) { console.error(e); }
         }
 
-        function aplicarFiltrosLaudos() {
-            const termo = document.getElementById("buscaLaudo").value.toLowerCase();
-            const dataEscolhida = document.getElementById("filtroData").value;
-            const statusEscolhido = document.getElementById("filtroStatus").value.toUpperCase();
+        function filtrarLaudos() {
+            const termo = document.getElementById("buscaLaudos").value.toLowerCase();
+            const status = document.getElementById("filtroStatus").value;
 
             const filtrados = listaGlobalLaudos.filter(l => {
-                const numero = String(l.numero || l.id).toLowerCase();
-                const amostra = String(l.amostra_cod || '').toLowerCase();
-                const produto = String(l.produto_nome || '').toLowerCase();
-                const resultado = String(l.resultado || '').toUpperCase();
-                const dataFmt = String(l.data_fmt || ''); 
-
-                const matchTexto = numero.includes(termo) || amostra.includes(termo) || produto.includes(termo);
-
+                const matchTexto = l.numero.toLowerCase().includes(termo) || 
+                                   l.amostra_cod.toLowerCase().includes(termo) || 
+                                   l.produto_nome.toLowerCase().includes(termo);
+                
                 let matchStatus = true;
-                if (statusEscolhido) {
-                    if (statusEscolhido === 'ASSINADOS') {
-                        matchStatus = (resultado !== 'AGUARDANDO ASSINATURA');
-                    } else if (statusEscolhido === 'CONFORME') {
-                        matchStatus = (resultado === 'CONFORME' || resultado === 'APROVADO');
-                    } else if (statusEscolhido === 'REPROVADA') {
-                        matchStatus = (resultado === 'REPROVADA' || resultado === 'REPROVADO');
-                    } else {
-                        matchStatus = (resultado === statusEscolhido);
-                    }
+                if (status) {
+                    if (status === "AGUARDANDO ASSINATURA") matchStatus = l.resultado === "AGUARDANDO ASSINATURA";
+                    else if (status === "CONFORME") matchStatus = (l.resultado === "CONFORME" || l.resultado === "APROVADO");
+                    else if (status === "NÃO CONFORME") matchStatus = (l.resultado === "NÃO CONFORME" || l.resultado === "REPROVADA" || l.resultado === "REPROVADO");
                 }
-
-                let matchData = true;
-                if (dataEscolhida) {
-                    const [ano, mes, dia] = dataEscolhida.split('-');
-                    const dataFormatadaBr = `${dia}/${mes}/${ano}`;
-                    matchData = dataFmt.startsWith(dataFormatadaBr);
-                }
-
-                return matchTexto && matchStatus && matchData;
+                return matchTexto && matchStatus;
             });
-
-            renderizarTabelaLaudos(filtrados);
+            renderizarTabela(filtrados);
         }
 
-        function renderizarTabelaLaudos(lista) {
+        function renderizarTabela(lista) {
             const tbody = document.getElementById("tabelaLaudos");
             tbody.innerHTML = "";
+            document.getElementById("checkAll").checked = false;
 
-            if(lista.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='6' class='text-center py-5 text-muted'>Nenhum laudo encontrado com estes filtros.</td></tr>";
+            if (lista.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='7' class='text-center py-4 text-muted'>Nenhum laudo encontrado.</td></tr>";
                 return;
             }
 
-            const isAdmin = userLogado && (userLogado.perfil === 'ADMIN' || userLogado.perfil === 'ADMINISTRADOR');
-            const podeCancelar = isAdmin || (userLogado && userLogado.permissoes && userLogado.permissoes.laudos_cancel === true);
-
             lista.forEach(l => {
-                let badgeColor = "bg-warning text-dark";
-                let resultadoDisplay = l.resultado;
-                let iconeAssinatura = "";
-
-                if (l.resultado === 'Aprovado' || l.resultado === 'CONFORME') {
-                    badgeColor = 'bg-success';
-                    resultadoDisplay = 'CONFORME';
-                    iconeAssinatura = ' <i class="bi bi-pen-fill ms-1" title="Laudo Assinado"></i>';
-                } else if (l.resultado === 'Reprovado' || l.resultado === 'REPROVADA' || l.resultado === 'REPROVADO') {
-                    badgeColor = 'bg-danger';
-                    resultadoDisplay = 'REPROVADA';
-                    iconeAssinatura = ' <i class="bi bi-pen-fill ms-1" title="Laudo Assinado"></i>';
-                }
-
-                let btnCancelarHtml = "";
-                if (podeCancelar) {
-                    btnCancelarHtml = `<button onclick="cancelarLaudo(${l.id})" class="btn btn-sm btn-outline-danger ms-1 shadow-sm" title="Cancelar Laudo"><i class="bi bi-trash"></i></button>`;
-                }
+                let badgeCor = "bg-secondary";
+                if (l.resultado === 'CONFORME' || l.resultado === 'APROVADO') badgeCor = "bg-success";
+                else if (l.resultado === 'NÃO CONFORME' || l.resultado === 'REPROVADA' || l.resultado === 'REPROVADO') badgeCor = "bg-danger";
+                else if (l.resultado === 'AGUARDANDO ASSINATURA') badgeCor = "bg-warning text-dark";
 
                 tbody.innerHTML += `
                     <tr>
-                        <td class="ps-4 fw-bold text-primary">${l.numero || l.id}</td>
-                        <td>${l.amostra_cod}</td>
-                        <td class="fw-bold">${l.produto_nome}</td>
+                        <td class="ps-4"><input class="form-check-input border-secondary laudo-checkbox" type="checkbox" value="${l.id}"></td>
+                        <td class="fw-bold text-primary">${l.numero}</td>
+                        <td class="fw-bold">${l.amostra_cod}</td>
+                        <td>${l.produto_nome}</td>
                         <td>${l.data_fmt}</td>
-                        <td><span class="badge ${badgeColor}">${resultadoDisplay}${iconeAssinatura}</span></td>
+                        <td><span class="badge ${badgeCor} shadow-sm">${l.resultado}</span></td>
                         <td class="text-end pe-4">
-                            <button onclick="abrirLaudo(${l.id})" class="btn btn-sm btn-outline-primary shadow-sm" title="Visualizar na Tela"><i class="bi bi-eye"></i></button>
-                            ${btnCancelarHtml}
+                            <button class="btn btn-sm btn-outline-primary" onclick="abrirModalLaudo(${l.id})" title="Visualizar / Assinar"><i class="bi bi-eye"></i></button>
+                            <button class="btn btn-sm btn-outline-dark ms-1" onclick="excluirLaudo(${l.id}, '${l.resultado}')" title="Excluir / Cancelar"><i class="bi bi-trash"></i></button>
                         </td>
                     </tr>
                 `;
             });
         }
 
-        async function abrirLaudo(id) {
+        function toggleSelectAll() {
+            const checkAll = document.getElementById("checkAll").checked;
+            const checkboxes = document.querySelectorAll('.laudo-checkbox');
+            checkboxes.forEach(box => box.checked = checkAll);
+        }
+
+        async function imprimirSelecionados() {
+            const checkboxes = document.querySelectorAll('.laudo-checkbox:checked');
+            if (checkboxes.length === 0) return alert("Por favor, selecione pelo menos um laudo na tabela.");
+
+            const btn = document.querySelector("button[onclick='imprimirSelecionados()']");
+            const textoOriginal = btn.innerHTML;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Preparando folhas...`;
+            btn.disabled = true;
+
+            const printContainer = document.getElementById("printContainer");
+            printContainer.innerHTML = ""; 
+
+            try {
+                for (let box of checkboxes) {
+                    const id = box.value;
+                    const res = await fetch(`${API}/laudos/${id}/detalhes`);
+                    const dados = await res.json();
+
+                    if (!dados.cabecalho.emitido_por) {
+                        alert(`Atenção: O Laudo ${dados.cabecalho.numero} não pode ser impresso porque ainda não foi assinado.`);
+                        continue; 
+                    }
+
+                    const htmlFolha = gerarHTMLFolhaA4(dados.cabecalho, dados.resultados);
+                    printContainer.innerHTML += htmlFolha;
+                }
+
+                if (printContainer.innerHTML.trim() !== "") {
+                    window.print();
+                }
+            } catch (e) {
+                console.error(e); alert("Ocorreu um erro ao preparar os laudos para impressão.");
+            } finally {
+                btn.innerHTML = textoOriginal; btn.disabled = false;
+                setTimeout(() => { printContainer.innerHTML = ""; }, 1000); 
+            }
+        }
+
+        function imprimirLaudoModal() {
+            const printContainer = document.getElementById("printContainer");
+            printContainer.innerHTML = document.getElementById("previewLaudoArea").innerHTML;
+            window.print();
+            setTimeout(() => { printContainer.innerHTML = ""; }, 1000);
+        }
+
+        // 🔥 MOTOR DE RENDERIZAÇÃO A4 (CORRIGIDO PARA NÃO CORTAR NA DIREITA)
+        function gerarHTMLFolhaA4(cab, resultados) {
+            let linhasTabela = "";
+            resultados.forEach(r => {
+                const temMin = r.valor_min !== null && r.valor_min !== undefined;
+                const temMax = r.valor_max !== null && r.valor_max !== undefined;
+                let spec = "-";
+                if(temMin && temMax) spec = `${r.valor_min} a ${r.valor_max}`;
+                else if(temMin) spec = `Mín: ${r.valor_min}`;
+                else if(temMax) spec = `Máx: ${r.valor_max}`;
+                
+                const statusFormatado = r.conforme ? 'CONFORME' : 'NÃO CONFORME';
+
+                // Adicionado controle de quebra de texto para evitar que a tabela estique
+                linhasTabela += `
+                    <tr>
+                        <td class="fw-bold" style="word-wrap: break-word; white-space: normal;">${r.parametro || '-'}</td>
+                        <td style="word-wrap: break-word; white-space: normal;">${spec}</td>
+                        <td class="fw-bold text-center" style="word-wrap: break-word; white-space: normal;">${r.valor_encontrado || '-'}</td>
+                        <td class="text-center fw-bold" style="word-wrap: break-word; white-space: normal;">${statusFormatado}</td>
+                    </tr>
+                `;
+            });
+
+            let blocoAssinatura = "";
+            if (cab.emitido_por) {
+                let imgAssinatura = cab.responsavel_assinatura 
+                    ? `<img src="${cab.responsavel_assinatura}" style="height: 60px; object-fit: contain; margin-bottom: 5px;">` 
+                    : `<div style="height: 60px;"></div>`;
+
+                blocoAssinatura = `
+                    <div class="assinatura-area text-center mt-4">
+                        ${imgAssinatura}
+                        <div style="border-top: 1px solid #000; width: 350px; margin: 0 auto; padding-top: 8px;">
+                            <h6 class="mb-0 fw-bold text-dark">${cab.responsavel_nome}</h6>
+                            <small class="text-dark d-block mt-1">${cab.responsavel_cargo}</small>
+                            <small class="text-muted d-block mt-2" style="font-size: 0.75rem;">
+                                <i class="bi bi-shield-check text-success"></i> Documento emitido e assinado eletronicamente via LIMS em ${cab.data_emissao_fmt}
+                            </small>
+                        </div>
+                    </div>
+                `;
+            } else {
+                blocoAssinatura = `
+                    <div class="assinatura-area text-center mt-5">
+                        <div class="d-inline-block text-danger fw-bold border border-danger p-3 rounded bg-light" style="width: 350px;">
+                            <i class="bi bi-exclamation-triangle-fill"></i> DOCUMENTO NÃO ASSINADO
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="folha-a4" style="font-family: Arial, sans-serif; width: 100%; max-width: 100%; box-sizing: border-box; overflow: hidden;">
+                    <div class="text-center mb-4">
+                        <img src="assets/img/logo.png" alt="Kari Kari Alimentos" style="max-height: 70px; margin-bottom: 10px;">
+                        
+                        <h4 class="fw-bold mb-0 text-dark">KARI KARI ALIMENTOS</h4>
+                        <p class="text-dark small mb-4">Laboratório de Controle de Qualidade</p>
+                        
+                        <h5 class="fw-bold text-dark text-decoration-underline">CERTIFICADO DE ANÁLISE INTERNA Nº ${cab.numero}</h5>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-4 small text-dark px-1">
+                        <div>
+                            <p class="mb-1 fw-bold">Produto: <span class="fw-normal">${cab.produto_nome}</span></p>
+                            <p class="mb-1 fw-bold">Lote: <span class="fw-normal">${cab.lote || '-'}</span></p>
+                        </div>
+                        <div class="text-end">
+                            <p class="mb-1 fw-bold">Código da Amostra: <span class="fw-normal">${cab.amostra_cod}</span></p>
+                            <p class="mb-1 fw-bold">Data de Emissão: <span class="fw-normal">${cab.emitido_por ? cab.data_emissao_fmt : 'Pendente'}</span></p>
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold text-dark mb-2 px-1">RESULTADOS ANALÍTICOS</h6>
+                    
+                    <div class="px-1 w-100" style="box-sizing: border-box;">
+                        <table class="table table-bordered border-dark table-sm mb-4 text-dark align-middle w-100" style="table-layout: fixed; word-wrap: break-word;">
+                            <thead class="text-center" style="background-color: #f8f9fa !important; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                                <tr>
+                                    <th style="width: 40%;">Parâmetro</th>
+                                    <th style="width: 25%;">Especificação</th>
+                                    <th style="width: 15%;">Resultado</th>
+                                    <th style="width: 20%;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${linhasTabela}
+                            </tbody>
+                        </table>
+
+                        <div class="parecer-tecnico-box border border-dark fw-bold text-center py-2 mb-4 text-dark w-100" style="font-size: 1.1rem; letter-spacing: 1px; box-sizing: border-box;">
+                            PARECER TÉCNICO: ${cab.resultado}
+                        </div>
+                    </div>
+
+                    ${blocoAssinatura}
+                </div>
+            `;
+        }
+
+        async function abrirModalLaudo(id) {
+            laudoAbertoId = id;
             try {
                 const res = await fetch(`${API}/laudos/${id}/detalhes`);
-                if(!res.ok) return alert("Erro ao carregar detalhes.");
-                const data = await res.json();
-                const cab = data.cabecalho;
+                const dados = await res.json();
                 
-                document.getElementById("laudoIdAtual").value = cab.id || cab.amostra_id;
-                document.getElementById("viewNumero").innerText = `CERTIFICADO DE ANÁLISE INTERNA Nº ${cab.numero || cab.id}`;
-                document.getElementById("viewProduto").innerText = cab.produto_nome;
-                document.getElementById("viewLote").innerText = cab.lote || 'N/A';
-                document.getElementById("viewAmostra").innerText = cab.amostra_cod;
-                document.getElementById("viewData").innerText = cab.data_emissao_fmt;
-                document.getElementById("viewResultado").innerText = cab.resultado || 'APROVADO';
+                document.getElementById("modalLaudoTitle").innerHTML = `<i class="bi bi-file-earmark-text"></i> Laudo ${dados.cabecalho.numero}`;
                 
-                const boxResultado = document.getElementById("viewResultado").parentElement;
-                if(cab.resultado === 'Reprovado' || cab.resultado === 'REPROVADA' || cab.resultado === 'REPROVADO') {
-                    boxResultado.style.color = '#dc3545'; boxResultado.style.borderColor = '#dc3545';
+                const btnAssinar = document.getElementById("btnAssinarModal");
+                const btnImprimir = document.getElementById("btnImprimirModal");
+
+                if (!dados.cabecalho.emitido_por) {
+                    btnAssinar.style.display = "inline-block";
+                    btnImprimir.style.display = "none";
                 } else {
-                    boxResultado.style.color = '#198754'; boxResultado.style.borderColor = '#198754';
+                    btnAssinar.style.display = "none";
+                    btnImprimir.style.display = "inline-block";
                 }
 
-                const tbody = document.getElementById("viewTabela");
-                tbody.innerHTML = "";
-                data.resultados.forEach(r => {
-                    const spec = (r.valor_min && r.valor_max) ? `${r.valor_min} a ${r.valor_max}` : '-';
-                    const isOk = r.conforme;
-                    // 🚀 MUDANÇA AQUI: Removido o 'fs-5' para o texto ficar em 11pt
-                    tbody.innerHTML += `
-                        <tr>
-                            <td class="fw-bold">${r.parametro}</td>
-                            <td>${spec}</td>
-                            <td class="text-center fw-bold">${r.valor_encontrado}</td>
-                            <td class="text-center fw-bold ${isOk ? 'text-success' : 'text-danger'}">${isOk ? 'CONFORME' : 'NÃO CONFORME'}</td>
-                        </tr>
-                    `;
-                });
-
-                if (cab.emitido_por) {
-                    document.getElementById("boxAssinaturaImg").innerHTML = cab.responsavel_assinatura ? `<img src="${cab.responsavel_assinatura}" style="max-height: 80px; z-index: 10;">` : '';
-                    document.getElementById("viewResponsavel").innerText = cab.responsavel_nome;
-                    document.getElementById("viewCargoResponsavel").innerText = cab.responsavel_cargo || "Laboratório Kari Kari";
-                    document.getElementById("dataAssinaturaEletronica").innerText = `Documento emitido e assinado eletronicamente via LIMS (v1.0) em ${cab.data_emissao_fmt}.`;
-                    
-                    document.getElementById("btnAssinarLaudo").style.display = "none";
-                    document.getElementById("btnBaixarPdf").style.display = "inline-flex";
-                    document.getElementById("btnImprimir").style.display = "inline-flex";
-                } else {
-                    document.getElementById("boxAssinaturaImg").innerHTML = `<span class="text-danger small"><i class="bi bi-exclamation-triangle"></i> Aguardando Assinatura Final</span>`;
-                    document.getElementById("viewResponsavel").innerText = "---";
-                    document.getElementById("viewCargoResponsavel").innerText = "---";
-                    document.getElementById("dataAssinaturaEletronica").innerText = `Assinado eletronicamente via LIMS (v1.0) em ${cab.data_emissao_fmt} para uso interno.`;
-                    
-                    document.getElementById("btnAssinarLaudo").style.display = "inline-flex";
-                    document.getElementById("btnBaixarPdf").style.display = "none";
-                    document.getElementById("btnImprimir").style.display = "none";
-                }
-
-                const btnCancel = document.getElementById("btnCancelar");
-                const isAdmin = userLogado && (userLogado.perfil === 'ADMIN' || userLogado.perfil === 'ADMINISTRADOR');
-                const podeCancelar = isAdmin || (userLogado && userLogado.permissoes && userLogado.permissoes.laudos_cancel === true);
-
-                if (podeCancelar) btnCancel.style.display = "inline-flex"; 
-                else btnCancel.style.display = "none";
-
-                const tabEl = document.getElementById('visualizar-tab');
-                tabEl.disabled = false;
-                bootstrap.Tab.getOrCreateInstance(tabEl).show();
-
-                aplicarTravaDeVisualizador();
-
+                document.getElementById("previewLaudoArea").innerHTML = gerarHTMLFolhaA4(dados.cabecalho, dados.resultados);
+                new bootstrap.Modal(document.getElementById('modalLaudo')).show();
             } catch(e) { console.error(e); }
         }
 
         async function assinarLaudo() {
-            if (!userLogado) return alert("Você precisa estar logado para assinar.");
-
-            if (!confirm("Ao clicar em OK, sua assinatura digital será gravada de forma irreversível neste laudo. Deseja prosseguir?")) return;
-
+            if(!confirm("Atenção: Ao assinar digitalmente, este laudo será finalizado com o seu nome e não poderá ser alterado. Deseja prosseguir?")) return;
+            
             try {
-                const id = document.getElementById("laudoIdAtual").value;
-                const res = await fetch(`${API}/laudos/${id}/assinar`, {
+                const res = await fetch(`${API}/laudos/${laudoAbertoId}/assinar`, {
                     method: 'PUT',
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ usuario_id: userLogado.id })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario_id: usuarioLogado.id })
                 });
 
-                if (res.ok) {
-                    alert("✅ Laudo assinado eletronicamente com sucesso! O documento oficial foi gerado.");
-                    abrirLaudo(id); 
+                if(res.ok) {
+                    alert("Laudo assinado com sucesso!");
+                    abrirModalLaudo(laudoAbertoId); 
                     carregarLaudos(); 
-                } else {
-                    alert("Erro ao registrar a assinatura no servidor.");
-                }
-            } catch (error) { console.error(error); alert("Falha de conexão com o banco de dados."); }
+                } else { alert("Erro ao assinar laudo."); }
+            } catch(e) { console.error(e); }
         }
 
-        function voltarLista() {
-            bootstrap.Tab.getOrCreateInstance(document.getElementById('lista-tab')).show();
-        }
-
-        async function baixarPDF() {
-            const id = document.getElementById("laudoIdAtual").value;
-            if(!id) return;
-
-            try {
-                const token = localStorage.getItem("limsToken") || ""; 
-                const res = await fetch(`${API}/laudos/${id}/pdf`, {
-                    method: 'GET',
-                    headers: { "Authorization": `Bearer ${token}` }
-                });
-
-                if (!res.ok) {
-                    const msg = await res.text();
-                    throw new Error(msg);
-                }
-
-                const blob = await res.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.style.display = "none";
-                a.href = url;
-                a.download = `Laudo_KariKari_${id}.pdf`; 
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                a.remove();
-                
-            } catch (error) {
-                alert(error.message || "Erro ao transferir o PDF.");
+        async function excluirLaudo(id, status) {
+            if (status !== 'AGUARDANDO ASSINATURA') {
+                if(!confirm("Atenção: Este laudo JÁ ESTÁ ASSINADO. Excluí-lo irá revogar o certificado e a amostra voltará para 'EM ANÁLISE'. Deseja cancelar o laudo?")) return;
+            } else {
+                if(!confirm("Deseja realmente excluir este laudo pendente?")) return;
             }
-        }
-
-        async function cancelarLaudo(idParam) {
-            const id = idParam || document.getElementById("laudoIdAtual").value;
-            if(!confirm("Atenção: Você está prestes a CANCELAR este laudo e devolvê-lo para a fila. Deseja continuar?")) return;
-            
             try {
-                await fetch(`${API}/laudos/${id}`, { method: "DELETE" });
-                alert("Laudo cancelado com sucesso e amostra devolvida à Fila.");
-                voltarLista();
+                await fetch(`${API}/laudos/${id}`, { method: 'DELETE' });
                 carregarLaudos();
-            } catch (error) { alert("Erro ao cancelar o laudo."); }
-        }
-
-        function aplicarTravaDeVisualizador() {
-            if (!userLogado) return;
-
-            const perfilUser = String(userLogado.perfil || "").toUpperCase().trim();
-            const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
-            
-            const podeAssinar = isAdmin || (userLogado.permissoes && userLogado.permissoes.laudos_issue === true);
-
-            if (!podeAssinar) {
-                const btnAssinar = document.getElementById("btnAssinarLaudo");
-                if (btnAssinar) btnAssinar.style.display = "none";
-            }
+            } catch(e) { console.error(e); }
         }
 
         carregarLaudos();
