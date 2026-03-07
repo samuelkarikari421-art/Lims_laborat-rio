@@ -284,14 +284,12 @@
     <script>
         const API = window.location.origin + "/api";
         
-        // VARIÁVEIS GLOBAIS
         let listaGlobalSolucoes = [];
         let reagentesGlobais = [];
         let listaGlobalUso = []; 
         let itensReceita = []; 
         let itensUsoAnalise = [];
 
-        // INICIALIZAÇÃO
         async function carregarTudo() {
             try {
                 const resSol = await fetch(`${API}/solucoes`);
@@ -385,38 +383,19 @@
             }
         }
         
-        // 🔥 NOVA FUNÇÃO: SINCRONIZAÇÃO REVERSA (Dropdown -> Input Texto)
         function sincronizarCodigo(selectId, inputId) {
-            const sel = document.getElementById(selectId);
-            const input = document.getElementById(inputId);
-            if (sel.selectedIndex > 0) {
-                const cod = sel.options[sel.selectedIndex].getAttribute("data-codigo");
-                input.value = cod ? cod : "";
-            } else {
-                input.value = "";
-            }
+            const sel = document.getElementById(selectId); const input = document.getElementById(inputId);
+            if (sel.selectedIndex > 0) { const cod = sel.options[sel.selectedIndex].getAttribute("data-codigo"); input.value = cod ? cod : ""; } else { input.value = ""; }
         }
 
-        // 🔥 FUNÇÃO MELHORADA: SINCRONIZAÇÃO DIRETA (Input Texto -> Dropdown)
         function buscarInsumoPorCodigo(inputId, selectId) {
-            const inputCod = document.getElementById(inputId).value.trim().toUpperCase(); 
-            const sel = document.getElementById(selectId);
-            
-            if (!inputCod) {
-                sel.value = ""; // Se apagar o texto, volta para "Selecione..."
-                return;
-            }
-            
+            const inputCod = document.getElementById(inputId).value.trim().toUpperCase(); const sel = document.getElementById(selectId);
+            if (!inputCod) { sel.value = ""; return; }
             let encontrou = false;
             for (let i = 0; i < sel.options.length; i++) { 
                 const codDropdown = sel.options[i].getAttribute("data-codigo");
-                if (codDropdown && codDropdown.includes(inputCod)) { 
-                    sel.value = sel.options[i].value; 
-                    encontrou = true;
-                    break; 
-                } 
+                if (codDropdown && codDropdown.includes(inputCod)) { sel.value = sel.options[i].value; encontrou = true; break; } 
             }
-            // Se não encontrou nenhuma correspondência, volta pro vazio para não registrar errado
             if(!encontrou) sel.value = "";
         }
         
@@ -435,9 +414,10 @@
             });
         }
         
+        // 🔥 FUNÇÃO DE SALVAR COM O ALERTA DE ERRO RESTAURADO
         async function salvarSolucao() {
             const idEdicao = document.getElementById("solucaoIdEdicao").value; const origem = document.getElementById("solOrigem").value;
-            if (origem === 'CRIADO' && itensReceita.length === 0) if(!confirm("Registrar a solução CRIADA sem insumos?")) return;
+            if (origem === 'CRIADO' && itensReceita.length === 0) { if(!confirm("Registrar a solução CRIADA sem insumos?")) return; }
 
             const reagUsados = itensReceita.filter(i => i.tipo === 'REAGENTE').map(i => ({ reagente_id: i.id, qtd_usada: i.qtd_usada }));
             const solUsadas = itensReceita.filter(i => i.tipo === 'SOLUCAO').map(i => ({ solucao_id: i.id, qtd_usada: i.qtd_usada }));
@@ -454,9 +434,18 @@
             try {
                 let url = `${API}/solucoes`; let method = 'POST';
                 if(idEdicao) { url = `${API}/solucoes/${idEdicao}`; method = 'PUT'; if(origem === 'CRIADO' && !confirm("O estoque dos insumos será reajustado. Confirmar?")) return; }
+                
                 const res = await fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) });
-                if(res.ok) { bootstrap.Modal.getInstance(document.getElementById('modalSolucao')).hide(); carregarTudo(); }
-            } catch(e) { console.error(e); }
+                
+                // A MÁGICA DO ALERTA DE ERRO ESTÁ AQUI
+                if(res.ok) { 
+                    bootstrap.Modal.getInstance(document.getElementById('modalSolucao')).hide(); 
+                    carregarTudo(); 
+                } else { 
+                    const dataErr = await res.json();
+                    alert("❌ ERRO AO SALVAR:\n" + (dataErr.error || "O banco de dados rejeitou o registro. Verifique o terminal!")); 
+                }
+            } catch(e) { console.error(e); alert("Erro de conexão com o servidor."); }
         }
         
         async function excluirSolucao(id) { if(!confirm("A exclusão NÃO estorna estoques. Continuar?")) return; await fetch(`${API}/solucoes/${id}`, { method: 'DELETE' }); carregarTudo(); }
@@ -510,7 +499,6 @@
             });
         }
 
-        // --- FUNÇÕES DO MODAL DE USO ---
         function mudarTipoInsumoUso() {
             const tipo = document.getElementById("usoTipoItem").value; const sel = document.getElementById("usoSelectInsumo");
             document.getElementById("usoBuscaCod").value = ""; sel.innerHTML = '<option value="">Selecione...</option>';
@@ -607,8 +595,14 @@
                 let url = `${API}/solucoes/uso`; let method = 'POST';
                 if(idEdicao) { url = `${API}/solucoes/uso/${idEdicao}`; method = 'PUT'; if(!confirm("Confirmar alterações de saldo nos estoques?")) return; }
                 const res = await fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) });
-                if(res.ok) { bootstrap.Modal.getInstance(document.getElementById('modalUso')).hide(); carregarHistoricoUso(); carregarTudo(); }
-            } catch(e) { console.error(e); }
+                if(res.ok) { 
+                    bootstrap.Modal.getInstance(document.getElementById('modalUso')).hide(); 
+                    carregarHistoricoUso(); carregarTudo(); 
+                } else {
+                    const dataErr = await res.json();
+                    alert("❌ ERRO AO SALVAR:\n" + (dataErr.error || "Verifique o terminal do Node.")); 
+                }
+            } catch(e) { console.error(e); alert("Erro de conexão com o servidor."); }
         }
 
         async function excluirUso(id) {

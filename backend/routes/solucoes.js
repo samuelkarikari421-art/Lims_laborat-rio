@@ -78,7 +78,8 @@ router.post("/", async (req, res) => {
         res.json({ success: true, codigo });
     } catch (err) {
         await client.query('ROLLBACK'); 
-        res.status(500).json({ success: false });
+        console.error("❌ ERRO NO CADASTRO DE SOLUÇÃO:", err.message); // 🔥 LOG DE ERRO ADICIONADO
+        res.status(500).json({ success: false, error: err.message });
     } finally { client.release(); }
 });
 
@@ -122,7 +123,8 @@ router.put("/:id", async (req, res) => {
         res.json({ success: true });
     } catch (err) {
         await client.query('ROLLBACK');
-        res.status(500).json({ success: false });
+        console.error("❌ ERRO NA EDIÇÃO DE SOLUÇÃO:", err.message);
+        res.status(500).json({ success: false, error: err.message });
     } finally { client.release(); }
 });
 
@@ -155,19 +157,13 @@ router.get("/uso/historico", async (req, res) => {
 router.get("/uso/:id/detalhes", async (req, res) => {
     try {
         const cabecalho = await pool.query(`SELECT * FROM uso_solucoes WHERE id = $1`, [req.params.id]);
-        
         const itensSol = await pool.query(`
             SELECT i.solucao_id as id, i.qtd_usada, s.codigo, s.nome, s.unidade 
-            FROM uso_solucoes_itens i
-            JOIN solucoes s ON s.id = i.solucao_id
-            WHERE i.uso_id = $1
+            FROM uso_solucoes_itens i JOIN solucoes s ON s.id = i.solucao_id WHERE i.uso_id = $1
         `, [req.params.id]);
-
         const itensReag = await pool.query(`
             SELECT i.reagente_id as id, i.qtd_usada, r.codigo, r.nome_reagente as nome, r.unidade 
-            FROM uso_analise_reagentes i
-            JOIN reagentes r ON r.id = i.reagente_id
-            WHERE i.uso_id = $1
+            FROM uso_analise_reagentes i JOIN reagentes r ON r.id = i.reagente_id WHERE i.uso_id = $1
         `, [req.params.id]);
 
         res.json({ cabecalho: cabecalho.rows[0], solucoes: itensSol.rows, reagentes: itensReag.rows });
@@ -200,7 +196,8 @@ router.post("/uso", async (req, res) => {
         res.json({ success: true });
     } catch (err) {
         await client.query('ROLLBACK');
-        res.status(500).json({ success: false });
+        console.error("❌ ERRO NO POST USO:", err.message);
+        res.status(500).json({ success: false, error: err.message });
     } finally { client.release(); }
 });
 
@@ -211,7 +208,6 @@ router.put("/uso/:id", async (req, res) => {
         const usoId = req.params.id;
         const { analise_codigo, observacoes, solucoes_usadas, reagentes_usados } = req.body;
 
-        // 1. Estorna os saldos
         const oldSol = await client.query(`SELECT solucao_id, qtd_usada FROM uso_solucoes_itens WHERE uso_id = $1`, [usoId]);
         for (const o of oldSol.rows) { await client.query(`UPDATE solucoes SET saldo_total = saldo_total + $1 WHERE id = $2`, [o.qtd_usada, o.solucao_id]); }
         await client.query(`DELETE FROM uso_solucoes_itens WHERE uso_id = $1`, [usoId]);
@@ -220,10 +216,8 @@ router.put("/uso/:id", async (req, res) => {
         for (const o of oldReag.rows) { await client.query(`UPDATE reagentes SET quantidade = quantidade + $1 WHERE id = $2`, [o.qtd_usada, o.reagente_id]); }
         await client.query(`DELETE FROM uso_analise_reagentes WHERE uso_id = $1`, [usoId]);
 
-        // 2. Atualiza cabeçalho
         await client.query(`UPDATE uso_solucoes SET analise_codigo = $1, observacoes = $2 WHERE id = $3`, [analise_codigo, observacoes, usoId]);
 
-        // 3. Aplica novos descontos
         if(solucoes_usadas) {
             for (const item of solucoes_usadas) {
                 await client.query(`INSERT INTO uso_solucoes_itens (uso_id, solucao_id, qtd_usada) VALUES ($1, $2, $3)`, [usoId, item.id, item.qtd_usada]);
@@ -241,7 +235,8 @@ router.put("/uso/:id", async (req, res) => {
         res.json({ success: true });
     } catch (err) {
         await client.query('ROLLBACK');
-        res.status(500).json({ success: false });
+        console.error("❌ ERRO NO PUT USO:", err.message);
+        res.status(500).json({ success: false, error: err.message });
     } finally { client.release(); }
 });
 

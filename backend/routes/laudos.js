@@ -8,7 +8,6 @@ router.get("/", async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT a.id, 
-                   -- 🔥 NOVO PADRÃO SQL: LDO-YYYYMM-ID
                    'LDO-' || to_char(a.data_entrada, 'YYYYMM') || '-' || LPAD(a.id::text, 4, '0') as numero, 
                    CASE 
                        WHEN l.emitido_por IS NULL THEN 'AGUARDANDO ASSINATURA' 
@@ -97,7 +96,7 @@ router.put("/:id/assinar", async (req, res) => {
     }
 });
 
-// 4. GERAR O ARQUIVO PDF
+// 4. GERAR O ARQUIVO PDF (🔥 AGORA COM VISUAL IDÊNTICO AO HTML)
 router.get("/:id/pdf", async (req, res) => {
     try {
         const cabecalhoRes = await pool.query(`
@@ -127,64 +126,126 @@ router.get("/:id/pdf", async (req, res) => {
         const resultadosRes = await pool.query(`SELECT * FROM analises WHERE amostra_id = $1`, [cab.amostra_id]);
         const resultados = resultadosRes.rows;
 
-        const doc = new PDFDocument({ margin: 50 });
+        const doc = new PDFDocument({ margin: 50, size: 'A4' });
         res.setHeader('Content-disposition', `attachment; filename="${cab.numero}_KariKari.pdf"`);
         res.setHeader('Content-type', 'application/pdf');
         doc.pipe(res);
 
-        doc.fontSize(20).font('Helvetica-Bold').text('KARI KARI ALIMENTOS', { align: 'center' });
-        doc.fontSize(10).font('Helvetica').text('Laboratório de Controle de Qualidade', { align: 'center' });
+        // CABEÇALHO DO DOCUMENTO
+        doc.fontSize(18).font('Helvetica-Bold').text('Kari Kari Alimentos', { align: 'center' });
+        doc.fontSize(10).font('Helvetica').fillColor('gray').text('Laboratório de Controle de Qualidade', { align: 'center' });
+        doc.fillColor('black').moveDown(2);
+
+        doc.fontSize(14).font('Helvetica-Bold').text(`CERTIFICADO DE ANÁLISE Nº ${cab.numero}`, { align: 'center' });
         doc.moveDown(2);
 
-        doc.fontSize(14).font('Helvetica-Bold').text(`CERTIFICADO DE ANÁLISE Nº ${cab.numero}`, { align: 'center', underline: true });
+        // INFORMAÇÕES DA AMOSTRA
+        doc.fontSize(10).font('Helvetica');
+        doc.text(`Produto: `, 50, doc.y, { continued: true }).font('Helvetica-Bold').text(`${cab.produto_nome}`);
+        doc.font('Helvetica').text(`Lote: `, 50, doc.y, { continued: true }).font('Helvetica-Bold').text(`${cab.lote || '-'}`);
+        doc.font('Helvetica').text(`Código da Amostra: `, 50, doc.y, { continued: true }).font('Helvetica-Bold').text(`${cab.amostra_cod}`);
+        doc.font('Helvetica').text(`Data de Emissão: `, 50, doc.y, { continued: true }).font('Helvetica-Bold').text(`${cab.data_emissao_fmt}`);
         doc.moveDown(2);
 
-        doc.fontSize(11).font('Helvetica');
-        doc.text(`Produto: ${cab.produto_nome}`);
-        doc.text(`Lote: ${cab.lote || '-'}`);
-        doc.text(`Código da Amostra: ${cab.amostra_cod}`);
-        doc.text(`Data de Emissão: ${cab.data_emissao_fmt}`);
-        doc.moveDown(2);
-
-        doc.font('Helvetica-Bold').text('RESULTADOS ANALÍTICOS');
-        doc.moveDown(0.5);
-        
         let y = doc.y;
-        doc.text('Parâmetro', 50, y);
-        doc.text('Especificação', 220, y);
-        doc.text('Resultado', 380, y);
-        doc.text('Status', 480, y);
-        doc.moveTo(50, y + 15).lineTo(540, y + 15).stroke();
-        y += 25;
-        doc.font('Helvetica');
-        
+
+        // 🔥 LÓGICA DE REDIMENSIONAMENTO INTELIGENTE DA TABELA
+        const qtdResultados = resultados.length;
+        let fontSizeTabela = 9;
+        let rowHeight = 22;
+
+        if (qtdResultados > 25) { fontSizeTabela = 7; rowHeight = 14; } 
+        else if (qtdResultados > 15) { fontSizeTabela = 8; rowHeight = 18; }
+
+        // Posições das Colunas na folha A4 (Largura total disponível: 495px)
+        const col1 = 50, col2 = 230, col3 = 360, col4 = 450, tableWidth = 495;
+
+        // Função que desenha o Cabeçalho da Tabela
+        const drawTableHeader = (startY) => {
+            // Fundo Cinza e Borda Externa
+            doc.rect(col1, startY, tableWidth, rowHeight + 4).fillAndStroke('#f4f6f9', '#000');
+            doc.fillColor('black').font('Helvetica-Bold').fontSize(fontSizeTabela);
+            
+            // Textos
+            const textY = startY + (rowHeight - fontSizeTabela) / 2;
+            doc.text('Parâmetro Analisado', col1 + 5, textY);
+            doc.text('Especificação Mín/Máx', col2 + 5, textY);
+            doc.text('Resultado', col3 + 5, textY);
+            doc.text('Status', col4 + 5, textY);
+            
+            // Linhas divisórias verticais
+            doc.moveTo(col2, startY).lineTo(col2, startY + rowHeight + 4).stroke();
+            doc.moveTo(col3, startY).lineTo(col3, startY + rowHeight + 4).stroke();
+            doc.moveTo(col4, startY).lineTo(col4, startY + rowHeight + 4).stroke();
+            
+            return startY + rowHeight + 4;
+        };
+
+        y = drawTableHeader(y); // Desenha o cabeçalho da tabela
+        doc.font('Helvetica').fontSize(fontSizeTabela);
+
+        // PREENCHIMENTO DOS DADOS (Com bordas!)
         resultados.forEach(r => {
+            // Se a linha for passar do limite da folha, cria nova página e repete o cabeçalho
+            if (y + rowHeight > 750) {
+                doc.addPage();
+                y = 50;
+                y = drawTableHeader(y); 
+                doc.font('Helvetica').fontSize(fontSizeTabela);
+            }
+
+            // 1. Desenha o Retângulo da Linha
+            doc.rect(col1, y, tableWidth, rowHeight).stroke();
+            
+            // 2. Desenha as Linhas Verticais
+            doc.moveTo(col2, y).lineTo(col2, y + rowHeight).stroke();
+            doc.moveTo(col3, y).lineTo(col3, y + rowHeight).stroke();
+            doc.moveTo(col4, y).lineTo(col4, y + rowHeight).stroke();
+
+            // 3. Prepara e escreve os Textos centralizados verticalmente
             const temMin = r.valor_min !== undefined && r.valor_min !== null;
             const temMax = r.valor_max !== undefined && r.valor_max !== null;
-            const spec = (temMin && temMax) ? `${r.valor_min} a ${r.valor_max}` : '-';
-            const statusStr = r.conforme ? 'Conforme' : 'Não Conforme';
-            
-            doc.text(r.parametro || '-', 50, y);
-            doc.text(spec, 220, y);
-            doc.font('Helvetica-Bold').text(r.valor_encontrado || '-', 380, y).font('Helvetica');
-            doc.text(statusStr, 480, y);
-            y += 20;
-            if (y > 700) { doc.addPage(); y = 50; }
+            let spec = '-';
+            if (temMin && temMax) spec = `${r.valor_min} a ${r.valor_max}`;
+            else if (temMin) spec = `Mín: ${r.valor_min}`;
+            else if (temMax) spec = `Máx: ${r.valor_max}`;
+
+            const statusStr = r.conforme ? 'CONFORME' : 'NÃO CONFORME';
+            const textY = y + (rowHeight - fontSizeTabela) / 2 - 1; // Centraliza o texto na célula
+
+            doc.font('Helvetica-Bold').text(r.parametro || '-', col1 + 5, textY, { width: col2 - col1 - 10, lineBreak: false, ellipsis: true });
+            doc.font('Helvetica').text(spec, col2 + 5, textY, { width: col3 - col2 - 10, lineBreak: false, ellipsis: true });
+            doc.font('Helvetica-Bold').text(r.valor_encontrado || '-', col3 + 5, textY, { width: col4 - col3 - 10, lineBreak: false, ellipsis: true });
+            doc.font('Helvetica-Bold').text(statusStr, col4 + 5, textY, { width: 545 - col4 - 10, lineBreak: false, ellipsis: true });
+
+            y += rowHeight;
         });
 
-        doc.moveDown(4);
-        doc.y = y + 40;
-        doc.font('Helvetica-Bold').fontSize(12).text(`CONCLUSÃO: ${cab.resultado}`, { align: 'center' });
-        doc.moveDown(5);
+        // 🔥 CAIXA DO PARECER TÉCNICO (Igual ao HTML)
+        if (y + 50 > 750) { doc.addPage(); y = 50; } // Pula página se não couber a caixa
+        
+        y += 15; // Espaço antes da caixa
+        doc.rect(col1, y, tableWidth, 25).stroke();
+        doc.font('Helvetica-Bold').fontSize(11).text(`PARECER TÉCNICO:  ${cab.resultado}`, col1, y + 8, { align: 'center', width: tableWidth });
 
-        let assinaturaY = doc.y;
-        doc.moveTo(150, assinaturaY).lineTo(450, assinaturaY).stroke();
+        // 🔥 ÁREA DE ASSINATURA
+        y += 80;
+        if (y + 80 > 800) { doc.addPage(); y = 80; } // Empurra para a próxima folha se estiver muito no fundo
+
+        // Assinatura (Usando fonte itálica grande para simular a assinatura real)
+        doc.font('Times-Italic').fontSize(22).text(cab.responsavel_nome || 'Analista', col1, y - 25, { align: 'center', width: tableWidth });
+        
+        // Linha da Assinatura
+        doc.lineWidth(1).moveTo(150, y).lineTo(445, y).stroke();
         doc.moveDown(0.5);
         
-        doc.fontSize(11).font('Helvetica-Bold').text(cab.responsavel_nome || 'Analista', { align: 'center' });
-        doc.fontSize(10).font('Helvetica').text(cab.responsavel_cargo || 'Controle de Qualidade', { align: 'center' });
-        doc.moveDown(0.2);
-        doc.fontSize(9).text('Assinado Eletronicamente', { align: 'center', color: 'gray' });
+        // Nome e Cargo
+        doc.font('Helvetica-Bold').fontSize(10).text(cab.responsavel_nome || 'Analista', { align: 'center' });
+        doc.font('Helvetica').fontSize(9).text(cab.responsavel_cargo || 'Controle de Qualidade', { align: 'center' });
+        doc.moveDown(0.5);
+        
+        // Texto de Segurança
+        doc.fontSize(8).fillColor('gray').text(`Documento emitido e assinado eletronicamente via LIMS em ${cab.data_emissao_fmt}`, { align: 'center' });
 
         doc.end();
 
