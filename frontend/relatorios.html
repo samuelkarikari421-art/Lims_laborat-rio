@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatórios - LIMS Kari Kari</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body>
+
+    <nav class="sidebar">
+        <button id="btnToggle" class="btn-toggle-sidebar">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <div class="sidebar-header">
+            <img src="assets/img/logo.png" alt="Logo Kari Kari" class="sidebar-logo">
+            <div class="brand-subtitle">Lab KariKari LIMS</div>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Operacional</div>
+            
+            <a href="dashboard.html" class="nav-link">
+                <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+            </a>
+            
+            <a href="amostras.html" class="nav-link">
+                <i class="bi bi-box-seam"></i> <span>Amostras</span>
+            </a>
+            
+            <a href="analises.html" class="nav-link">
+                <i class="bi-clipboard-data"></i> <span>Análises</span>
+            </a>
+            
+            <a href="laudos.html" class="nav-link">
+                <i class="bi bi-file-earmark-check"></i> <span>Laudos</span>
+            </a>
+            
+            <a href="reagentes.html" class="nav-link">
+                <i class="bi bi-droplet-half"></i> <span>Reagentes</span>
+            </a>
+            <a href="solucoes.html" class="nav-link">
+                <i class="bi bi-eyedropper"></i> <span>Soluções</span>
+            </a>
+
+            <div class="sidebar-label">Gestão</div>
+
+            <a href="relatorios.html" class="nav-link active">
+                <i class="bi bi-graph-up"></i> <span>Relatórios</span>
+            </a>
+            
+            <a href="produtos.html" class="nav-link">
+                <i class="bi bi-tags"></i> <span>Produtos</span>
+            </a>
+            
+            <a href="usuarios.html" class="nav-link">
+                <i class="bi bi-people"></i> <span>Usuários</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <button onclick="window.location.href='login.html'" class="btn-logout">
+                <i class="bi bi-box-arrow-left me-2"></i> <span>Sair</span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <h2 class="fw-bold mb-4">Relatórios Gerenciais</h2>
+
+        <ul class="nav nav-tabs mb-4" id="relatoriosTab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="qualidade-tab" data-bs-toggle="tab" data-bs-target="#qualidade-pane" type="button">
+                    <i class="bi bi-shield-check"></i> Indicadores de Qualidade
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="performance-tab" data-bs-toggle="tab" data-bs-target="#performance-pane" type="button" onclick="carregarPerformance()">
+                    <i class="bi bi-stopwatch"></i> Performance do Laboratório
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            
+            <div class="tab-pane fade show active" id="qualidade-pane">
+                <div class="card shadow-sm mb-4 bg-light border-0">
+                    <div class="card-body">
+                        <form id="formQualidade" class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <label class="small fw-bold text-muted">Produto</label>
+                                <select id="filtroProduto" class="form-select border-0 shadow-sm"><option value="">Todos</option></select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="small fw-bold text-muted">Data Início</label>
+                                <input type="date" id="dataIni" class="form-control border-0 shadow-sm">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="small fw-bold text-muted">Data Fim</label>
+                                <input type="date" id="dataFim" class="form-control border-0 shadow-sm">
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-primary w-100 shadow-sm"><i class="bi bi-search"></i> Gerar Indicadores</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm border-start border-5 border-success">
+                            <div class="card-body">
+                                <h6 class="text-uppercase text-muted small">Conformidade</h6>
+                                <h2 class="display-4 fw-bold text-success mb-0"><span id="kpiConf">0</span>%</h2>
+                                <small>Das amostras analisadas no período</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm border-start border-5 border-danger">
+                            <div class="card-body">
+                                <h6 class="text-uppercase text-muted small">Índice de Reprovação</h6>
+                                <h2 class="display-4 fw-bold text-danger mb-0"><span id="kpiRepro">0</span>%</h2>
+                                <small>Taxa de não conformidade</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white fw-bold">Tendência de Reprovação (Diária)</div>
+                    <div class="card-body">
+                        <canvas id="chartTendencia" height="80"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="performance-pane">
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="card bg-dark text-white border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <h6 class="text-uppercase opacity-75 small">Lead Time Médio</h6>
+                                <h2 class="display-4 fw-bold"><span id="kpiTempo">0</span> h</h2>
+                                <p class="small opacity-75">Tempo médio entre a entrada da amostra e a emissão do laudo (Turnaround Time).</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-header bg-white fw-bold">Volume Mensal de Amostras</div>
+                            <div class="card-body">
+                                <canvas id="chartVolume" height="120"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/sidebar.js"></script>
+    
+    <script>
+        const API = window.location.origin + "/api";
+        let chartTendenciaInstance = null;
+        let chartVolumeInstance = null;
+
+        // Init
+        document.addEventListener("DOMContentLoaded", () => {
+            carregarProdutos();
+            carregarQualidade(); // Carrega inicial (sem filtros ou padrão)
+        });
+
+        // 1. Carregar Select de Produtos
+        async function carregarProdutos() {
+            const res = await fetch(`${API}/produtos`);
+            const prods = await res.json();
+            const sel = document.getElementById("filtroProduto");
+            prods.forEach(p => sel.innerHTML += `<option value="${p.id}">${p.nome}</option>`);
+        }
+
+        // 2. Carregar Dados de Qualidade (Filtro)
+        async function carregarQualidade() {
+            const prod = document.getElementById("filtroProduto").value;
+            const ini = document.getElementById("dataIni").value;
+            const fim = document.getElementById("dataFim").value;
+            
+            const query = new URLSearchParams({ produto_id: prod, data_inicio: ini, data_fim: fim }).toString();
+            
+            const res = await fetch(`${API}/relatorios/qualidade?${query}`);
+            const data = await res.json();
+
+            // Atualiza KPIs
+            document.getElementById("kpiConf").innerText = data.kpi.percConformidade;
+            document.getElementById("kpiRepro").innerText = data.kpi.indiceReprovacao;
+
+            // Atualiza Gráfico
+            renderChartTendencia(data.grafico);
+        }
+
+        // 3. Renderizar Gráfico de Linha (Tendência)
+        function renderChartTendencia(dados) {
+            const ctx = document.getElementById('chartTendencia').getContext('2d');
+            
+            if (chartTendenciaInstance) chartTendenciaInstance.destroy();
+
+            const labels = dados.map(d => d.dia);
+            const reprovados = dados.map(d => d.reprovados);
+            const totais = dados.map(d => d.total);
+
+            chartTendenciaInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Reprovações',
+                            data: reprovados,
+                            borderColor: '#dc3545',
+                            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Total Amostras',
+                            data: totais,
+                            borderColor: '#6c757d',
+                            borderDash: [5, 5],
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: { responsive: true }
+            });
+        }
+
+        // 4. Carregar Performance (Ao clicar na aba)
+        async function carregarPerformance() {
+            const res = await fetch(`${API}/relatorios/performance`);
+            const data = await res.json();
+
+            // KPI Tempo
+            document.getElementById("kpiTempo").innerText = data.tempoMedioHoras;
+
+            // Gráfico Volume
+            const ctx = document.getElementById('chartVolume').getContext('2d');
+            if (chartVolumeInstance) chartVolumeInstance.destroy();
+
+            chartVolumeInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.volumeMensal.map(d => d.mes),
+                    datasets: [{
+                        label: 'Qtd Amostras',
+                        data: data.volumeMensal.map(d => d.qtd),
+                        backgroundColor: '#b22222', // Atualizado para Vermelho Kari Kari
+                        borderRadius: 5
+                    }]
+                },
+                options: { responsive: true }
+            });
+        }
+
+        document.getElementById("formQualidade").addEventListener("submit", (e) => {
+            e.preventDefault();
+            carregarQualidade();
+        });
+    </script>
+</body>
+</html>

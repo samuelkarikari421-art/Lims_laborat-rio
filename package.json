@@ -1,0 +1,18 @@
+{
+  "name": "lims-kari-kari",
+  "version": "1.0.0",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.3",
+    "pdfkit": "^0.17.2",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0"
+  }
+}

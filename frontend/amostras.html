@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Amostras - LIMS Kari Kari</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        .table-excel-container { overflow-x: auto; white-space: nowrap; border-radius: 8px; }
+        .table-excel th { background-color: #212529 !important; color: white; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; }
+        .table-excel td { font-size: 0.85rem; vertical-align: middle; }
+        .status-badge { padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 0.7rem; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <button id="btnToggle" class="btn-toggle-sidebar"><i class="bi bi-list"></i></button>
+        
+        <div class="sidebar-header">
+            <img src="assets/img/logo.png" alt="Logo Kari Kari" class="sidebar-logo">
+            <div class="brand-subtitle">Lab KariKari LIMS</div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Operacional</div>
+            <a href="dashboard.html" class="nav-link"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
+            <a href="amostras.html" class="nav-link active"><i class="bi bi-box-seam"></i> <span>Amostras</span></a>
+            <a href="analises.html" class="nav-link"><i class="bi bi-clipboard-data"></i> <span>Análises</span></a>
+            <a href="laudos.html" class="nav-link"><i class="bi bi-file-earmark-check"></i> <span>Laudos</span></a>
+            <a href="reagentes.html" class="nav-link"><i class="bi bi-droplet-half"></i> <span>Reagentes</span></a>
+            <a href="solucoes.html" class="nav-link"><i class="bi bi-eyedropper"></i> <span>Soluções</span></a>
+            <div class="sidebar-label">Gestão</div>
+            <a href="relatorios.html" class="nav-link"><i class="bi bi-graph-up"></i> <span>Relatórios</span></a>
+            <a href="produtos.html" class="nav-link"><i class="bi bi-tags"></i> <span>Produtos</span></a>
+            <a href="usuarios.html" class="nav-link"><i class="bi bi-people"></i> <span>Usuários</span></a>
+        </div>
+        <div class="sidebar-footer"><button onclick="window.location.href='login.html'" class="btn-logout"><i class="bi bi-box-arrow-left me-2"></i> <span>Sair</span></button></div>
+    </nav>
+
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-dark mb-0">Controle de Amostras (FIFO)</h2>
+                <p class="text-muted small">Gerenciamento de entrada e rastreabilidade laboratorial</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-success fw-bold" onclick="exportarExcel()">
+                    <i class="bi bi-file-earmark-excel"></i> Exportar Planilha
+                </button>
+                <button class="btn btn-primary fw-bold px-4 shadow-sm" id="btnNovaAmostra" onclick="abrirModalNovaAmostra()">
+                    <i class="bi bi-plus-lg"></i> Registrar Entrada
+                </button>
+            </div>
+        </div>
+
+        <div class="row mb-3 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label fw-bold text-muted small mb-1">Buscar Amostra</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                    <input type="text" id="buscaAmostra" class="form-control" placeholder="Código, Produto ou Lote...">
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <label class="form-label fw-bold text-muted small mb-1">Data de Coleta</label>
+                <input type="date" id="filtroDataAmostra" class="form-control">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold text-muted small mb-1">Status da Amostra</label>
+                <select id="filtroStatusAmostra" class="form-select">
+                    <option value="">Todos os Status</option>
+                    <option value="PENDENTE">Pendente</option>
+                    <option value="EM ANÁLISE">Em Análise</option>
+                    <option value="CONFORME">Conforme (Aprovada)</option>
+                    <option value="REPROVADA">Não Conforme (Reprovada)</option>
+                </select>
+            </div>
+        </div>
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0 table-excel-container">
+                <table class="table table-hover table-bordered mb-0 table-excel" id="tabelaExcel">
+                    <thead>
+                        <tr>
+                            <th>Cód. Amostra</th>
+                            <th>ID FIFO</th>
+                            <th>Cód. Prod</th>
+                            <th>Produto</th>
+                            <th>Linha</th>
+                            <th>Lote</th>
+                            <th>Data Coleta</th>
+                            <th>Hora</th>
+                            <th>Resp. Coleta</th>
+                            <th>Tipo Análise</th>
+                            <th>Status</th>
+                            <th>Entrada Lab</th>
+                            <th>Saída/Laudo</th>
+                            <th>Analista</th>
+                            <th>Nº Laudo</th>
+                            <th>Resultado</th>
+                            <th>Desvio?</th>
+                            <th>Obs</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaAmostras"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalNovaAmostra" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-white border-bottom-0">
+                    <h5 class="modal-title fw-bold text-primary"><i class="bi bi-box-seam"></i> Nova Entrada de Amostra</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light p-4">
+                    <form id="formNovaAmostra">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-muted">CÓD. AMOSTRA</label>
+                                <input type="text" id="codigo" class="form-control bg-light text-primary fw-bold" placeholder="Gerado Automático" readonly>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-primary">CÓD. PRODUTO</label>
+                                <input type="text" id="cod_produto_busca" class="form-control border-primary" placeholder="Ex: KK-001">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">NOME DO PRODUTO</label>
+                                <select id="produto_id" class="form-select" required></select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">LOTE DE PRODUÇÃO</label>
+                                <input type="text" id="lote" class="form-control" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">LINHA / MÁQUINA</label>
+                                <select id="linha_producao" class="form-select" required>
+                                    <option value="" disabled selected>Selecione a linha...</option>
+                                    <option value="Batata">Batata</option>
+                                    <option value="Pipoca">Pipoca</option>
+                                    <option value="Bacon">Bacon</option>
+                                    <option value="Extrusado de milho">Extrusado de milho</option>
+                                    <option value="Geral">Geral</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted">DATA COLETA</label>
+                                <input type="date" id="data_coleta" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted">HORA COLETA</label>
+                                <input type="time" id="hora_coleta" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted">RESP. COLETA</label>
+                                <input type="text" id="responsavel_coleta" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">TIPO DE ANÁLISE</label>
+                                <select id="tipo_analise" class="form-select">
+                                    <option value="Físico-Química">Físico-Química</option>
+                                    <option value="Microbiológica">Microbiológica</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-danger">OCORREU DESVIO NO PROCESSO?</label>
+                                <select id="desvio" class="form-select border-danger">
+                                    <option value="Não">Não</option>
+                                    <option value="Sim">Sim</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold text-muted">OBSERVAÇÕES</label>
+                                <textarea id="observacoes" class="form-control" rows="2" placeholder="Descreva qualquer anomalia na amostra..."></textarea>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="submit" class="btn btn-primary px-5 fw-bold py-2">Registrar na Fila</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalVisualizar" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white border-bottom-0">
+                    <h5 class="modal-title fw-bold" id="viewTitle">Cód: ---</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light">
+                    <h6 class="text-uppercase fw-bold text-primary mb-3" id="viewProdutoTitle">PRODUTO</h6>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="card shadow-sm border-0 mb-3">
+                                <div class="card-header bg-white fw-bold"><i class="bi bi-info-circle text-primary"></i> Dados de Fábrica</div>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between"><span>Lote:</span> <strong id="viewLote">---</strong></li>
+                                    <li class="list-group-item d-flex justify-content-between"><span>Linha Prod:</span> <strong id="viewLinha">---</strong></li>
+                                    <li class="list-group-item d-flex justify-content-between"><span>Data Coleta:</span> <strong id="viewDataColeta">---</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-header bg-white fw-bold"><i class="bi bi-graph-up text-primary"></i> Resultados da Análise</div>
+                                <table class="table table-hover align-middle m-0">
+                                    <thead class="table-light">
+                                        <tr><th class="ps-3">Parâmetro</th><th>Resultado</th><th>Status</th></tr>
+                                    </thead>
+                                    <tbody id="viewTabelaResultados"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalEditarAmostra" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-white border-bottom-0">
+                    <h5 class="modal-title fw-bold text-warning"><i class="bi bi-pencil-square"></i> Editar Amostra</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light p-4">
+                    <form id="formEditarAmostra">
+                        <input type="hidden" id="editAmostraId">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted">CÓD. AMOSTRA</label>
+                                <input type="text" id="editCodigo" class="form-control bg-light text-primary fw-bold" readonly>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label small fw-bold text-muted">NOME DO PRODUTO</label>
+                                <select id="editProdutoId" class="form-select" required></select>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted">LOTE DE PRODUÇÃO</label>
+                                <input type="text" id="editLote" class="form-control" required>
+                            </div>
+                            
+                            <div class="col-md-8">
+                                <label class="form-label small fw-bold text-muted">LINHA / MÁQUINA</label>
+                                <select id="editLinha" class="form-select" required>
+                                    <option value="Batata">Batata</option>
+                                    <option value="Pipoca">Pipoca</option>
+                                    <option value="Bacon">Bacon</option>
+                                    <option value="Extrusado de milho">Extrusado de milho</option>
+                                    <option value="Geral">Geral</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">DATA DA COLETA / FABRICAÇÃO</label>
+                                <input type="date" id="editDataFabricacao" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">DATA DE VALIDADE</label>
+                                <input type="date" id="editDataValidade" class="form-control">
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label small fw-bold text-muted">OBSERVAÇÕES</label>
+                                <textarea id="editObservacoes" class="form-control" rows="2" placeholder="Descreva qualquer anomalia na amostra..."></textarea>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-warning px-5 fw-bold py-2">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/sidebar.js"></script>
+    
+    <script>
+        const API = window.location.origin + "/api";
+        let modalAmostra;
+        let modalView;
+        let modalEditarAmostra;
+        let listaProdutosGlobais = [];
+        let listaAmostrasGlobais = []; 
+
+        // ==========================================
+        // 🛡️ TRAVA BASEADA NAS PERMISSÕES DO USUÁRIO
+        // ==========================================
+        function aplicarTravaGlobal() {
+            const userStr = localStorage.getItem("limsUser");
+            if (!userStr) return;
+
+            const user = JSON.parse(userStr);
+            const perfilUser = String(user.perfil || "").toUpperCase().trim();
+            const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
+            
+            const podeEditar = isAdmin || (user.permissoes && user.permissoes.amostras_edit === true);
+
+            if (!podeEditar) {
+                console.warn("🔒 Sem permissão de edição: Ocultando ferramentas de Amostras.");
+
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    #btnNovaAmostra, #cadastro-tab { display: none !important; }
+                    button[onclick*="excluir"], button[onclick*="deletar"], button[onclick*="apagar"], button[onclick*="abrirModalEdicao"], button[onclick*="editar"] { display: none !important; }
+                    form button[type="submit"], .modal-footer button.btn-primary, .modal-footer button.btn-warning { display: none !important; }
+                    form input, form select, form textarea { pointer-events: none !important; background-color: #e9ecef !important; color: #6c757d !important; }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // Adiciona ouvintes para os filtros em tempo real
+        document.addEventListener("DOMContentLoaded", () => {
+            aplicarTravaGlobal(); // Dispara o escudo de segurança!
+            
+            document.getElementById("buscaAmostra").addEventListener("input", aplicarFiltrosAmostras);
+            document.getElementById("filtroDataAmostra").addEventListener("change", aplicarFiltrosAmostras);
+            document.getElementById("filtroStatusAmostra").addEventListener("change", aplicarFiltrosAmostras);
+
+            carregarProdutos();
+            carregarAmostras();
+        });
+
+        // 1. CARREGAMENTO DE PRODUTOS
+        async function carregarProdutos() {
+            try {
+                const res = await fetch(`${API}/produtos`);
+                listaProdutosGlobais = await res.json();
+                
+                const selCadastro = document.getElementById("produto_id");
+                const selEditar = document.getElementById("editProdutoId");
+                
+                selCadastro.innerHTML = "<option value='' disabled selected>Selecione o Produto...</option>";
+                selEditar.innerHTML = "<option value='' disabled selected>Selecione o Produto...</option>";
+                
+                listaProdutosGlobais.forEach(p => {
+                    const nome = p.nome_produto || p.nome;
+                    selCadastro.innerHTML += `<option value="${p.id}">${nome}</option>`;
+                    selEditar.innerHTML += `<option value="${p.id}">${nome}</option>`;
+                });
+            } catch(e) { console.error("Erro ao carregar produtos:", e); }
+        }
+
+        document.getElementById("cod_produto_busca").addEventListener("input", function(e) {
+            const codDigitado = e.target.value.trim().toUpperCase();
+            const produtoEncontrado = listaProdutosGlobais.find(p => {
+                const codigoProd = p.cod_produto || p.codigo_interno || "";
+                return codigoProd.toUpperCase() === codDigitado;
+            });
+            if (produtoEncontrado) {
+                document.getElementById("produto_id").value = produtoEncontrado.id;
+            } else {
+                document.getElementById("produto_id").value = "";
+            }
+        });
+
+        document.getElementById("produto_id").addEventListener("change", function(e) {
+            const idSelecionado = e.target.value;
+            const produtoEncontrado = listaProdutosGlobais.find(p => p.id == idSelecionado);
+            if (produtoEncontrado) {
+                document.getElementById("cod_produto_busca").value = produtoEncontrado.cod_produto || produtoEncontrado.codigo_interno || "";
+            } else {
+                document.getElementById("cod_produto_busca").value = "";
+            }
+        });
+
+        // 2. GESTÃO DA TABELA DE AMOSTRAS E FILTROS
+        async function carregarAmostras() {
+            try {
+                const res = await fetch(`${API}/amostras`);
+                listaAmostrasGlobais = await res.json(); 
+                aplicarFiltrosAmostras(); // Envia para o filtro inicial
+            } catch(e) { console.error("Erro ao carregar amostras:", e); }
+        }
+
+        function aplicarFiltrosAmostras() {
+            const termo = document.getElementById("buscaAmostra").value.toLowerCase();
+            const dataEscolhida = document.getElementById("filtroDataAmostra").value; // YYYY-MM-DD
+            const statusEscolhido = document.getElementById("filtroStatusAmostra").value.toUpperCase();
+
+            const filtrados = listaAmostrasGlobais.filter(a => {
+                const codigo = String(a.codigo || '').toLowerCase();
+                const produto = String(a.produto_nome || a.nome_produto || '').toLowerCase();
+                const lote = String(a.lote || '').toLowerCase();
+                const status = String(a.status || '').toUpperCase();
+                const dataColetaFmt = String(a.data_coleta_fmt || ''); // Vem do banco como DD/MM/YYYY
+
+                // Verifica Texto
+                const matchTexto = codigo.includes(termo) || produto.includes(termo) || lote.includes(termo);
+
+                // Verifica Status
+                const matchStatus = statusEscolhido === "" || status === statusEscolhido;
+
+                // Verifica Data
+                let matchData = true;
+                if (dataEscolhida) {
+                    const [ano, mes, dia] = dataEscolhida.split('-');
+                    const dataFormatadaBr = `${dia}/${mes}/${ano}`;
+                    matchData = dataColetaFmt.startsWith(dataFormatadaBr);
+                }
+
+                return matchTexto && matchStatus && matchData;
+            });
+
+            renderizarTabelaAmostras(filtrados);
+        }
+
+        function renderizarTabelaAmostras(lista) {
+            const tbody = document.getElementById("tabelaAmostras");
+            tbody.innerHTML = "";
+
+            if(lista.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='19' class='text-center py-5 text-muted'>Nenhuma amostra encontrada com estes filtros.</td></tr>";
+                return;
+            }
+
+            lista.forEach(a => {
+                let badgeClass = "bg-warning text-dark";
+                if(a.status === 'CONFORME') badgeClass = "bg-success";
+                if(a.status === 'REPROVADA') badgeClass = "bg-danger";
+                if(a.status === 'EM ANÁLISE') badgeClass = "bg-info text-dark";
+
+                const nomeProd = a.produto_nome || a.nome_produto || '-';
+                const codProd = a.cod_produto || '-';
+                
+                let btnDisabled = a.status !== 'PENDENTE' ? 'disabled title="Amostra já em processamento"' : '';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="fw-bold text-primary">${a.codigo}</td>
+                        <td>${a.id}</td>
+                        <td>${codProd}</td>
+                        <td class="fw-bold">${nomeProd}</td>
+                        <td>${a.linha_producao || '-'}</td>
+                        <td>${a.lote}</td>
+                        <td>${a.data_coleta_fmt}</td>
+                        <td>${a.hora_coleta}</td>
+                        <td>${a.responsavel_coleta || '-'}</td>
+                        <td>${a.tipo_analise}</td>
+                        <td><span class="status-badge ${badgeClass}">${a.status}</span></td>
+                        <td>${a.data_entrada_fmt || '-'}</td>
+                        <td>${a.data_saida_fmt || '-'}</td>
+                        <td>${a.analista_nome || '-'}</td>
+                        <td>${a.laudo_numero || '-'}</td>
+                        <td class="fw-bold">${a.laudo_resultado || '-'}</td>
+                        <td class="${a.desvio === 'Sim' ? 'text-danger fw-bold' : ''}">${a.desvio}</td>
+                        <td class="small text-muted">${a.observacoes || '-'}</td>
+                        <td class="text-nowrap text-center">
+                            <button onclick="verDetalhes(${a.id})" class="btn btn-sm btn-light border text-info shadow-sm" title="Ver Detalhes"><i class="bi bi-eye"></i></button>
+                            <button onclick="abrirModalEdicao(${a.id})" class="btn btn-sm btn-light border text-warning shadow-sm btn-editar" title="Editar" ${btnDisabled}><i class="bi bi-pencil"></i></button>
+                            <button onclick="excluirAmostra(${a.id})" class="btn btn-sm btn-light border text-danger shadow-sm btn-excluir" title="Excluir" ${btnDisabled}><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // 3. CADASTRAR NOVA AMOSTRA
+        function abrirModalNovaAmostra() {
+            document.getElementById("formNovaAmostra").reset();
+            if(!modalAmostra) modalAmostra = new bootstrap.Modal(document.getElementById('modalNovaAmostra'));
+            modalAmostra.show();
+        }
+
+        document.getElementById("formNovaAmostra").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const data = {
+                produto_id: document.getElementById('produto_id').value,
+                lote: document.getElementById('lote').value,
+                linha_producao: document.getElementById('linha_producao').value,
+                data_coleta: document.getElementById('data_coleta').value,
+                hora_coleta: document.getElementById('hora_coleta').value,
+                responsavel_coleta: document.getElementById('responsavel_coleta').value,
+                tipo_analise: document.getElementById('tipo_analise').value,
+                desvio: document.getElementById('desvio').value,
+                observacoes: document.getElementById('observacoes').value
+            };
+            
+            await fetch(`${API}/amostras`, { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify(data) 
+            });
+            
+            modalAmostra.hide();
+            carregarAmostras();
+        });
+
+        // 4. VISUALIZAR DETALHES
+        async function verDetalhes(id) {
+            try {
+                const res = await fetch(`${API}/amostras/${id}/detalhes`);
+                const data = await res.json();
+
+                document.getElementById("viewTitle").innerText = `Amostra: ${data.amostra.codigo}`;
+                document.getElementById("viewProdutoTitle").innerText = data.amostra.produto_nome || data.amostra.nome_produto || '-';
+                document.getElementById("viewLote").innerText = data.amostra.lote;
+                document.getElementById("viewLinha").innerText = data.amostra.linha_producao || '-';
+                document.getElementById("viewDataColeta").innerText = data.amostra.data_coleta_fmt;
+
+                const tResult = document.getElementById("viewTabelaResultados");
+                tResult.innerHTML = "";
+                if(data.resultados.length === 0) {
+                    tResult.innerHTML = "<tr><td colspan='3' class='text-center text-muted'>Ainda não analisado.</td></tr>";
+                } else {
+                    data.resultados.forEach(r => {
+                        const icone = r.conforme ? '<i class="bi bi-check-circle-fill text-success"></i>' : '<i class="bi bi-x-circle-fill text-danger"></i>';
+                        tResult.innerHTML += `<tr><td class="ps-3">${r.parametro}</td><td class="fw-bold">${r.valor_encontrado}</td><td>${icone}</td></tr>`;
+                    });
+                }
+
+                if (!modalView) modalView = new bootstrap.Modal(document.getElementById('modalVisualizar'));
+                modalView.show();
+            } catch (e) {
+                alert("Erro ao carregar os detalhes.");
+            }
+        }
+
+        // 5. EDITAR AMOSTRA
+        function abrirModalEdicao(id) {
+            const amostra = listaAmostrasGlobais.find(a => a.id === id);
+            if (!amostra) return;
+
+            const elId = document.getElementById("editAmostraId"); if(elId) elId.value = amostra.id;
+            const elCod = document.getElementById("editCodigo"); if(elCod) elCod.value = amostra.codigo;
+            const elProd = document.getElementById("editProdutoId"); if(elProd) elProd.value = amostra.produto_id;
+            const elLote = document.getElementById("editLote"); if(elLote) elLote.value = amostra.lote;
+            const elLinha = document.getElementById("editLinha"); if(elLinha) elLinha.value = amostra.linha_producao || 'Geral';
+            
+            const elDataColeta = document.getElementById("editDataFabricacao"); 
+            if(elDataColeta) elDataColeta.value = amostra.data_coleta ? amostra.data_coleta.split('T')[0] : '';
+            
+            const elDataVal = document.getElementById("editDataValidade");
+            if(elDataVal) elDataVal.value = amostra.data_validade ? amostra.data_validade.split('T')[0] : '';
+            
+            const elObs = document.getElementById("editObservacoes");
+            if(elObs) elObs.value = amostra.observacoes || '';
+
+            if(!modalEditarAmostra) modalEditarAmostra = new bootstrap.Modal(document.getElementById('modalEditarAmostra'));
+            modalEditarAmostra.show();
+        }
+
+        document.getElementById("formEditarAmostra").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const id = document.getElementById("editAmostraId").value;
+            
+            const payload = {
+                produto_id: document.getElementById("editProdutoId").value,
+                lote: document.getElementById("editLote").value,
+                linha_producao: document.getElementById("editLinha").value,
+                data_fabricacao: document.getElementById("editDataFabricacao").value,
+                data_validade: document.getElementById("editDataValidade").value,
+                observacoes: document.getElementById("editObservacoes").value
+            };
+
+            try {
+                const res = await fetch(`${API}/amostras/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    modalEditarAmostra.hide();
+                    carregarAmostras(); 
+                    alert("Amostra editada com sucesso!");
+                } else {
+                    alert(data.message || "Erro ao atualizar a amostra.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Erro de conexão ao tentar editar.");
+            }
+        });
+
+        // 6. EXCLUIR AMOSTRA
+        async function excluirAmostra(id) {
+            if (!confirm("⚠️ Tem certeza que deseja excluir esta amostra da fila?\nEsta ação não pode ser desfeita.")) return;
+            
+            try {
+                const res = await fetch(`${API}/amostras/${id}`, { method: "DELETE" });
+                const data = await res.json();
+                
+                if (res.ok && data.success) {
+                    carregarAmostras(); 
+                    alert("Amostra excluída da fila!");
+                } else {
+                    alert(data.message || "Erro ao excluir amostra. Ela pode estar em uso.");
+                }
+            } catch (e) {
+                console.error("Erro na exclusão:", e);
+                alert("Erro de conexão ao tentar excluir.");
+            }
+        }
+
+        // 7. EXPORTAR EXCEL (Agora só exporta o que estiver visível após o filtro)
+        function exportarExcel() {
+            let csv = "\ufeff";
+            const rows = document.querySelectorAll("#tabelaExcel tr");
+            rows.forEach(row => {
+                const cols = row.querySelectorAll("td, th");
+                let rowData = [];
+                for (let i = 0; i < cols.length - 1; i++) { 
+                    rowData.push('"' + cols[i].innerText.replace(/"/g, '""') + '"');
+                }
+                csv += rowData.join(";") + "\r\n";
+            });
+            const link = document.createElement("a");
+            link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+            link.download = "Controle_Amostras_FIFO.csv";
+            link.click();
+        }
+
+    </script>
+</body>
+</html>

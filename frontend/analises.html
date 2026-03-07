@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Análises - LIMS Kari Kari</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        .cronometro-box { background: #f8f9fa; border-radius: 8px; padding: 10px 20px; border: 1px solid #dee2e6; }
+        .tempo-vivo { font-family: 'Courier New', Courier, monospace; font-size: 1.5rem; font-weight: bold; color: #b22222; }
+        .input-aprovado { border-color: #198754 !important; background-color: #f1fcf6 !important; }
+        .input-reprovado { border-color: #dc3545 !important; background-color: #fdf2f3 !important; }
+        
+        .alerta-recuperacao { border-left: 5px solid #ffc107; background-color: #fff8e5; }
+
+        .dropdown-menu-ensaios {
+            max-height: 350px;
+            overflow-y: auto;
+            padding: 0;
+        }
+        .dropdown-menu-ensaios .dropdown-header {
+            position: sticky;
+            top: 0;
+            background: #f4f6f9;
+            z-index: 2;
+            border-bottom: 1px solid #ddd;
+            color: #b22222;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            padding: 10px 15px;
+        }
+        .dropdown-menu-ensaios .dropdown-item {
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: normal;
+        }
+        .dropdown-menu-ensaios .dropdown-item:hover { background-color: #fdf2f3; }
+        .dropdown-menu-ensaios .form-check-input { cursor: pointer; border-color: #b22222; }
+        .dropdown-menu-ensaios .form-check-input:checked { background-color: #b22222; border-color: #b22222; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <button id="btnToggle" class="btn-toggle-sidebar"><i class="bi bi-list"></i></button>
+        
+        <div class="sidebar-header">
+            <img src="assets/img/logo.png" alt="Logo Kari Kari" class="sidebar-logo">
+            <div class="brand-subtitle">Lab KariKari LIMS</div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Operacional</div>
+            <a href="dashboard.html" class="nav-link"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
+            <a href="amostras.html" class="nav-link"><i class="bi bi-box-seam"></i> <span>Amostras</span></a>
+            <a href="analises.html" class="nav-link active"><i class="bi bi-clipboard-data" style="display: inline-block !important;"></i> <span>Análises</span></a>
+            <a href="laudos.html" class="nav-link"><i class="bi bi-file-earmark-check"></i> <span>Laudos</span></a>
+            <a href="reagentes.html" class="nav-link"><i class="bi bi-droplet-half"></i> <span>Reagentes</span></a>
+            <a href="solucoes.html" class="nav-link"><i class="bi bi-eyedropper"></i> <span>Soluções</span></a>
+            
+            <div class="sidebar-label">Gestão</div>
+            <a href="relatorios.html" class="nav-link"><i class="bi bi-graph-up"></i> <span>Relatórios</span></a>
+            <a href="produtos.html" class="nav-link"><i class="bi bi-tags"></i> <span>Produtos</span></a>
+            <a href="usuarios.html" class="nav-link"><i class="bi bi-people"></i> <span>Usuários</span></a>
+        </div>
+        <div class="sidebar-footer">
+            <button onclick="window.location.href='login.html'" class="btn-logout"><i class="bi bi-box-arrow-left me-2"></i> <span>Sair</span></button>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <h2 class="fw-bold mb-4">Bancada de Análises Técnicas</h2>
+
+        <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="registro-tab" data-bs-toggle="tab" data-bs-target="#registro-pane" type="button">
+                    <i class="bi bi-pencil-square"></i> Executar Testes (FIFO)
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="historico-tab" data-bs-toggle="tab" data-bs-target="#historico-pane" type="button" onclick="carregarHistorico()">
+                    <i class="bi bi-clock-history"></i> Histórico de Produtividade
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            
+            <div class="tab-pane fade show active" id="registro-pane">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-header bg-dark text-white fw-bold">Fila de Espera</div>
+                            <div class="list-group list-group-flush" id="listaPendentes">
+                                <div class="p-3 text-center text-muted small">Carregando fila...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-9">
+                        <div class="card shadow-sm" id="painelAnalise" style="display: none;">
+                            
+                            <div id="avisoRecuperacao" class="alerta-recuperacao p-3 mb-0 d-none text-dark small fw-bold">
+                                <i class="bi bi-info-circle-fill text-warning fs-5 align-middle me-2"></i> 
+                                Você possui esta análise em andamento. Os dados foram recuperados automaticamente!
+                            </div>
+
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                                <div>
+                                    <h5 class="mb-0 fw-bold text-primary" id="tituloAmostra">...</h5>
+                                    <small class="text-muted" id="subtituloAmostra"></small>
+                                </div>
+                                <div class="cronometro-box d-flex align-items-center gap-3">
+                                    <div class="text-end">
+                                        <small class="d-block fw-bold text-uppercase text-muted" style="font-size: 0.6rem;">Tempo Decorrido</small>
+                                        <span id="cronometroDisplay" class="tempo-vivo">00:00</span>
+                                    </div>
+                                    <i class="bi bi-stopwatch fs-3 text-primary"></i>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="formAnalises">
+                                    <input type="hidden" id="amostraIdSelecionada">
+                                    
+                                    <div class="card bg-light border-0 shadow-sm mb-4" id="painelEnsaiosExtras">
+                                        <div class="card-body">
+                                            <h6 class="fw-bold text-dark mb-3"><i class="bi bi-tags"></i> Inclusão de Ensaios Extras</h6>
+                                            <div class="row g-2 align-items-start">
+                                                <div class="col-md-9">
+                                                    <label class="form-label small text-muted fw-bold">CATÁLOGO DE ENSAIOS MULTIPLOS</label>
+                                                    <div class="dropdown w-100">
+                                                        <button class="btn btn-white border border-primary w-100 text-start d-flex justify-content-between align-items-center py-2" style="background: white;" type="button" id="btnDropdownEnsaios" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                                            <span id="textoDropdownEnsaios" class="text-muted">Clique e marque as caixinhas...</span>
+                                                            <i class="bi bi-chevron-down text-primary"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-ensaios w-100 shadow-lg border-0" aria-labelledby="btnDropdownEnsaios">
+                                                            <li><h6 class="dropdown-header border-top-0">1. ANÁLISES FÍSICO-QUÍMICAS</h6></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Composição básica" data-categoria="Físico-Química"> Composição básica</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Umidade" data-categoria="Físico-Química"> Umidade</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Cinzas" data-categoria="Físico-Química"> Cinzas</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Proteína" data-categoria="Físico-Química"> Proteína</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Lipídios (Gordura)" data-categoria="Físico-Química"> Lipídios (Gordura)</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Carboidratos" data-categoria="Físico-Química"> Carboidratos</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Fibra alimentar" data-categoria="Físico-Química"> Fibra alimentar</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="pH" data-categoria="Físico-Química"> pH</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Embalagem" data-categoria="Físico-Química"> Embalagem</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Dados de fabricação" data-categoria="Físico-Química"> Dados de fabricação</label></li>
+                                                            
+                                                            <li><h6 class="dropdown-header">2. MICROBIOLÓGICAS</h6></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Contagem padrão em placas" data-categoria="Microbiológica"> Contagem padrão em placas</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Salmonella spp." data-categoria="Microbiológica"> Salmonella spp.</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Escherichia coli" data-categoria="Microbiológica"> Escherichia coli</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Coliformes totais" data-categoria="Microbiológica"> Coliformes totais</label></li>
+
+                                                            <li><h6 class="dropdown-header">5. SENSORIAIS</h6></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Aparência" data-categoria="Sensorial"> Aparência</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Cor" data-categoria="Sensorial"> Cor</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Odor" data-categoria="Sensorial"> Odor</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Sabor" data-categoria="Sensorial"> Sabor</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Textura" data-categoria="Sensorial"> Textura</label></li>
+
+                                                            <li><h6 class="dropdown-header">8. ALIMENTÍCIAS (KARI KARI)</h6></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Nutricional (Completo)" data-categoria="Alimentos"> Nutricional Completo</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Sódio" data-categoria="Alimentos"> Sódio</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Aw (atividade de água)" data-categoria="Alimentos"> Aw (atividade de água)</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Crocância" data-categoria="Alimentos"> Crocância</label></li>
+                                                            <li><label class="dropdown-item"><input class="form-check-input me-2 ensaio-checkbox" type="checkbox" value="Rancidez" data-categoria="Alimentos"> Rancidez</label></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <button type="button" class="btn btn-outline-primary w-100 fw-bold py-2" id="btnAdicionarBancada" onclick="adicionarParametroExtra()" title="Injeta os parâmetros marcados na tabela abaixo">
+                                                        <i class="bi bi-plus-circle"></i> Adicionar à Bancada
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <table class="table align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Parâmetro / Método</th>
+                                                <th>Especificação</th>
+                                                <th>Unid.</th>
+                                                <th width="200px">Valor Encontrado</th>
+                                                <th class="text-center">Status</th>
+                                                <th class="text-center coluna-acao">Ação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tabelaInputs"></tbody>
+                                    </table>
+
+                                    <div class="mt-3">
+                                        <label class="form-label fw-bold small">Observações da Análise</label>
+                                        <textarea id="obsAnalise" class="form-control" rows="2" placeholder="Descreva qualquer anomalia sensorial..." oninput="salvarAutoSave()"></textarea>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end gap-2 mt-4" id="botoesAcaoFooter">
+                                        <button type="button" class="btn btn-light border" onclick="cancelarAnalise()">Cancelar & Devolver à Fila</button>
+                                        <button type="submit" class="btn btn-primary fw-bold px-5">Finalizar Análise</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div id="placeholder" class="text-center py-5 bg-white rounded shadow-sm border">
+                            <i class="bi bi-clipboard-data display-1 text-light"></i>
+                            <p class="mt-3 text-muted">Selecione uma amostra da fila para iniciar a análise.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="historico-pane">
+                
+                <div class="row mb-3 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
+                    <div class="col-md-5">
+                        <label class="form-label fw-bold text-muted small mb-1">Buscar Análise</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                            <input type="text" id="buscaHistorico" class="form-control" placeholder="Cód. Análise, Amostra ou Produto...">
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-muted small mb-1">Data Base</label>
+                        <input type="date" id="filtroDataHistorico" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-muted small mb-1">Resultado / Status</label>
+                        <select id="filtroStatusHistorico" class="form-select">
+                            <option value="">Todos os Status</option>
+                            <option value="CONFORME">Conforme / Aprovado</option>
+                            <option value="REPROVADA">Não Conforme / Reprovado</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-0">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4 py-3">Data Base</th>
+                                    <th class="text-primary">Cód. Análise</th>
+                                    <th>Cód. Amostra</th>
+                                    <th>Produto</th>
+                                    <th>Resultado</th>
+                                    <th class="text-end pe-4">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaHistorico"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalDetalhesAnalise" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white border-bottom-0">
+                    <h5 class="modal-title fw-bold">Detalhes da Análise: <span id="detalheAmostraCod" class="text-warning"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light p-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Parâmetro</th>
+                                <th>Método</th>
+                                <th>Especificação</th>
+                                <th>Valor Encontrado</th>
+                                <th class="text-center pe-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaDetalhesAnalise"></tbody>
+                    </table>
+                </div>
+                <div class="modal-footer bg-white">
+                    <button type="button" class="btn btn-secondary fw-bold px-4" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/sidebar.js"></script>
+    
+    <script>
+        const API = window.location.origin + "/api";
+        let cronometroInterval;
+        let listaGlobalHistorico = []; // Variável para armazenar os dados e usar os filtros
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Escutadores do Histórico
+            document.getElementById("buscaHistorico").addEventListener("input", aplicarFiltrosHistorico);
+            document.getElementById("filtroDataHistorico").addEventListener("change", aplicarFiltrosHistorico);
+            document.getElementById("filtroStatusHistorico").addEventListener("change", aplicarFiltrosHistorico);
+
+            document.addEventListener('change', function(e) {
+                if(e.target && e.target.classList.contains('ensaio-checkbox')) {
+                    atualizarTextoDropdown();
+                }
+            });
+
+            const analiseSalva = localStorage.getItem("lims_analise_ativa");
+            if (analiseSalva) {
+                restaurarAnaliseNaTela(JSON.parse(analiseSalva));
+            }
+
+            carregarPendentes();
+            aplicarTravaDeVisualizador();
+        });
+
+        // ==========================================
+        // FILTROS MÁGICOS DO HISTÓRICO
+        // ==========================================
+        function aplicarFiltrosHistorico() {
+            const termo = document.getElementById("buscaHistorico").value.toLowerCase();
+            const dataEscolhida = document.getElementById("filtroDataHistorico").value; // YYYY-MM-DD
+            const statusEscolhido = document.getElementById("filtroStatusHistorico").value.toUpperCase();
+
+            const filtrados = listaGlobalHistorico.filter(item => {
+                const codigoAnalise = String(item.codigo_analise || '').toLowerCase();
+                const amostraCod = String(item.amostra_cod || '').toLowerCase();
+                const produto = String(item.produto_nome || '').toLowerCase();
+                const status = String(item.status || '').toUpperCase();
+                const dataFmt = String(item.data_conclusao_fmt || ''); // DD/MM/YYYY HH:MI
+
+                // 1. Filtro Texto
+                const matchTexto = codigoAnalise.includes(termo) || amostraCod.includes(termo) || produto.includes(termo);
+
+                // 2. Filtro Status
+                let matchStatus = true;
+                if (statusEscolhido) {
+                    if (statusEscolhido === 'CONFORME') {
+                        matchStatus = (status === 'CONFORME' || status === 'APROVADO');
+                    } else if (statusEscolhido === 'REPROVADA') {
+                        matchStatus = (status === 'REPROVADA' || status === 'REPROVADO');
+                    }
+                }
+
+                // 3. Filtro Data
+                let matchData = true;
+                if (dataEscolhida) {
+                    const [ano, mes, dia] = dataEscolhida.split('-');
+                    const dataFormatadaBr = `${dia}/${mes}/${ano}`;
+                    matchData = dataFmt.startsWith(dataFormatadaBr);
+                }
+
+                return matchTexto && matchStatus && matchData;
+            });
+
+            renderizarTabelaHistorico(filtrados);
+        }
+
+        function renderizarTabelaHistorico(lista) {
+            const tbody = document.getElementById("tabelaHistorico");
+            tbody.innerHTML = "";
+            
+            if (lista.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='6' class='text-center py-5 text-muted'>Nenhuma análise finalizada recentemente ou correspondente aos filtros.</td></tr>";
+                return;
+            }
+
+            lista.forEach(item => {
+                const badgeStatus = item.status === 'CONFORME' ? 'bg-success' : (item.status === 'REPROVADA' ? 'bg-danger' : 'bg-warning text-dark');
+                const idParaBusca = item.amostra_id; 
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="ps-4 text-muted small">${item.data_conclusao_fmt || '-'}</td>
+                        <td class="fw-bold text-primary">${item.codigo_analise || 'S/C'}</td>
+                        <td class="fw-bold">${item.amostra_cod || '-'}</td>
+                        <td>${item.produto_nome || '-'}</td>
+                        <td><span class="badge ${badgeStatus}">${item.status || '-'}</span></td>
+                        <td class="text-end pe-4">
+                            <button class="btn btn-sm btn-outline-info shadow-sm btn-detalhes" 
+                                    onclick="verDetalhesAnalise('${idParaBusca}', '${item.amostra_cod}')" 
+                                    title="Ver Detalhes">
+                                <i class="bi bi-eye"></i> Detalhes
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Aplica a trava caso o usuário não tenha permissão de ver os detalhes
+            aplicarTravaDeVisualizador();
+        }
+
+        async function carregarHistorico() {
+            try {
+                const tbody = document.getElementById("tabelaHistorico");
+                tbody.innerHTML = "<tr><td colspan='6' class='text-center py-4 text-muted'><div class='spinner-border spinner-border-sm text-primary'></div> Carregando histórico...</td></tr>";
+
+                const res = await fetch(`${API}/analises/historico`);
+                if (!res.ok) throw new Error("Erro na rota do backend");
+                
+                listaGlobalHistorico = await res.json();
+                aplicarFiltrosHistorico(); // Chama o filtro em vez de montar a tabela direto
+                
+            } catch (error) {
+                console.error(error);
+                alert("Falha ao carregar o Histórico.");
+            }
+        }
+        // ==========================================
+
+
+        function atualizarTextoDropdown() {
+            const contagem = document.querySelectorAll('.ensaio-checkbox:checked').length;
+            const btnTexto = document.getElementById('textoDropdownEnsaios');
+            if(contagem === 0) {
+                btnTexto.innerText = "Clique e marque as caixinhas...";
+                btnTexto.classList.replace('text-primary', 'text-muted');
+                btnTexto.classList.remove('fw-bold');
+            } else {
+                btnTexto.innerText = `${contagem} ensaio(s) selecionado(s)`;
+                btnTexto.classList.replace('text-muted', 'text-primary');
+                btnTexto.classList.add('fw-bold');
+            }
+        }
+
+        async function carregarPendentes() {
+            try {
+                const res = await fetch(`${API}/analises/pendentes`);
+                const lista = await res.json();
+                const div = document.getElementById("listaPendentes");
+                div.innerHTML = "";
+                lista.forEach(a => {
+                    const btn = document.createElement("button");
+                    btn.className = "list-group-item list-group-item-action py-3 item-fila";
+                    btn.innerHTML = `
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1 fw-bold text-primary">${a.codigo_amostra || a.codigo}</h6>
+                            <span class="badge bg-light text-dark border">FIFO #${a.id}</span>
+                        </div>
+                        <small class="text-dark d-block fw-bold">${a.produto}</small>
+                        <small class="text-muted">Entrada: ${a.data_entrada_fmt}</small>
+                    `;
+                    btn.onclick = () => iniciarTrabalho(a);
+                    div.appendChild(btn);
+                });
+
+                aplicarTravaDeVisualizador(); 
+
+            } catch(e) {}
+        }
+
+        async function iniciarTrabalho(amostra) {
+            if(localStorage.getItem("lims_analise_ativa")) {
+                alert("⚠️ Você já tem uma análise em andamento! Finalize ou cancele a atual antes de puxar outra da fila.");
+                return;
+            }
+            if(!confirm(`Deseja iniciar a análise para a amostra ${amostra.codigo_amostra || amostra.codigo}?`)) return;
+
+            const resStart = await fetch(`${API}/analises/iniciar/${amostra.id}`, { method: 'POST' });
+            const dataStart = await resStart.json();
+
+            const baseData = {
+                amostra: amostra,
+                hora_inicio: dataStart.hora_inicio,
+                rascunho: null 
+            };
+            localStorage.setItem("lims_analise_ativa", JSON.stringify(baseData));
+            await renderizarTelaBase(baseData, false);
+        }
+
+        async function renderizarTelaBase(dadosAnalise, isRecuperacao) {
+            const amostra = dadosAnalise.amostra;
+            document.getElementById("painelAnalise").style.display = "block";
+            document.getElementById("placeholder").style.display = "none";
+            document.getElementById("tituloAmostra").innerText = amostra.codigo_amostra || amostra.codigo;
+            document.getElementById("subtituloAmostra").innerText = `Produto: ${amostra.produto} | Lote: ${amostra.lote}`;
+            document.getElementById("amostraIdSelecionada").value = amostra.id;
+
+            iniciarCronometroVisual(new Date(dadosAnalise.hora_inicio));
+            const tbody = document.getElementById("tabelaInputs");
+            tbody.innerHTML = "";
+
+            if (isRecuperacao && dadosAnalise.rascunho) {
+                document.getElementById("avisoRecuperacao").classList.remove("d-none");
+                document.getElementById("obsAnalise").value = dadosAnalise.rascunho.obs;
+
+                dadosAnalise.rascunho.resultados.forEach((r, i) => {
+                    let badgeExtra = r.metodo.includes('Ad-Hoc') ? `<span class="badge bg-warning text-dark ms-1">Extra</span>` : '';
+                    let colorParam = r.metodo.includes('Ad-Hoc') ? 'text-primary' : '';
+                    
+                    tbody.innerHTML += `
+                        <tr class="linha-dado" data-param="${r.parametro}" data-min="${r.valor_min}" data-max="${r.valor_max}" data-metodo="${r.metodo}" data-unidade="${r.unidade}" data-spectxt="${r.specText}">
+                            <td>
+                                <div class="fw-bold ${colorParam}">${r.parametro} ${badgeExtra}</div>
+                                <small class="text-muted" style="font-size: 0.7rem;">MÉTODO: ${r.metodo || '-'}</small>
+                            </td>
+                            <td class="text-muted small">${r.specText}</td>
+                            <td>${r.unidade || '-'}</td>
+                            <td>
+                                <input type="text" class="${r.inputClass}" value="${r.valor_encontrado}" 
+                                       oninput="validarRealTime(this, ${r.valor_min}, ${r.valor_max}, 'icon-${i}')" required>
+                            </td>
+                            <td class="text-center" id="icon-${i}">${r.iconHtml}</td>
+                            <td class="text-center coluna-acao">
+                                <button type="button" class="btn btn-sm btn-outline-danger border-0 btn-remover-linha" onclick="removerLinha(this)"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } else {
+                document.getElementById("avisoRecuperacao").classList.add("d-none");
+                
+                const resTemp = await fetch(`${API}/analises/template/${amostra.id}`);
+                const specs = await resTemp.json();
+
+                let resultadosSalvos = [];
+                try {
+                    const resSalvos = await fetch(`${API}/analises/detalhes/${amostra.id}`);
+                    if(resSalvos.ok) resultadosSalvos = await resSalvos.json();
+                } catch(e) {}
+                
+                specs.forEach((s, i) => {
+                    const specTxt = (s.valor_min !== null && s.valor_max !== null) ? `${s.valor_min} a ${s.valor_max}` : (s.valor_min ? `>= ${s.valor_min}` : (s.valor_max ? `<= ${s.valor_max}` : 'Sem Limites'));
+                    
+                    const dadoAntigo = resultadosSalvos.find(r => r.parametro === s.parametro);
+                    const valorParaExibir = dadoAntigo ? dadoAntigo.valor_encontrado : "";
+
+                    tbody.innerHTML += `
+                        <tr class="linha-dado" data-param="${s.parametro}" data-min="${s.valor_min}" data-max="${s.valor_max}" data-metodo="${s.metodo}" data-unidade="${s.unidade}" data-spectxt="${specTxt}">
+                            <td>
+                                <div class="fw-bold">${s.parametro}</div>
+                                <small class="text-muted" style="font-size: 0.7rem;">MÉTODO: ${s.metodo || '-'}</small>
+                            </td>
+                            <td class="text-muted small">${specTxt}</td>
+                            <td>${s.unidade || '-'}</td>
+                            <td>
+                                <input type="text" class="form-control form-control-sm fw-bold input-dado" 
+                                       value="${valorParaExibir}"
+                                       oninput="validarRealTime(this, ${s.valor_min}, ${s.valor_max}, 'icon-${i}')" required>
+                            </td>
+                            <td class="text-center" id="icon-${i}"><i class="bi bi-dash-circle text-muted"></i></td>
+                            <td class="text-center coluna-acao">
+                                <button type="button" class="btn btn-sm btn-outline-danger border-0 btn-remover-linha" onclick="removerLinha(this)"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                const extras = resultadosSalvos.filter(r => !specs.some(s => s.parametro === r.parametro));
+                extras.forEach((r, idx) => {
+                    const i = specs.length + idx;
+                    tbody.innerHTML += `
+                        <tr class="linha-dado" data-param="${r.parametro}" data-min="null" data-max="null" data-metodo="${r.metodo}" data-unidade="-" data-spectxt="Sem Limites (Registro)">
+                            <td>
+                                <div class="fw-bold text-primary">${r.parametro} <span class="badge bg-warning text-dark ms-1">Extra</span></div>
+                                <small class="text-muted" style="font-size: 0.7rem;">MÉTODO: ${r.metodo || 'Ad-Hoc'}</small>
+                            </td>
+                            <td class="text-muted small">Sem Limites (Registro)</td>
+                            <td>-</td>
+                            <td>
+                                <input type="text" class="form-control form-control-sm fw-bold input-dado" 
+                                       value="${r.valor_encontrado}"
+                                       oninput="validarRealTime(this, null, null, 'icon-${i}')" required>
+                            </td>
+                            <td class="text-center" id="icon-${i}"><i class="bi bi-dash-circle text-muted"></i></td>
+                            <td class="text-center coluna-acao">
+                                <button type="button" class="btn btn-sm btn-outline-danger border-0 btn-remover-linha" onclick="removerLinha(this)"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                setTimeout(() => {
+                    document.querySelectorAll(".linha-dado input").forEach(inp => {
+                        if(inp.value) inp.dispatchEvent(new Event('input'));
+                    });
+                }, 300);
+
+                salvarAutoSave(); 
+            }
+
+            aplicarTravaDeVisualizador();
+        }
+
+        function restaurarAnaliseNaTela(dadosAnalise) { renderizarTelaBase(dadosAnalise, true); }
+
+        function salvarAutoSave() {
+            const amostraId = document.getElementById("amostraIdSelecionada").value;
+            if (!amostraId) return;
+
+            const linhas = document.querySelectorAll(".linha-dado");
+            const resultadosRascunho = [];
+            
+            linhas.forEach(tr => {
+                resultadosRascunho.push({
+                    parametro: tr.dataset.param,
+                    valor_min: tr.dataset.min,
+                    valor_max: tr.dataset.max,
+                    metodo: tr.dataset.metodo,
+                    unidade: tr.dataset.unidade,
+                    specText: tr.dataset.spectxt,
+                    valor_encontrado: tr.querySelector("input").value,
+                    iconHtml: tr.querySelector("td:nth-last-child(2)").innerHTML,
+                    inputClass: tr.querySelector("input").className
+                });
+            });
+
+            const rascunhoAtual = {
+                obs: document.getElementById("obsAnalise").value,
+                resultados: resultadosRascunho
+            };
+
+            const analiseAtiva = JSON.parse(localStorage.getItem("lims_analise_ativa"));
+            if(analiseAtiva) {
+                analiseAtiva.rascunho = rascunhoAtual;
+                localStorage.setItem("lims_analise_ativa", JSON.stringify(analiseAtiva));
+            }
+        }
+
+        window.removerLinha = function(btn) {
+            if(confirm("Remover este ensaio da bancada?")) {
+                btn.closest('tr').remove();
+                salvarAutoSave(); 
+            }
+        };
+
+        function adicionarParametroExtra() {
+            const checkboxes = document.querySelectorAll('.ensaio-checkbox:checked');
+            if (checkboxes.length === 0) { 
+                alert("Abra o menu, marque um ensaio e depois clique em Adicionar."); return; 
+            }
+
+            const tbody = document.getElementById("tabelaInputs");
+            checkboxes.forEach((chk) => {
+                const paramNome = chk.value;
+                const categoria = chk.dataset.categoria || "Avulso"; 
+                const i = tbody.children.length + Math.floor(Math.random() * 1000);
+
+                tbody.innerHTML += `
+                    <tr class="linha-dado" data-param="${paramNome}" data-min="null" data-max="null" data-metodo="Ad-Hoc (${categoria})" data-unidade="-" data-spectxt="Sem Limites (Registro)">
+                        <td>
+                            <div class="fw-bold text-primary">${paramNome} <span class="badge bg-warning text-dark ms-1">Extra</span></div>
+                            <small class="text-muted" style="font-size: 0.7rem;">MÉTODO: Ad-Hoc</small>
+                        </td>
+                        <td class="text-muted small">Sem Limites (Registro)</td>
+                        <td>-</td>
+                        <td>
+                            <input type="text" class="form-control form-control-sm fw-bold input-dado" 
+                                   oninput="validarRealTime(this, null, null, 'icon-${i}')" required>
+                        </td>
+                        <td class="text-center" id="icon-${i}"><i class="bi bi-dash-circle text-muted"></i></td>
+                        <td class="text-center coluna-acao">
+                            <button type="button" class="btn btn-sm btn-outline-danger border-0 btn-remover-linha" onclick="removerLinha(this)"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+                chk.checked = false;
+            });
+            atualizarTextoDropdown();
+            salvarAutoSave(); 
+            aplicarTravaDeVisualizador();
+        }
+
+        window.validarRealTime = function(input, min, max, iconId) {
+            const valStr = input.value.trim();
+            const valMathStr = valStr.replace(',', '.');
+            const val = parseFloat(valMathStr);
+            const icon = document.getElementById(iconId);
+            
+            if (valStr === "") {
+                input.className = "form-control form-control-sm fw-bold";
+                icon.innerHTML = '<i class="bi bi-dash-circle text-muted"></i>';
+            } 
+            else if (min === "null" && max === "null" || min === null && max === null) {
+                input.className = "form-control form-control-sm fw-bold input-aprovado";
+                icon.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i>';
+            } 
+            else if (isNaN(val)) {
+                input.className = "form-control form-control-sm fw-bold input-reprovado text-danger";
+                icon.innerHTML = '<i class="bi bi-x-circle-fill text-danger" title="Apenas números são permitidos aqui!"></i>';
+            } else {
+                const ok = (min === "null" || min === null || val >= parseFloat(min)) && 
+                           (max === "null" || max === null || val <= parseFloat(max));
+                input.className = ok ? "form-control form-control-sm fw-bold input-aprovado" : "form-control form-control-sm fw-bold input-reprovado";
+                icon.innerHTML = ok ? '<i class="bi bi-check-circle-fill text-success"></i>' : '<i class="bi bi-x-circle-fill text-danger"></i>';
+            }
+            salvarAutoSave(); 
+        };
+
+        function iniciarCronometroVisual(inicio) {
+            clearInterval(cronometroInterval);
+            cronometroInterval = setInterval(() => {
+                const agora = new Date();
+                const diff = Math.floor((agora - inicio) / 1000);
+                const min = String(Math.floor(diff / 60)).padStart(2, '0');
+                const seg = String(diff % 60).padStart(2, '0');
+                document.getElementById("cronometroDisplay").innerText = `${min}:${seg}`;
+            }, 1000);
+        }
+
+        document.getElementById("formAnalises").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const inputs = Array.from(document.querySelectorAll(".linha-dado input"));
+            const temVazio = inputs.some(inp => inp.value.trim() === "");
+            if (temVazio) {
+                alert("⚠️ AÇÃO BLOQUEADA\nTodos os parâmetros da bancada devem ser preenchidos.");
+                return; 
+            }
+            
+            const obsOriginal = document.getElementById("obsAnalise").value;
+            const linhasExtras = Array.from(document.querySelectorAll(".linha-dado")).filter(tr => tr.dataset.metodo.includes("Ad-Hoc"));
+            let obsFinal = obsOriginal;
+            
+            if (linhasExtras.length > 0) {
+                const nomesExtras = linhasExtras.map(tr => tr.dataset.param).join(", ");
+                obsFinal = `[Ensaios Adicionais Executados: ${nomesExtras}] \n${obsOriginal}`;
+            }
+
+            const resultados = inputs.map(inp => {
+                const tr = inp.closest('tr');
+                return {
+                    parametro: tr.dataset.param,
+                    valor_min: tr.dataset.min === "null" ? null : parseFloat(tr.dataset.min),
+                    valor_max: tr.dataset.max === "null" ? null : parseFloat(tr.dataset.max),
+                    metodo: tr.dataset.metodo,
+                    unidade: tr.dataset.unidade,
+                    valor_encontrado: inp.value.trim()
+                };
+            });
+
+            const payload = {
+                amostra_id: document.getElementById("amostraIdSelecionada").value,
+                observacoes: obsFinal,
+                resultados: resultados
+            };
+
+            const res = await fetch(`${API}/analises/finalizar`, {
+                method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if(data.success) {
+                localStorage.removeItem("lims_analise_ativa");
+                alert(`✅ Sucesso! Análise salva.\nCódigo Gerado: ${data.codigo_analise}`);
+                location.reload();
+            }
+        });
+
+        function cancelarAnalise() {
+            if(confirm("Tem certeza que deseja cancelar? O progresso será perdido.")) {
+                localStorage.removeItem("lims_analise_ativa");
+                location.reload();
+            }
+        }
+
+        async function verDetalhesAnalise(idParaBusca, amostraCod) {
+            try {
+                const res = await fetch(`${API}/analises/detalhes/${idParaBusca}`);
+                if (!res.ok) return alert("Erro ao buscar detalhes no servidor.");
+                const detalhes = await res.json();
+                
+                document.getElementById("detalheAmostraCod").innerText = (String(idParaBusca).startsWith("ANL")) ? `${idParaBusca} (Amostra: ${amostraCod})` : amostraCod;
+                const tbody = document.getElementById("tabelaDetalhesAnalise");
+                tbody.innerHTML = "";
+
+                detalhes.forEach(r => {
+                    const isConforme = r.conforme;
+                    const statusColor = isConforme ? 'text-success' : 'text-danger';
+                    const iconHtml = isConforme ? '<i class="bi bi-check-circle-fill"></i>' : '<i class="bi bi-x-circle-fill"></i>';
+                    const specTxt = (r.valor_min !== null && r.valor_max !== null) ? `${r.valor_min} a ${r.valor_max}` : (r.valor_min ? `>= ${r.valor_min}` : (r.valor_max ? `<= ${r.valor_max}` : 'S/ Limites'));
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="ps-4 fw-bold">${r.parametro}</td>
+                            <td class="small text-muted">${r.metodo || '-'}</td>
+                            <td>${specTxt} <small class="text-muted">${r.unidade || ''}</small></td>
+                            <td class="fw-bold fs-6">${r.valor_encontrado || '-'}</td>
+                            <td class="text-center fw-bold ${statusColor}">${isConforme ? 'CONFORME' : 'REPROVADA'} ${iconHtml}</td>
+                        </tr>
+                    `;
+                });
+
+                new bootstrap.Modal(document.getElementById('modalDetalhesAnalise')).show();
+            } catch (error) { console.error(error); }
+        }
+
+        // ==========================================
+        // 🛡️ TRAVA DE SEGURANÇA REVISADA (ANÁLISES)
+        // ==========================================
+        function aplicarTravaDeVisualizador() {
+            const userStr = localStorage.getItem("limsUser");
+            if (!userStr) return;
+
+            const user = JSON.parse(userStr);
+            const perfilUser = String(user.perfil || "").toUpperCase().trim();
+            
+            // 🚀 SE FOR ADMIN, PARA AQUI E NÃO ESCONDE NADA!
+            const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
+            if (isAdmin) {
+                return; 
+            }
+
+            const podeVisualizar = (user.permissoes && user.permissoes.analises_view === true);
+            const podeRegistrar = (user.permissoes && user.permissoes.analises_register === true);
+
+            // BLOQUEIO DE VISUALIZAÇÃO
+            if (!podeVisualizar) {
+                const styleView = document.createElement('style');
+                styleView.innerHTML = `
+                    .btn-detalhes { display: none !important; }
+                `;
+                document.head.appendChild(styleView);
+            }
+
+            // BLOQUEIO DE REGISTRO
+            if (!podeRegistrar) {
+                const itensFila = document.querySelectorAll('.item-fila');
+                itensFila.forEach(btn => {
+                    btn.onclick = null;
+                    btn.classList.add('opacity-50');
+                    btn.style.cursor = 'not-allowed';
+                });
+
+                const styleReg = document.createElement('style');
+                styleReg.innerHTML = `
+                    #painelEnsaiosExtras, #botoesAcaoFooter, .coluna-acao, .btn-remover-linha { 
+                        display: none !important; 
+                    }
+                `;
+                document.head.appendChild(styleReg);
+
+                const camposDigitacao = document.querySelectorAll('.input-dado, #obsAnalise');
+                camposDigitacao.forEach(campo => {
+                    campo.disabled = true;
+                    campo.style.backgroundColor = '#e9ecef';
+                });
+            }
+        }
+    </script>
+</body>
+</html>
