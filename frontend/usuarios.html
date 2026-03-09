@@ -185,13 +185,23 @@
                                     <span class="perm-title"><i class="bi bi-tags"></i> Cadastros & Estoque</span>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="perm_reagentes_view">
-                                        <label class="form-check-label" for="perm_reagentes_view">Ver Estoque</label>
+                                        <label class="form-check-label" for="perm_reagentes_view">Ver Reagentes</label>
                                     </div>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="perm_reagentes_edit">
-                                        <label class="form-check-label" for="perm_reagentes_edit">Movimentar Estoque</label>
+                                        <label class="form-check-label" for="perm_reagentes_edit">Movimentar Reagentes</label>
+                                    </div>
+                                    
+                                    <div class="form-check form-switch mt-2 pt-2 border-top">
+                                        <input class="form-check-input" type="checkbox" id="perm_solucoes_view">
+                                        <label class="form-check-label" for="perm_solucoes_view">Ver Soluções</label>
                                     </div>
                                     <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="perm_solucoes_edit">
+                                        <label class="form-check-label text-primary fw-bold" for="perm_solucoes_edit">Gerir Soluções</label>
+                                    </div>
+
+                                    <div class="form-check form-switch mt-2 pt-2 border-top">
                                         <input class="form-check-input" type="checkbox" id="perm_produtos_edit">
                                         <label class="form-check-label" for="perm_produtos_edit">Gerir Produtos</label>
                                     </div>
@@ -257,13 +267,13 @@
             return { "Content-Type": "application/json", "Authorization": `Bearer ${token}` };
         }
 
-        // ADICIONADO LAUDOS_CANCEL AOS MODELOS
+        // 🔥 MODELOS ATUALIZADOS COM "solucoes_view" E "solucoes_edit"
         const modelos = {
-            'ADMIN': { amostras_view: true, amostras_edit: true, analises_view: true, analises_register: true, laudos_view: true, laudos_download: true, laudos_issue: true, laudos_cancel: true, reagentes_view: true, reagentes_edit: true, produtos_edit: true, dashboard_view: true, users_edit: true },
-            'QUIMICO': { amostras_view: true, amostras_edit: true, analises_view: true, analises_register: true, laudos_view: true, laudos_download: true, laudos_issue: true, laudos_cancel: true, reagentes_view: true, reagentes_edit: true, produtos_edit: true, dashboard_view: true, users_edit: false },
-            'ANALISTA': { amostras_view: true, amostras_edit: true, analises_view: true, analises_register: true, laudos_view: true, laudos_download: false, laudos_issue: false, laudos_cancel: false, reagentes_view: true, reagentes_edit: true, produtos_edit: false, dashboard_view: true, users_edit: false },
-            'APRENDIZ': { amostras_view: true, amostras_edit: false, analises_view: true, analises_register: true, laudos_view: true, laudos_download: false, laudos_issue: false, laudos_cancel: false, reagentes_view: true, reagentes_edit: false, produtos_edit: false, dashboard_view: true, users_edit: false },
-            'VISUALIZADOR': { amostras_view: true, amostras_edit: false, analises_view: true, analises_register: false, laudos_view: true, laudos_download: true, laudos_issue: false, laudos_cancel: false, reagentes_view: true, reagentes_edit: false, produtos_edit: false, dashboard_view: true, users_edit: false }
+            'ADMIN': { amostras_view: true, amostras_edit: true, analises_view: true, analises_register: true, laudos_view: true, laudos_download: true, laudos_issue: true, laudos_cancel: true, reagentes_view: true, reagentes_edit: true, solucoes_view: true, solucoes_edit: true, produtos_edit: true, dashboard_view: true, users_edit: true },
+            'QUIMICO': { amostras_view: true, amostras_edit: true, analises_view: true, analises_register: true, laudos_view: true, laudos_download: true, laudos_issue: true, laudos_cancel: true, reagentes_view: true, reagentes_edit: true, solucoes_view: true, solucoes_edit: true, produtos_edit: true, dashboard_view: true, users_edit: false },
+            'ANALISTA': { amostras_view: true, amostras_edit: true, analises_view: true, analises_register: true, laudos_view: true, laudos_download: false, laudos_issue: false, laudos_cancel: false, reagentes_view: true, reagentes_edit: true, solucoes_view: true, solucoes_edit: true, produtos_edit: false, dashboard_view: true, users_edit: false },
+            'APRENDIZ': { amostras_view: true, amostras_edit: false, analises_view: true, analises_register: true, laudos_view: true, laudos_download: false, laudos_issue: false, laudos_cancel: false, reagentes_view: true, reagentes_edit: false, solucoes_view: true, solucoes_edit: false, produtos_edit: false, dashboard_view: true, users_edit: false },
+            'VISUALIZADOR': { amostras_view: true, amostras_edit: false, analises_view: true, analises_register: false, laudos_view: true, laudos_download: true, laudos_issue: false, laudos_cancel: false, reagentes_view: true, reagentes_edit: false, solucoes_view: true, solucoes_edit: false, produtos_edit: false, dashboard_view: true, users_edit: false }
         };
 
         const fileToBase64 = file => new Promise((resolve, reject) => {
@@ -356,8 +366,8 @@
             }
 
             const p = u.permissoes || {};
-            // ADICIONADO laudos_cancel NA LISTA DE CHAVES
-            const allKeys = ['amostras_view', 'amostras_edit', 'analises_view', 'analises_register', 'laudos_view', 'laudos_download', 'laudos_issue', 'laudos_cancel', 'reagentes_view', 'reagentes_edit', 'produtos_edit', 'dashboard_view', 'users_edit'];
+            // 🔥 ADICIONADO AS CHAVES "solucoes_view" E "solucoes_edit"
+            const allKeys = ['amostras_view', 'amostras_edit', 'analises_view', 'analises_register', 'laudos_view', 'laudos_download', 'laudos_issue', 'laudos_cancel', 'reagentes_view', 'reagentes_edit', 'solucoes_view', 'solucoes_edit', 'produtos_edit', 'dashboard_view', 'users_edit'];
             allKeys.forEach(key => {
                 const el = document.getElementById(`perm_${key}`);
                 if(el) el.checked = p[key] === true;
@@ -389,9 +399,14 @@
                 laudos_view: document.getElementById("perm_laudos_view").checked,
                 laudos_download: document.getElementById("perm_laudos_download").checked,
                 laudos_issue: document.getElementById("perm_laudos_issue").checked,
-                laudos_cancel: document.getElementById("perm_laudos_cancel").checked, // NOVA PERMISSÃO AQUI
+                laudos_cancel: document.getElementById("perm_laudos_cancel").checked,
                 reagentes_view: document.getElementById("perm_reagentes_view").checked,
                 reagentes_edit: document.getElementById("perm_reagentes_edit").checked,
+                
+                // 🔥 AS CAPTURAS DOS NOVOS SWITCHES AQUI
+                solucoes_view: document.getElementById("perm_solucoes_view").checked,
+                solucoes_edit: document.getElementById("perm_solucoes_edit").checked,
+                
                 produtos_edit: document.getElementById("perm_produtos_edit").checked,
                 dashboard_view: document.getElementById("perm_dashboard_view").checked,
                 users_edit: document.getElementById("perm_users_edit").checked
