@@ -47,7 +47,7 @@
             
             <div class="tab-pane fade show active" id="estoque-pane">
                 <div class="d-flex justify-content-end mb-3">
-                    <button class="btn btn-primary shadow-sm fw-bold" onclick="abrirModalNovaSolucao()">
+                    <button class="btn btn-primary shadow-sm fw-bold btn-nova-solucao" onclick="abrirModalNovaSolucao()">
                         <i class="bi bi-plus-lg"></i> Nova Solução
                     </button>
                 </div>
@@ -84,7 +84,7 @@
                                 <th>Validade</th>
                                 <th>Saldo Total</th>
                                 <th>Origem</th>
-                                <th class="text-end pe-4">Ações</th>
+                                <th class="text-end pe-4 col-acoes-tabela">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="tabelaSolucoes"></tbody>
@@ -94,7 +94,7 @@
 
             <div class="tab-pane fade" id="uso-pane">
                 <div class="d-flex justify-content-end mb-3">
-                    <button class="btn btn-success shadow-sm fw-bold" onclick="abrirModalUso()">
+                    <button class="btn btn-success shadow-sm fw-bold btn-novo-uso" onclick="abrirModalUso()">
                         <i class="bi bi-clipboard-plus"></i> Registrar Uso em Análise
                     </button>
                 </div>
@@ -121,7 +121,7 @@
                                 <th>Data do Registro</th>
                                 <th>Itens Consumidos</th>
                                 <th>Observações</th>
-                                <th class="text-end pe-4">Ações</th>
+                                <th class="text-end pe-4 col-acoes-tabela">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="tabelaUsoSolucoes"></tbody>
@@ -165,7 +165,8 @@
                             <div class="col-12 mt-4" id="boxReceitaMistura" style="display: none;">
                                 <div class="p-3 bg-light border rounded">
                                     <h6 class="fw-bold text-danger"><i class="bi bi-box-arrow-down-right"></i> Composição da Mistura (Insumos Utilizados)</h6>
-                                    <div class="row g-2 align-items-end mb-3">
+                                    
+                                    <div class="row g-2 align-items-end mb-3" id="areaAdicionarReceita">
                                         <div class="col-md-2">
                                             <label class="form-label small fw-bold">Tipo de Insumo</label>
                                             <select id="tipoItemReceita" class="form-select" onchange="mudarTipoInsumoReceita()">
@@ -186,16 +187,20 @@
                                             <input type="number" step="0.01" id="qtdInsumoUsado" class="form-control">
                                         </div>
                                         <div class="col-md-2">
-                                            <button type="button" class="btn btn-secondary w-100" onclick="adicionarItemReceita()">Add</button>
+                                            <button type="button" class="btn btn-secondary w-100 btn-editar" id="btnAdicionarReceita" onclick="adicionarItemReceita()">Add</button>
                                         </div>
                                     </div>
-                                    <table class="table table-sm table-bordered bg-white"><tbody id="listaReceitaTabela"></tbody></table>
+
+                                    <table class="table table-sm table-bordered bg-white">
+                                        <thead class="table-light"><tr><th>Tipo</th><th>Insumo Utilizado</th><th>Qtd</th><th class="text-center btn-excluir" id="colAcoesReceita">X</th></tr></thead>
+                                        <tbody id="listaReceitaTabela"></tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer"><button type="button" class="btn btn-primary fw-bold" onclick="salvarSolucao()">Salvar Solução</button></div>
+                <div class="modal-footer"><button type="button" class="btn btn-primary fw-bold btn-acao-salvar" id="btnSalvarSolucao" onclick="salvarSolucao()">Salvar Solução</button></div>
             </div>
         </div>
     </div>
@@ -253,7 +258,7 @@
                                 <input type="number" step="0.01" id="usoQtd" class="form-control">
                             </div>
                             <div class="col-md-2">
-                                <button type="button" class="btn btn-success w-100 fw-bold" onclick="adicionarItemUso()"><i class="bi bi-plus"></i> Add</button>
+                                <button type="button" class="btn btn-success w-100 fw-bold btn-editar" onclick="adicionarItemUso()"><i class="bi bi-plus"></i> Add</button>
                             </div>
                         </div>
                     </div>
@@ -264,7 +269,7 @@
                                 <th>Tipo</th>
                                 <th>Item Utilizado</th>
                                 <th>Quantidade Baixada</th>
-                                <th class="text-center" width="10%" id="colAcoesUso">Ações</th>
+                                <th class="text-center btn-excluir" width="10%" id="colAcoesUso">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="tabelaItensUso"></tbody>
@@ -272,7 +277,7 @@
                 </div>
                 <div class="modal-footer" id="rodapeModalUso">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="button" class="btn btn-success fw-bold" onclick="salvarUsoAnalise()">Salvar Uso</button>
+                    <button type="button" class="btn btn-success fw-bold btn-acao-salvar" id="btnSalvarUso" onclick="salvarUsoAnalise()">Salvar Uso</button>
                 </div>
             </div>
         </div>
@@ -284,6 +289,35 @@
     <script>
         const API = window.location.origin + "/api";
         
+        let usuarioStr = localStorage.getItem('usuarioLogado') || localStorage.getItem('limsUser');
+        let usuario = null;
+        
+        if (!usuarioStr) {
+            console.warn("⚠️ MODO DESENVOLVIMENTO: Usando usuário de teste.");
+            usuario = { id: 1, nome: "Samuel Kari Kari (Teste)", perfil: "ADMIN", permissoes: { solucoes_view: true, solucoes_edit: true } };
+        } else {
+            usuario = JSON.parse(usuarioStr);
+        }
+
+        const perfilUser = String(usuario.perfil || usuario.cargo || "").toUpperCase().trim();
+        const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
+        
+        if (!isAdmin && (!usuario.permissoes || usuario.permissoes.solucoes_view !== true)) {
+            alert("Acesso Negado: Sem permissão para o Módulo de Soluções.");
+            window.location.href = 'dashboard.html';
+        }
+
+        if (!isAdmin && (!usuario.permissoes || usuario.permissoes.solucoes_edit !== true)) {
+            const style = document.createElement('style');
+            style.innerHTML = `
+                .btn-nova-solucao, 
+                .btn-novo-uso, 
+                .btn-excluir, 
+                .btn-acao-salvar { display: none !important; }
+            `;
+            document.head.appendChild(style);
+        }
+
         let listaGlobalSolucoes = [];
         let reagentesGlobais = [];
         let listaGlobalUso = []; 
@@ -301,9 +335,6 @@
             } catch(e) { console.error(e); }
         }
 
-        // ==========================================
-        // ABA 1: ESTOQUE DE SOLUÇÕES E RECEITAS
-        // ==========================================
         document.getElementById("buscaSolucoes").addEventListener("input", filtrarSolucoes);
         document.getElementById("filtroValidade").addEventListener("change", filtrarSolucoes);
         document.getElementById("filtroOrigem").addEventListener("change", filtrarSolucoes);
@@ -329,43 +360,152 @@
                 let badgeCor = s.tipo_origem === 'CRIADO' ? 'bg-info text-dark' : 'bg-secondary';
                 const diasRestantes = Math.ceil((new Date(s.validade) - new Date()) / (1000 * 60 * 60 * 24));
                 let valClass = diasRestantes < 0 ? "text-danger fw-bold" : (diasRestantes <= 30 ? "text-warning fw-bold" : "text-dark");
+                
+                // TRUE para Modo Visualização, FALSE para Modo Edição
+                const botoesAcao = `
+                    <button class="btn btn-sm btn-outline-info" onclick="abrirEdicaoSolucao(${s.id}, true)" title="Detalhes"><i class="bi bi-eye"></i></button> 
+                    <button class="btn btn-sm btn-outline-primary ms-1 btn-editar" onclick="abrirEdicaoSolucao(${s.id}, false)" title="Editar"><i class="bi bi-pencil-square"></i></button> 
+                    <button class="btn btn-sm btn-outline-danger ms-1 btn-excluir" onclick="excluirSolucao(${s.id})" title="Excluir"><i class="bi bi-trash"></i></button>
+                `;
+
                 tbody.innerHTML += `
                     <tr>
-                        <td class="ps-4 fw-bold text-primary">${s.codigo || '-'}</td><td class="fw-bold">${s.nome}</td><td>${s.concentracao}</td>
-                        <td class="${valClass}">${s.validade_fmt}</td><td class="fw-bold fs-6">${s.saldo_total} <small class="text-muted fw-normal">${s.unidade}</small></td>
+                        <td class="ps-4 fw-bold text-primary">${s.codigo || '-'}</td><td class="fw-bold">${s.nome}</td><td>${s.concentracao || s.concetracao || ''}</td>
+                        <td class="${valClass}">${s.validade_fmt}</td><td class="fw-bold fs-6">${s.saldo_total || s.salto_total} <small class="text-muted fw-normal">${s.unidade}</small></td>
                         <td><span class="badge ${badgeCor}">${s.tipo_origem}</span></td>
-                        <td class="text-end pe-4"><button class="btn btn-sm btn-outline-primary" onclick="abrirEdicaoSolucao(${s.id})"><i class="bi bi-pencil-square"></i></button> <button class="btn btn-sm btn-outline-danger ms-1" onclick="excluirSolucao(${s.id})"><i class="bi bi-trash"></i></button></td>
+                        <td class="text-end pe-4 text-nowrap">${botoesAcao}</td>
                     </tr>`;
             });
         }
 
-        function abrirModalNovaSolucao() {
-            document.getElementById("formSolucao").reset(); document.getElementById("solucaoIdEdicao").value = "";
-            document.getElementById("solOrigem").disabled = false; document.getElementById("tituloModalSolucao").innerHTML = '<i class="bi bi-droplet-fill"></i> Cadastrar Solução';
-            itensReceita = []; toggleReceitaArea(); new bootstrap.Modal(document.getElementById('modalSolucao')).show();
+        function habilitarCamposSolucao(isReadOnly) {
+            const campos = ["solNome", "solConcentracao", "solLote", "solFabricacao", "solValidade", "solSaldo", "solUnidade", "solObservacoes", "tipoItemReceita", "buscaCodInsumo", "selectInsumo", "qtdInsumoUsado"];
+            campos.forEach(c => document.getElementById(c).disabled = isReadOnly);
+            
+            document.getElementById("areaAdicionarReceita").style.display = isReadOnly ? 'none' : 'flex';
+            document.getElementById("btnSalvarSolucao").style.display = isReadOnly ? 'none' : 'inline-block';
+            document.getElementById("colAcoesReceita").style.display = isReadOnly ? 'none' : 'table-cell';
         }
 
-        async function abrirEdicaoSolucao(id) {
+        function abrirModalNovaSolucao() {
+            document.getElementById("formSolucao").reset(); document.getElementById("solucaoIdEdicao").value = "";
+            document.getElementById("solOrigem").disabled = false; 
+            document.getElementById("tituloModalSolucao").innerHTML = '<i class="bi bi-droplet-fill"></i> Cadastrar Solução';
+            
+            habilitarCamposSolucao(false); // Libera tudo para nova solução
+
+            itensReceita = []; toggleReceitaArea(); 
+            const modalEl = document.getElementById('modalSolucao');
+            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            modal.show();
+        }
+
+        async function abrirEdicaoSolucao(id, isReadOnly) {
             try {
-                const res = await fetch(`${API}/solucoes/${id}`); const data = await res.json(); const sol = data.solucao;
-                document.getElementById("solucaoIdEdicao").value = sol.id; document.getElementById("solNome").value = sol.nome;
-                document.getElementById("solConcentracao").value = sol.concentracao; document.getElementById("solLote").value = sol.lote || '';
-                if (sol.data_fabricacao) document.getElementById("solFabricacao").value = sol.data_fabricacao.split('T')[0];
-                if (sol.validade) document.getElementById("solValidade").value = sol.validade.split('T')[0];
-                document.getElementById("solOrigem").value = sol.tipo_origem; document.getElementById("solOrigem").disabled = true; 
-                document.getElementById("solSaldo").value = sol.saldo_total; document.getElementById("solUnidade").value = sol.unidade;
+                const solLocal = listaGlobalSolucoes.find(s => s.id == id) || {};
+                const res = await fetch(`${API}/solucoes/${id}`); 
+                const data = await res.json(); 
+                
+                let solApi = data.solucao !== undefined ? data.solucao : data;
+                if (Array.isArray(solApi)) solApi = solApi[0];
+                if (!solApi) solApi = {}; 
+
+                const sol = { ...solLocal, ...solApi };
+                
+                document.getElementById("solucaoIdEdicao").value = sol.id || ''; 
+                document.getElementById("solNome").value = sol.nome || '';
+                document.getElementById("solConcentracao").value = sol.concentracao || sol.concetracao || ''; 
+                document.getElementById("solLote").value = sol.lote || '';
+                
+                if (sol.data_fabricacao || sol.data_Fabricacao) document.getElementById("solFabricacao").value = String(sol.data_fabricacao || sol.data_Fabricacao).split('T')[0];
+                if (sol.validade) document.getElementById("solValidade").value = String(sol.validade).split('T')[0];
+                
+                document.getElementById("solOrigem").value = sol.tipo_origem || 'COMPRADO'; 
+                document.getElementById("solOrigem").disabled = true; // A origem nunca pode mudar após criar
+                document.getElementById("solSaldo").value = sol.saldo_total || sol.salto_total || 0; 
+                document.getElementById("solUnidade").value = sol.unidade || 'mL';
                 document.getElementById("solObservacoes").value = sol.observacoes || '';
-                document.getElementById("tituloModalSolucao").innerHTML = '<i class="bi bi-pencil-square"></i> Detalhes / Edição de Solução';
+                
+                // Altera o título de acordo com o modo
+                document.getElementById("tituloModalSolucao").innerHTML = isReadOnly ? '<i class="bi bi-eye"></i> Detalhes da Solução' : '<i class="bi bi-pencil-square"></i> Edição de Solução';
+                
+                // Habilita ou Desabilita os campos
+                habilitarCamposSolucao(isReadOnly);
 
                 if (sol.tipo_origem === 'CRIADO') {
-                    document.getElementById("boxReceitaMistura").style.display = "block"; mudarTipoInsumoReceita();
+                    document.getElementById("boxReceitaMistura").style.display = "block"; 
+                    mudarTipoInsumoReceita();
                     itensReceita = [];
-                    data.reagentes.forEach(r => itensReceita.push({ tipo: 'REAGENTE', id: r.reagente_id, nome: (r.codigo ? r.codigo+' - ' : '') + r.nome, qtd_usada: r.qtd_usada, unidade: r.unidade }));
-                    data.solucoes_usadas.forEach(s => itensReceita.push({ tipo: 'SOLUCAO', id: s.solucao_id, nome: (s.codigo ? s.codigo+' - ' : '') + s.nome, qtd_usada: s.qtd_usada, unidade: s.unidade }));
-                    atualizarTabelaReceita();
-                } else { document.getElementById("boxReceitaMistura").style.display = "none"; itensReceita = []; }
-                new bootstrap.Modal(document.getElementById('modalSolucao')).show();
-            } catch(e) { console.error(e); }
+                    
+                    let reagArray = [];
+                    let solArray = [];
+
+                    const fontesDeDados = [
+                        data.reagentes, data.solucoes_reagentes, sol.reagentes, sol.solucoes_reagentes,
+                        data.solucoes_usadas, data.solucoes_solucoes, data.solucoes, sol.solucoes_usadas, sol.solucoes_solucoes,
+                        data, sol
+                    ];
+
+                    fontesDeDados.forEach(fonte => {
+                        if (Array.isArray(fonte)) {
+                            fonte.forEach(item => {
+                                if (item.reagente_id) {
+                                    if (!reagArray.some(r => r.reagente_id == item.reagente_id)) reagArray.push(item);
+                                }
+                                if (item.solucao_origem_id) {
+                                    if (!solArray.some(s => s.solucao_origem_id == item.solucao_origem_id)) solArray.push(item);
+                                } else if (item.solucao_id && item.solucao_id != sol.id) {
+                                    if (!solArray.some(s => s.solucao_id == item.solucao_id)) solArray.push(item);
+                                }
+                            });
+                        }
+                    });
+
+                    reagArray.forEach(r => {
+                        let idReagente = r.reagente_id;
+                        let infoGlobal = reagentesGlobais.find(x => x.id == idReagente);
+                        let nomeBase = r.nome || r.nome_reagente || (infoGlobal ? infoGlobal.nome : `Reagente Desconhecido (ID: ${idReagente})`);
+                        let codBase = r.codigo || (infoGlobal ? infoGlobal.codigo : '');
+                        let nomeExibicao = codBase ? `[${codBase}] ${nomeBase}` : nomeBase;
+                        
+                        itensReceita.push({ 
+                            tipo: 'REAGENTE', 
+                            id: idReagente, 
+                            nome: nomeExibicao, 
+                            qtd_usada: r.qtd_usada || r.quantidade || 0, 
+                            unidade: r.unidade || (infoGlobal ? infoGlobal.unidade : '') 
+                        });
+                    });
+
+                    solArray.forEach(s => {
+                        let idSolucao = s.solucao_origem_id || s.solucao_id;
+                        let infoGlobal = listaGlobalSolucoes.find(x => x.id == idSolucao);
+                        let nomeBase = s.nome || s.nome_solucao || (infoGlobal ? infoGlobal.nome : `Solução Desconhecida (ID: ${idSolucao})`);
+                        let codBase = s.codigo || (infoGlobal ? infoGlobal.codigo : '');
+                        let nomeExibicao = codBase ? `[${codBase}] ${nomeBase}` : nomeBase;
+
+                        itensReceita.push({ 
+                            tipo: 'SOLUCAO', 
+                            id: idSolucao, 
+                            nome: nomeExibicao, 
+                            qtd_usada: s.qtd_usada || s.quantidade || 0, 
+                            unidade: s.unidade || (infoGlobal ? infoGlobal.unidade : '') 
+                        });
+                    });
+                    
+                    atualizarTabelaReceita(isReadOnly);
+                } else { 
+                    document.getElementById("boxReceitaMistura").style.display = "none"; 
+                    itensReceita = []; 
+                }
+                
+                const modalEl = document.getElementById('modalSolucao');
+                const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                modal.show();
+            } catch(e) { 
+                console.error("Erro na leitura da Solução:", e); 
+                alert("Erro ao abrir os detalhes. Verifique o console.");
+            }
         }
 
         function toggleReceitaArea() { document.getElementById("boxReceitaMistura").style.display = document.getElementById("solOrigem").value === "CRIADO" ? "block" : "none"; if(document.getElementById("solOrigem").value === "CRIADO") mudarTipoInsumoReceita(); }
@@ -375,11 +515,11 @@
             document.getElementById("buscaCodInsumo").value = ""; sel.innerHTML = '<option value="">Selecione...</option>';
             if (tipo === 'REAGENTE') {
                 document.getElementById("labelInsumo").innerText = "Reagente do Estoque";
-                reagentesGlobais.forEach(r => sel.innerHTML += `<option value="${r.id}" data-codigo="${(r.codigo||'').toUpperCase()}" data-nome="${r.nome_reagente || r.nome}" data-unidade="${r.unidade || ''}">${r.codigo ? r.codigo+' - ' : ''}${r.nome_reagente || r.nome} (Estq: ${r.quantidade})</option>`);
+                reagentesGlobais.forEach(r => sel.innerHTML += `<option value="${r.id}" data-codigo="${(r.codigo||'').toUpperCase()}" data-nome="${r.nome}" data-unidade="${r.unidade || ''}">${r.codigo ? r.codigo+' - ' : ''}${r.nome} (Estq: ${r.quantidade})</option>`);
             } else {
                 document.getElementById("labelInsumo").innerText = "Outra Solução do Estoque";
                 const myId = document.getElementById("solucaoIdEdicao").value;
-                listaGlobalSolucoes.forEach(s => { if (s.id != myId && parseFloat(s.saldo_total) > 0) sel.innerHTML += `<option value="${s.id}" data-codigo="${(s.codigo||'').toUpperCase()}" data-nome="${s.nome}" data-unidade="${s.unidade}">${s.codigo ? s.codigo+' - ' : ''}${s.nome} (Estq: ${s.saldo_total})</option>`; });
+                listaGlobalSolucoes.forEach(s => { if (s.id != myId && parseFloat(s.saldo_total || s.salto_total) > 0) sel.innerHTML += `<option value="${s.id}" data-codigo="${(s.codigo||'').toUpperCase()}" data-nome="${s.nome}" data-unidade="${s.unidade}">${s.codigo ? s.codigo+' - ' : ''}${s.nome} (Estq: ${s.saldo_total || s.salto_total})</option>`; });
             }
         }
         
@@ -403,30 +543,37 @@
             const tipo = document.getElementById("tipoItemReceita").value; const sel = document.getElementById("selectInsumo"); const qtd = document.getElementById("qtdInsumoUsado").value;
             if(!sel.value || !qtd || parseFloat(qtd) <= 0) return alert("Selecione um item e informe uma quantidade válida.");
             itensReceita.push({ tipo: tipo, id: sel.value, nome: sel.options[sel.selectedIndex].getAttribute('data-nome'), qtd_usada: parseFloat(qtd), unidade: sel.options[sel.selectedIndex].getAttribute('data-unidade') });
-            document.getElementById("qtdInsumoUsado").value = ""; document.getElementById("buscaCodInsumo").value = ""; sel.value = ""; atualizarTabelaReceita();
+            document.getElementById("qtdInsumoUsado").value = ""; document.getElementById("buscaCodInsumo").value = ""; sel.value = ""; 
+            atualizarTabelaReceita(false);
         }
         
-        function atualizarTabelaReceita() {
+        // Recebe isReadOnly para saber se desenha o botão de remover na tabela
+        function atualizarTabelaReceita(isReadOnly = false) {
             const tbody = document.getElementById("listaReceitaTabela"); tbody.innerHTML = "";
+            if(itensReceita.length === 0) { 
+                tbody.innerHTML = `<tr><td colspan='${isReadOnly ? 3 : 4}' class='text-center text-muted'>Nenhum insumo encontrado.</td></tr>`; 
+                return; 
+            }
             itensReceita.forEach((item, i) => {
                 let badge = item.tipo === 'REAGENTE' ? '<span class="badge bg-secondary">Reagente</span>' : '<span class="badge bg-primary">Solução</span>';
-                tbody.innerHTML += `<tr><td>${badge}</td><td class="small fw-bold">${item.nome}</td><td class="small text-danger">-${item.qtd_usada} ${item.unidade}</td><td class="text-center"><i class="bi bi-x-circle text-danger" style="cursor:pointer;" onclick="itensReceita.splice(${i},1); atualizarTabelaReceita()"></i></td></tr>`;
+                let btnHtml = isReadOnly ? "" : `<td class="text-center"><i class="bi bi-x-circle text-danger btn-excluir" style="cursor:pointer;" onclick="itensReceita.splice(${i},1); atualizarTabelaReceita(false)"></i></td>`;
+                tbody.innerHTML += `<tr><td>${badge}</td><td class="small fw-bold">${item.nome}</td><td class="small text-danger">-${item.qtd_usada} ${item.unidade}</td>${btnHtml}</tr>`;
             });
         }
         
-        // 🔥 FUNÇÃO DE SALVAR COM O ALERTA DE ERRO RESTAURADO
         async function salvarSolucao() {
             const idEdicao = document.getElementById("solucaoIdEdicao").value; const origem = document.getElementById("solOrigem").value;
             if (origem === 'CRIADO' && itensReceita.length === 0) { if(!confirm("Registrar a solução CRIADA sem insumos?")) return; }
 
             const reagUsados = itensReceita.filter(i => i.tipo === 'REAGENTE').map(i => ({ reagente_id: i.id, qtd_usada: i.qtd_usada }));
-            const solUsadas = itensReceita.filter(i => i.tipo === 'SOLUCAO').map(i => ({ solucao_id: i.id, qtd_usada: i.qtd_usada }));
+            const solUsadas = itensReceita.filter(i => i.tipo === 'SOLUCAO').map(i => ({ solucao_origem_id: i.id, qtd_usada: i.qtd_usada })); 
 
             const dados = {
                 nome: document.getElementById("solNome").value, concentracao: document.getElementById("solConcentracao").value, lote: document.getElementById("solLote").value, 
                 tipo_origem: origem, data_fabricacao: document.getElementById("solFabricacao").value, validade: document.getElementById("solValidade").value, 
                 saldo_total: document.getElementById("solSaldo").value, unidade: document.getElementById("solUnidade").value, observacoes: document.getElementById("solObservacoes").value, 
-                reagentes_usados: reagUsados, solucoes_usadas_receita: solUsadas
+                reagentes_usados: reagUsados, solucoes_usadas_receita: solUsadas,
+                solucoes_reagentes: reagUsados, solucoes_solucoes: solUsadas
             };
             
             if(!dados.nome || !dados.validade || !dados.saldo_total || !dados.concentracao) return alert("Preencha campos obrigatórios.");
@@ -437,13 +584,12 @@
                 
                 const res = await fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) });
                 
-                // A MÁGICA DO ALERTA DE ERRO ESTÁ AQUI
                 if(res.ok) { 
                     bootstrap.Modal.getInstance(document.getElementById('modalSolucao')).hide(); 
                     carregarTudo(); 
                 } else { 
                     const dataErr = await res.json();
-                    alert("❌ ERRO AO SALVAR:\n" + (dataErr.error || "O banco de dados rejeitou o registro. Verifique o terminal!")); 
+                    alert("❌ ERRO AO SALVAR:\n" + (dataErr.error || "O banco de dados rejeitou o registro.")); 
                 }
             } catch(e) { console.error(e); alert("Erro de conexão com o servidor."); }
         }
@@ -452,7 +598,7 @@
 
 
         // ==========================================
-        // ABA 2: USO EM ANÁLISES
+        // ABA 2: USO EM ANÁLISES 
         // ==========================================
         document.getElementById("buscaUso").addEventListener("input", filtrarUso);
         document.getElementById("filtroDataUso").addEventListener("change", filtrarUso);
@@ -484,19 +630,33 @@
                 if(u.qtd_reagentes > 0) badge += `<span class="badge bg-secondary">${u.qtd_reagentes} Reagente(s)</span>`;
                 if(badge === "") badge = "-";
 
+                // TRUE para Visualizar, FALSE para Editar
+                const botoesAcao = `
+                    <button class="btn btn-sm btn-outline-info" onclick="visualizarEdicaoUso(${u.id}, true)" title="Detalhes"><i class="bi bi-eye"></i></button>
+                    <button class="btn btn-sm btn-outline-primary ms-1 btn-editar" onclick="visualizarEdicaoUso(${u.id}, false)" title="Editar"><i class="bi bi-pencil-square"></i></button>
+                    <button class="btn btn-sm btn-outline-danger ms-1 btn-excluir" onclick="excluirUso(${u.id})" title="Excluir"><i class="bi bi-trash"></i></button>
+                `;
+
                 tbody.innerHTML += `
                     <tr>
                         <td class="ps-4 fw-bold text-success">${u.analise_codigo}</td>
                         <td>${u.data_fmt}</td>
                         <td>${badge}</td>
                         <td class="text-muted small">${u.observacoes || '-'}</td>
-                        <td class="text-end pe-4">
-                            <button class="btn btn-sm btn-outline-primary" onclick="visualizarEdicaoUso(${u.id})" title="Detalhes / Editar"><i class="bi bi-eye"></i></button>
-                            <button class="btn btn-sm btn-outline-danger ms-1" onclick="excluirUso(${u.id})" title="Excluir"><i class="bi bi-trash"></i></button>
-                        </td>
+                        <td class="text-end pe-4 text-nowrap">${botoesAcao}</td>
                     </tr>
                 `;
             });
+        }
+
+        function habilitarCamposUso(isReadOnly) {
+            document.getElementById("usoAnaliseCod").disabled = isReadOnly;
+            document.getElementById("usoSelectAnalise").disabled = isReadOnly;
+            document.getElementById("usoObservacoes").disabled = isReadOnly;
+            
+            document.getElementById("boxFormAdicionarUso").style.display = isReadOnly ? 'none' : 'block';
+            document.getElementById("btnSalvarUso").style.display = isReadOnly ? 'none' : 'inline-block';
+            document.getElementById("colAcoesUso").style.display = isReadOnly ? 'none' : 'table-cell';
         }
 
         function mudarTipoInsumoUso() {
@@ -504,10 +664,10 @@
             document.getElementById("usoBuscaCod").value = ""; sel.innerHTML = '<option value="">Selecione...</option>';
             if (tipo === 'REAGENTE') {
                 document.getElementById("usoLabelInsumo").innerText = "Reagente do Estoque";
-                reagentesGlobais.forEach(r => sel.innerHTML += `<option value="${r.id}" data-codigo="${(r.codigo||'').toUpperCase()}" data-nome="${r.nome_reagente || r.nome}" data-unidade="${r.unidade || ''}">${r.codigo ? r.codigo+' - ' : ''}${r.nome_reagente || r.nome} (Estq: ${r.quantidade})</option>`);
+                reagentesGlobais.forEach(r => sel.innerHTML += `<option value="${r.id}" data-codigo="${(r.codigo||'').toUpperCase()}" data-nome="${r.nome}" data-unidade="">${r.codigo ? r.codigo+' - ' : ''}${r.nome} (Estq: ${r.quantidade})</option>`);
             } else {
                 document.getElementById("usoLabelInsumo").innerText = "Solução do Estoque";
-                listaGlobalSolucoes.forEach(s => { if (parseFloat(s.saldo_total) > 0) sel.innerHTML += `<option value="${s.id}" data-codigo="${(s.codigo||'').toUpperCase()}" data-nome="${s.nome}" data-unidade="${s.unidade}">${s.codigo ? s.codigo+' - ' : ''}${s.nome} (Estq: ${s.saldo_total})</option>`; });
+                listaGlobalSolucoes.forEach(s => { if (parseFloat(s.saldo_total || s.salto_total) > 0) sel.innerHTML += `<option value="${s.id}" data-codigo="${(s.codigo||'').toUpperCase()}" data-nome="${s.nome}" data-unidade="${s.unidade}">${s.codigo ? s.codigo+' - ' : ''}${s.nome} (Estq: ${s.saldo_total || s.salto_total})</option>`; });
             }
         }
 
@@ -516,13 +676,13 @@
                 const sel = document.getElementById("usoSelectAnalise"); sel.innerHTML = '<option value="">Digitar manualmente...</option>';
                 const resPend = await fetch(`${API}/analises/pendentes`); const pendentes = await resPend.json();
                 const hoje = new Date(); const ano = hoje.getFullYear(); const mes = String(hoje.getMonth() + 1).padStart(2, '0');
-                if (pendentes.length > 0) {
+                if (Array.isArray(pendentes) && pendentes.length > 0) {
                     const groupPend = document.createElement('optgroup'); groupPend.label = "Em Análise (Bancada)";
                     pendentes.forEach(p => { const cod = `ANL-${ano}${mes}-${String(p.id).padStart(4, '0')}`; groupPend.innerHTML += `<option value="${cod}" data-status="EM ANÁLISE" data-cor="bg-warning text-dark">${cod} - ${p.produto}</option>`; });
                     sel.appendChild(groupPend);
                 }
                 const resHist = await fetch(`${API}/analises/historico`); const historico = await resHist.json();
-                if (historico.length > 0) {
+                if (Array.isArray(historico) && historico.length > 0) {
                     const groupHist = document.createElement('optgroup'); groupHist.label = "Análises Concluídas";
                     historico.forEach(a => { let cor = a.status === 'CONFORME' || a.status === 'APROVADO' ? 'bg-success' : 'bg-danger'; groupHist.innerHTML += `<option value="${a.codigo_analise}" data-status="CONCLUÍDA (${a.status})" data-cor="${cor}">${a.codigo_analise} - ${a.produto_nome}</option>`; });
                     sel.appendChild(groupHist);
@@ -544,25 +704,109 @@
         async function abrirModalUso() {
             document.getElementById("usoIdEdicao").value = ""; document.getElementById("usoAnaliseCod").value = ""; document.getElementById("usoObservacoes").value = "";
             document.getElementById("tituloModalUso").innerHTML = '<i class="bi bi-clipboard-plus"></i> Registrar Itens Utilizados na Análise';
+            
+            habilitarCamposUso(false); // Libera tudo para o novo Uso
+            
             limparBadgeStatus(); itensUsoAnalise = []; atualizarTabelaItensUso(false);
             await carregarAnalisesParaSelect(); mudarTipoInsumoUso();
-            new bootstrap.Modal(document.getElementById('modalUso')).show();
+            
+            const modalEl = document.getElementById('modalUso');
+            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            modal.show();
         }
 
-        async function visualizarEdicaoUso(id) {
+        async function visualizarEdicaoUso(id, isReadOnly) {
             try {
-                const res = await fetch(`${API}/solucoes/uso/${id}/detalhes`); const dados = await res.json();
-                await abrirModalUso(); 
-                document.getElementById("tituloModalUso").innerHTML = '<i class="bi bi-pencil-square"></i> Detalhes / Edição de Uso';
-                document.getElementById("usoIdEdicao").value = dados.cabecalho.id; document.getElementById("usoAnaliseCod").value = dados.cabecalho.analise_codigo; document.getElementById("usoObservacoes").value = dados.cabecalho.observacoes || "";
+                const cabLocal = listaGlobalUso.find(u => u.id == id) || {};
+                const res = await fetch(`${API}/solucoes/uso/${id}/detalhes`); 
+                const dados = await res.json();
+                
+                document.getElementById("usoIdEdicao").value = ""; 
+                document.getElementById("usoAnaliseCod").value = ""; 
+                document.getElementById("usoObservacoes").value = "";
+                
+                document.getElementById("tituloModalUso").innerHTML = isReadOnly ? '<i class="bi bi-eye"></i> Detalhes do Uso' : '<i class="bi bi-pencil-square"></i> Edição de Uso';
+                
+                habilitarCamposUso(isReadOnly);
+                limparBadgeStatus(); 
+                itensUsoAnalise = []; 
+                await carregarAnalisesParaSelect(); 
+                mudarTipoInsumoUso();
+                
+                let cabApi = dados.cabecalho !== undefined ? dados.cabecalho : dados;
+                if (Array.isArray(cabApi)) cabApi = cabApi[0];
+                if (!cabApi) cabApi = {};
+
+                const cab = { ...cabLocal, ...cabApi };
+
+                document.getElementById("usoIdEdicao").value = cab.id || ''; 
+                document.getElementById("usoAnaliseCod").value = cab.analise_codigo || ''; 
+                document.getElementById("usoObservacoes").value = cab.observacoes || "";
                 buscarAnalisePorCodigo();
                 
-                itensUsoAnalise = [];
-                dados.reagentes.forEach(r => itensUsoAnalise.push({ tipo: 'REAGENTE', id: r.id, nome_exibicao: `[${r.codigo}] ${r.nome}`, qtd_usada: r.qtd_usada, unidade: r.unidade }));
-                dados.solucoes.forEach(s => itensUsoAnalise.push({ tipo: 'SOLUCAO', id: s.id, nome_exibicao: `[${s.codigo}] ${s.nome}`, qtd_usada: s.qtd_usada, unidade: s.unidade }));
+                let reagArray = [];
+                let solArray = [];
+
+                const fontesDeDados = [
+                    dados.reagentes, dados.uso_analise_reagentes, cab.reagentes, cab.uso_analise_reagentes,
+                    dados.solucoes, dados.uso_solucoes_itens, cab.solucoes, cab.uso_solucoes_itens,
+                    dados, cab
+                ];
+
+                fontesDeDados.forEach(fonte => {
+                    if (Array.isArray(fonte)) {
+                        fonte.forEach(item => {
+                            if (item.reagente_id) {
+                                if (!reagArray.some(r => r.reagente_id == item.reagente_id)) reagArray.push(item);
+                            }
+                            if (item.solucao_id) {
+                                if (!solArray.some(s => s.solucao_id == item.solucao_id)) solArray.push(item);
+                            }
+                        });
+                    }
+                });
+
+                reagArray.forEach(r => {
+                    let idReagente = r.reagente_id;
+                    let infoGlobal = reagentesGlobais.find(x => x.id == idReagente);
+                    let nomeBase = r.nome || r.nome_reagente || (infoGlobal ? infoGlobal.nome : `Reagente Desconhecido (ID: ${idReagente})`);
+                    let codBase = r.codigo || (infoGlobal ? infoGlobal.codigo : '');
+                    let nomeExibicao = codBase ? `[${codBase}] ${nomeBase}` : nomeBase;
+                    
+                    itensUsoAnalise.push({ 
+                        tipo: 'REAGENTE', 
+                        id: idReagente, 
+                        nome_exibicao: nomeExibicao, 
+                        qtd_usada: r.qtd_usada || r.quantidade || 0, 
+                        unidade: r.unidade || (infoGlobal ? infoGlobal.unidade : '') 
+                    });
+                });
                 
-                atualizarTabelaItensUso(false);
-            } catch(e) { console.error(e); }
+                solArray.forEach(s => {
+                    let idSolucao = s.solucao_id;
+                    let infoGlobal = listaGlobalSolucoes.find(x => x.id == idSolucao);
+                    let nomeBase = s.nome || s.nome_solucao || (infoGlobal ? infoGlobal.nome : `Solução Desconhecida (ID: ${idSolucao})`);
+                    let codBase = s.codigo || (infoGlobal ? infoGlobal.codigo : '');
+                    let nomeExibicao = codBase ? `[${codBase}] ${nomeBase}` : nomeBase;
+
+                    itensUsoAnalise.push({ 
+                        tipo: 'SOLUCAO', 
+                        id: idSolucao, 
+                        nome_exibicao: nomeExibicao, 
+                        qtd_usada: s.qtd_usada || s.quantidade || 0, 
+                        unidade: s.unidade || (infoGlobal ? infoGlobal.unidade : '') 
+                    });
+                });
+                
+                atualizarTabelaItensUso(isReadOnly);
+
+                const modalEl = document.getElementById('modalUso');
+                const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                modal.show();
+            } catch(e) { 
+                console.error("Erro na leitura de Uso:", e); 
+                alert("Erro ao carregar detalhes.");
+            }
         }
 
         function adicionarItemUso() {
@@ -572,21 +816,31 @@
             document.getElementById("usoQtd").value = ""; document.getElementById("usoBuscaCod").value = ""; sel.value = ""; atualizarTabelaItensUso(false);
         }
 
-        function atualizarTabelaItensUso(isReadOnly) {
+        function atualizarTabelaItensUso(isReadOnly = false) {
             const tbody = document.getElementById("tabelaItensUso"); tbody.innerHTML = "";
+            if(itensUsoAnalise.length === 0) { 
+                tbody.innerHTML = `<tr><td colspan='${isReadOnly ? 3 : 4}' class='text-center text-muted'>Nenhum insumo encontrado.</td></tr>`; 
+                return; 
+            }
             itensUsoAnalise.forEach((s, index) => {
                 let badge = s.tipo === 'REAGENTE' ? '<span class="badge bg-secondary">Reagente</span>' : '<span class="badge bg-primary">Solução</span>';
-                let btnHtml = isReadOnly ? "" : `<td class="text-center"><i class="bi bi-x-circle text-danger" style="cursor:pointer;" onclick="itensUsoAnalise.splice(${index}, 1); atualizarTabelaItensUso(false)"></i></td>`;
+                let btnHtml = isReadOnly ? "" : `<td class="text-center"><i class="bi bi-x-circle text-danger btn-excluir" style="cursor:pointer;" onclick="itensUsoAnalise.splice(${index}, 1); atualizarTabelaItensUso(false)"></i></td>`;
                 tbody.innerHTML += `<tr><td>${badge}</td><td class="fw-bold">${s.nome_exibicao}</td><td class="text-danger fw-bold">-${s.qtd_usada} ${s.unidade}</td>${btnHtml}</tr>`;
             });
         }
 
         async function salvarUsoAnalise() {
             const idEdicao = document.getElementById("usoIdEdicao").value;
-            const reagUsados = itensUsoAnalise.filter(i => i.tipo === 'REAGENTE').map(i => ({ id: i.id, qtd_usada: i.qtd_usada }));
-            const solUsadas = itensUsoAnalise.filter(i => i.tipo === 'SOLUCAO').map(i => ({ id: i.id, qtd_usada: i.qtd_usada }));
+            
+            const reagUsados = itensUsoAnalise.filter(i => i.tipo === 'REAGENTE').map(i => ({ reagente_id: i.id, qtd_usada: i.qtd_usada })); 
+            const solUsadas = itensUsoAnalise.filter(i => i.tipo === 'SOLUCAO').map(i => ({ solucao_id: i.id, qtd_usada: i.qtd_usada })); 
 
-            const dados = { analise_codigo: document.getElementById("usoAnaliseCod").value.trim(), observacoes: document.getElementById("usoObservacoes").value, solucoes_usadas: solUsadas, reagentes_usados: reagUsados };
+            const dados = { 
+                analise_codigo: document.getElementById("usoAnaliseCod").value.trim(), 
+                observacoes: document.getElementById("usoObservacoes").value, 
+                solucoes_usadas: solUsadas, reagentes_usados: reagUsados,
+                uso_analise_reagentes: reagUsados, uso_solucoes_itens: solUsadas
+            };
             
             if(!dados.analise_codigo) return alert("O Código da Análise é obrigatório."); 
             if(itensUsoAnalise.length === 0) return alert("Adicione pelo menos um item consumido.");
@@ -600,7 +854,7 @@
                     carregarHistoricoUso(); carregarTudo(); 
                 } else {
                     const dataErr = await res.json();
-                    alert("❌ ERRO AO SALVAR:\n" + (dataErr.error || "Verifique o terminal do Node.")); 
+                    alert("❌ ERRO AO SALVAR:\n" + (dataErr.error || "O banco de dados rejeitou o registro.")); 
                 }
             } catch(e) { console.error(e); alert("Erro de conexão com o servidor."); }
         }
