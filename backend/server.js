@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const pool = require("./db"); 
+const monitoramentoRoutes = require("./routes/monitoramento");
 
 const app = express();
 
@@ -13,7 +14,9 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.use(express.static(path.join(__dirname, "../frontend")));
 
-// Rotas da API
+// ==========================================
+// 🔗 ROTAS DA API
+// ==========================================
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/dashboard", require("./routes/dashboard"));
 app.use("/api/produtos", require("./routes/produtos"));
@@ -24,8 +27,17 @@ app.use("/api/laudos", require("./routes/laudos"));
 app.use("/api/reagentes", require("./routes/reagentes"));
 app.use("/api/relatorios", require("./routes/relatorios"));
 app.use("/api/solucoes", require("./routes/solucoes"));
+app.use("/api/ponto", require("./routes/ponto"));
+app.use("/api/coas", require("./routes/coas"));
+app.use("/api/materiais", require("./routes/materiais"));
 
-// Teste de conexão ao iniciar
+// 🔥 AQUI ESTAVA O CONFLITO RESOLVIDO: Rotas separadas corretamente!
+app.use("/api/monitoramento", monitoramentoRoutes); // Gestão de Monitoramento
+app.use("/api/monitoramento/agua", require("./routes/monitoramento_agua")); // Monitoramento de Água
+
+// ==========================================
+// 🗄️ Teste de conexão ao iniciar
+// ==========================================
 pool.query('SELECT NOW()', (err, res) => {
     if (err) {
         console.error("❌ ERRO CRÍTICO: Banco de dados não conectado!");
@@ -40,7 +52,9 @@ app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend/login.html"));
 });
 
-// --- PORTA 3002 (Configurada aqui) ---
+// ==========================================
+// 🚀 INICIALIZAÇÃO DO SERVIDOR (PORTA 3002)
+// ==========================================
 const PORT = 3002;
 const HOST = '0.0.0.0'; // O segredo está aqui: 0.0.0.0 permite conexões de outros computadores da rede
 

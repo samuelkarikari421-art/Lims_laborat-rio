@@ -6,27 +6,70 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
     <nav class="sidebar">
         <button id="btnToggle" class="btn-toggle-sidebar"><i class="bi bi-list"></i></button>
+        
         <div class="sidebar-header">
             <img src="assets/img/logo.png" alt="Logo Kari Kari" class="sidebar-logo">
             <div class="brand-subtitle">Lab KariKari LIMS</div>
         </div>
+
         <div class="sidebar-menu">
-            <div class="sidebar-label">Operacional</div>
-            <a href="dashboard.html" class="nav-link"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
-            <a href="amostras.html" class="nav-link"><i class="bi bi-box-seam"></i> <span>Amostras</span></a>
-            <a href="analises.html" class="nav-link"><i class="bi bi-clipboard-data"></i> <span>Análises</span></a>
-            <a href="laudos.html" class="nav-link"><i class="bi bi-file-earmark-check"></i> <span>Laudos</span></a>
-            <a href="reagentes.html" class="nav-link"><i class="bi bi-droplet-half"></i> <span>Reagentes</span></a>
-            <a href="solucoes.html" class="nav-link active"><i class="bi bi-eyedropper"></i> <span>Soluções</span></a>
-            <div class="sidebar-label">Gestão</div>
-            <a href="relatorios.html" class="nav-link"><i class="bi bi-graph-up"></i> <span>Relatórios</span></a>
-            <a href="produtos.html" class="nav-link"><i class="bi bi-tags"></i> <span>Produtos</span></a>
-            <a href="usuarios.html" class="nav-link"><i class="bi bi-people"></i> <span>Usuários</span></a>
+            <a href="#submenuLab" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-flask"></i> <span class="menu-text fw-bold">Laboratório</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse show" id="submenuLab">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <div class="sidebar-label mt-2 mb-1" style="font-size: 0.7rem;">Controle de Qualidade</div>
+                    <a href="dashboard.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                    <a href="amostras.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box-seam me-2"></i>Amostras</a>
+                    
+                    <a href="#submenuAnalises" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center py-1" style="font-size: 0.85rem;">
+                        <span><i class="bi bi-clipboard-data me-2"></i>Análises</span>
+                        <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
+                    </a>
+                    <div class="collapse" id="submenuAnalises">
+                        <div class="ps-3 ms-2 border-start border-secondary my-1">
+                            <a href="analises.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Bancada FIFO</a>
+                            <a href="calculos.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Cálculos</a>
+                            <a href="investigacao.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Investigação</a>
+                        </div>
+                    </div>
+
+                    <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
+                    <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
+                    <a href="solucoes.html" class="nav-link active py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
+                    <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
+                
+                    <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
+                    <a href="relatorios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up me-2"></i>Relatórios</a>
+                    <a href="produtos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-tags me-2"></i>Produtos</a>
+                    <a href="ponto.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-clock-history me-2"></i>Ponto</a>
+                    <a href="usuarios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-people me-2"></i>Usuários</a>
+                  
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-check2-square me-2"></i>Inspeções de Fábrica</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-exclamation-triangle me-2"></i>Não Conformidades</a>
+                </div>
+            </div>
+
+            <a href="#submenuPD" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center mt-2">
+                <span><i class="bi bi-lightbulb"></i> <span class="menu-text fw-bold">P&D</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse" id="submenuPD">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-tools me-2"></i>Projetos</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-journal-text me-2"></i>Fórmulas</a>
+                </div>
+            </div>
+
         </div>
         <div class="sidebar-footer"><button onclick="window.location.href='login.html'" class="btn-logout"><i class="bi bi-box-arrow-left me-2"></i> <span>Sair</span></button></div>
     </nav>
@@ -41,6 +84,9 @@
             <li class="nav-item">
                 <button class="nav-link fw-bold" id="uso-tab" data-bs-toggle="tab" data-bs-target="#uso-pane" type="button" onclick="carregarHistoricoUso()"><i class="bi bi-clipboard2-pulse"></i> Uso em Análises</button>
             </li>
+            <li class="nav-item" id="nav-consumo-tab">
+                <button class="nav-link fw-bold text-success" id="consumo-tab" data-bs-toggle="tab" data-bs-target="#consumo-pane" type="button" onclick="atualizarGraficoConsumo()"><i class="bi bi-bar-chart-steps"></i> Consumo por Mês</button>
+            </li>
         </ul>
 
         <div class="tab-content">
@@ -53,7 +99,7 @@
                 </div>
 
                 <div class="row mb-3 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <label class="form-label fw-bold text-muted small mb-1">Buscar Solução</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
@@ -64,7 +110,14 @@
                         <label class="form-label fw-bold text-muted small mb-1">Data de Validade</label>
                         <input type="date" id="filtroValidade" class="form-control">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold text-muted small mb-1">Alerta Estoque</label>
+                        <select id="filtroEstoque" class="form-select" onchange="filtrarSolucoes()">
+                            <option value="">Todos</option>
+                            <option value="BAIXO">Abaixo do Mínimo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label fw-bold text-muted small mb-1">Origem</label>
                         <select id="filtroOrigem" class="form-select">
                             <option value="">Todas</option>
@@ -75,20 +128,24 @@
                 </div>
 
                 <div class="card shadow-sm border-0">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="ps-4">Código</th>
-                                <th>Nome</th>
-                                <th>Concentração</th>
-                                <th>Validade</th>
-                                <th>Saldo Total</th>
-                                <th>Origem</th>
-                                <th class="text-end pe-4 col-acoes-tabela">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelaSolucoes"></tbody>
-                    </table>
+                    <div class="card-body p-0" style="overflow-x: auto;">
+                        <table class="table table-hover align-middle mb-0" style="min-width: 1000px;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Código</th>
+                                    <th>Nome</th>
+                                    <th>Concentração</th>
+                                    <th>Validade</th>
+                                    <th class="text-center border-start">Saldo Atual</th>
+                                    <th class="text-center text-info" title="Consumo acumulado neste mês">Consumo (Mês)</th>
+                                    <th class="text-center text-warning text-dark border-end" title="Consumo acumulado neste ano">Consumo (Ano)</th>
+                                    <th>Origem</th>
+                                    <th class="text-center pe-4 col-acoes">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaSolucoes"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -121,11 +178,48 @@
                                 <th>Data do Registro</th>
                                 <th>Itens Consumidos</th>
                                 <th>Observações</th>
-                                <th class="text-end pe-4 col-acoes-tabela">Ações</th>
+                                <th class="text-end pe-4 col-acoes-uso">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="tabelaUsoSolucoes"></tbody>
                     </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="consumo-pane">
+                <div class="row mb-3 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
+                    <div class="col-md-7">
+                        <label class="form-label fw-bold text-muted small mb-1">Selecionar Solução Específica</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-funnel"></i></span>
+                            <select id="filtroConsumoMaterial" class="form-select border-start-0" onchange="atualizarGraficoConsumo()">
+                                <option value="">Visão Global (Todas as Soluções somadas)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-muted small mb-1">Ano Analisado</label>
+                        <select id="filtroConsumoAno" class="form-select" onchange="atualizarGraficoConsumo()">
+                            <option value="2026" selected>2026</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-success w-100 fw-bold" onclick="atualizarGraficoConsumo()"><i class="bi bi-arrow-clockwise"></i> Atualizar</button>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white fw-bold py-3 d-flex justify-content-between align-items-center">
+                        <span class="text-success"><i class="bi bi-bar-chart-fill"></i> Tendência de Consumo Mensal</span>
+                        <span class="badge bg-light text-dark border" id="totalConsumoAno">Total Ano: 0</span>
+                    </div>
+                    <div class="card-body">
+                        <div style="position: relative; height: 350px; width: 100%;">
+                            <canvas id="chartConsumo"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -149,15 +243,17 @@
                             <div class="col-md-4"><label class="form-label fw-bold">Lote</label><input type="text" id="solLote" class="form-control"></div>
                             <div class="col-md-4"><label class="form-label fw-bold">Data de Fabricação</label><input type="date" id="solFabricacao" class="form-control"></div>
                             <div class="col-md-4"><label class="form-label fw-bold">Validade *</label><input type="date" id="solValidade" class="form-control" required></div>
-                            <div class="col-md-4">
+                            
+                            <div class="col-md-3">
                                 <label class="form-label fw-bold">Origem *</label>
                                 <select id="solOrigem" class="form-select" onchange="toggleReceitaArea()" required>
                                     <option value="COMPRADO">Comprado</option><option value="CRIADO">Criado no Laboratório</option>
                                 </select>
                             </div>
-                            <div class="col-md-4"><label class="form-label fw-bold">Saldo Total *</label><input type="number" step="0.01" id="solSaldo" class="form-control" required></div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Unidade de Medida</label>
+                            <div class="col-md-3"><label class="form-label fw-bold text-primary">Saldo Total *</label><input type="number" step="0.01" id="solSaldo" class="form-control border-primary fw-bold" required></div>
+                            <div class="col-md-3"><label class="form-label fw-bold text-warning text-dark">Estoque Mín. *</label><input type="number" step="0.01" id="solEstoqueMinimo" class="form-control border-warning fw-bold text-dark" value="0" required></div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Unidade</label>
                                 <select id="solUnidade" class="form-select"><option value="mL">mL</option><option value="L">Litros (L)</option><option value="g">Gramas (g)</option><option value="Kg">Kg</option></select>
                             </div>
                             <div class="col-12"><label class="form-label fw-bold">Observações</label><textarea id="solObservacoes" class="form-control" rows="2"></textarea></div>
@@ -283,103 +379,243 @@
         </div>
     </div>
 
+    <div class="modal fade" id="modalDescarte" tabindex="-1">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-danger text-white border-bottom-0">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-trash3"></i> Registrar Descarte</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formDescarte">
+                        <input type="hidden" id="descSolucaoId">
+                        
+                        <div class="text-center mb-3">
+                            <h6 class="fw-bold text-dark mb-0" id="descNomeSolucao">---</h6>
+                            <span class="badge bg-secondary" id="descLoteAtual">Lote: ---</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">QUANTIDADE A DESCARTAR</label>
+                            <div class="input-group">
+                                <input type="number" id="descQtd" class="form-control text-center fw-bold" step="0.01" required min="0.01">
+                                <span class="input-group-text fw-bold bg-light text-muted" id="descUnidade">---</span>
+                            </div>
+                            <div class="text-end mt-1">
+                                <button type="button" class="btn btn-sm btn-link text-danger text-decoration-none p-0 fw-bold" id="btnMaxDescarte" onclick="document.getElementById('descQtd').value = this.dataset.max">Descartar saldo total</button>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-danger">JUSTIFICATIVA DO DESCARTE *</label>
+                            <select id="descJustificativa" class="form-select border-danger fw-bold text-danger" required>
+                                <option value="" disabled selected>Selecione o motivo...</option>
+                                <option value="Prazo de Validade Expirado">Validade Expirada</option>
+                                <option value="Contaminação / Impureza">Contaminação / Impureza</option>
+                                <option value="Evaporação / Derramamento">Evaporação / Derramamento</option>
+                                <option value="Dano na Embalagem">Dano na Embalagem</option>
+                                <option value="Fim de Uso / Sobra">Fim de Uso / Sobra</option>
+                                <option value="Erro no Preparo">Erro no Preparo</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger w-100 fw-bold py-2 mt-2">Confirmar Descarte</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/sidebar.js"></script>
     
     <script>
         const API = window.location.origin + "/api";
-        
-        let usuarioStr = localStorage.getItem('usuarioLogado') || localStorage.getItem('limsUser');
-        let usuario = null;
-        
-        if (!usuarioStr) {
-            console.warn("⚠️ MODO DESENVOLVIMENTO: Usando usuário de teste.");
-            usuario = { id: 1, nome: "Samuel Kari Kari (Teste)", perfil: "ADMIN", permissoes: { solucoes_view: true, solucoes_edit: true } };
-        } else {
-            usuario = JSON.parse(usuarioStr);
-        }
-
-        const perfilUser = String(usuario.perfil || usuario.cargo || "").toUpperCase().trim();
-        const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
-        
-        if (!isAdmin && (!usuario.permissoes || usuario.permissoes.solucoes_view !== true)) {
-            alert("Acesso Negado: Sem permissão para o Módulo de Soluções.");
-            window.location.href = 'dashboard.html';
-        }
-
-        if (!isAdmin && (!usuario.permissoes || usuario.permissoes.solucoes_edit !== true)) {
-            const style = document.createElement('style');
-            style.innerHTML = `
-                .btn-nova-solucao, 
-                .btn-novo-uso, 
-                .btn-excluir, 
-                .btn-acao-salvar { display: none !important; }
-            `;
-            document.head.appendChild(style);
-        }
-
         let listaGlobalSolucoes = [];
         let reagentesGlobais = [];
         let listaGlobalUso = []; 
+        let dadosGraficoConsumo = []; // Variável para armazenar os detalhes de uso para o gráfico
         let itensReceita = []; 
         let itensUsoAnalise = [];
+        let modalDescarte;
+        let chartConsumoInstance = null; // Instância do Chart.js
+        let globalPerms = {};
+
+        // 🔥 FUNÇÃO DE BLINDAGEM DE DATAS
+        function normalizarData(dataString) {
+            if (!dataString) return null;
+            if (dataString.includes('/')) {
+                const [data] = dataString.split(' ');
+                const [d, m, a] = data.split('/');
+                return { ano: a, mes: m, dia: d };
+            }
+            if (dataString.includes('-')) {
+                const [data] = dataString.split('T');
+                const [a, m, d] = data.split('-');
+                return { ano: a, mes: m, dia: d };
+            }
+            return null;
+        }
+
+        // 🔥 MOTOR DE TRAVAS DA TELA DE SOLUÇÕES 🔥
+        function aplicarTravaTela() {
+            const userStr = localStorage.getItem("limsUser");
+            if (!userStr) return;
+            const user = JSON.parse(userStr);
+            const perfilUser = String(user.perfil || "").toUpperCase().trim();
+            const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
+            
+            globalPerms = user.permissoes || {};
+            
+            if (isAdmin) {
+                globalPerms.sol_create = true;
+                globalPerms.sol_edit = true;
+                globalPerms.sol_baixa = true;
+                globalPerms.sol_desc = true;
+                globalPerms.sol_del = true;
+            }
+
+            if (!globalPerms.sol_create) {
+                const btnNova = document.querySelector(".btn-nova-solucao");
+                if (btnNova) btnNova.style.display = 'none';
+            }
+
+            if (!globalPerms.sol_baixa) {
+                const btnUso = document.querySelector(".btn-novo-uso");
+                if (btnUso) btnUso.style.display = 'none';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            aplicarTravaTela();
+            modalDescarte = new bootstrap.Modal(document.getElementById('modalDescarte'));
+            
+            document.getElementById("buscaUso").addEventListener("input", filtrarUso);
+            document.getElementById("filtroDataUso").addEventListener("change", filtrarUso);
+            
+            document.getElementById("buscaSolucoes").addEventListener("input", filtrarSolucoes);
+            document.getElementById("filtroValidade").addEventListener("change", filtrarSolucoes);
+            document.getElementById("filtroOrigem").addEventListener("change", filtrarSolucoes);
+            document.getElementById("filtroEstoque").addEventListener("change", filtrarSolucoes);
+
+            carregarTudo();
+        });
 
         async function carregarTudo() {
             try {
                 const resSol = await fetch(`${API}/solucoes`);
                 listaGlobalSolucoes = await resSol.json();
                 filtrarSolucoes(); 
+                preencherDropdownConsumo(); // Atualiza o select do Gráfico
 
                 const resReag = await fetch(`${API}/reagentes`);
                 reagentesGlobais = await resReag.json();
             } catch(e) { console.error(e); }
         }
 
-        document.getElementById("buscaSolucoes").addEventListener("input", filtrarSolucoes);
-        document.getElementById("filtroValidade").addEventListener("change", filtrarSolucoes);
-        document.getElementById("filtroOrigem").addEventListener("change", filtrarSolucoes);
+        function preencherDropdownConsumo() {
+            const sel = document.getElementById("filtroConsumoMaterial");
+            sel.innerHTML = '<option value="">Visão Global (Todas as Soluções somadas)</option>';
+            listaGlobalSolucoes.forEach(m => {
+                sel.innerHTML += `<option value="${m.id}">${m.codigo ? m.codigo+' - ' : ''}${m.nome}</option>`;
+            });
+        }
 
         function filtrarSolucoes() {
             const termo = document.getElementById("buscaSolucoes").value.toLowerCase();
             const dataEscolhida = document.getElementById("filtroValidade").value;
             const origemEscolhida = document.getElementById("filtroOrigem").value;
+            const filtroEstoque = document.getElementById("filtroEstoque").value;
 
             const filtrados = listaGlobalSolucoes.filter(s => {
                 const matchTexto = (s.codigo && s.codigo.toLowerCase().includes(termo)) || (s.nome && s.nome.toLowerCase().includes(termo)) || (s.lote && s.lote.toLowerCase().includes(termo));
                 let matchOrigem = origemEscolhida === "" ? true : s.tipo_origem === origemEscolhida;
                 let matchData = true;
                 if (dataEscolhida) { const [a, m, d] = dataEscolhida.split('-'); matchData = s.validade_fmt === `${d}/${m}/${a}`; }
-                return matchTexto && matchOrigem && matchData;
+                
+                let matchQtd = true;
+                if (filtroEstoque === "BAIXO") {
+                    const minEstoque = parseFloat(s.estoque_minimo || 0);
+                    matchQtd = parseFloat(s.saldo_total || 0) <= minEstoque;
+                }
+
+                return matchTexto && matchOrigem && matchData && matchQtd;
             });
             renderizarTabela(filtrados);
         }
 
         function renderizarTabela(lista) {
-            const tbody = document.getElementById("tabelaSolucoes"); tbody.innerHTML = "";
+            const tbody = document.getElementById("tabelaSolucoes"); 
+            tbody.innerHTML = "";
+
+            const thAcoes = document.querySelector(".col-acoes");
+            if (!globalPerms.sol_edit && !globalPerms.sol_desc && !globalPerms.sol_del && !globalPerms.solucoes_edit) {
+                if(thAcoes) thAcoes.style.display = 'none';
+            } else {
+                if(thAcoes) thAcoes.style.display = 'table-cell';
+            }
+
             lista.forEach(s => {
                 let badgeCor = s.tipo_origem === 'CRIADO' ? 'bg-info text-dark' : 'bg-secondary';
-                const diasRestantes = Math.ceil((new Date(s.validade) - new Date()) / (1000 * 60 * 60 * 24));
-                let valClass = diasRestantes < 0 ? "text-danger fw-bold" : (diasRestantes <= 30 ? "text-warning fw-bold" : "text-dark");
                 
-                // TRUE para Modo Visualização, FALSE para Modo Edição
-                const botoesAcao = `
-                    <button class="btn btn-sm btn-outline-info" onclick="abrirEdicaoSolucao(${s.id}, true)" title="Detalhes"><i class="bi bi-eye"></i></button> 
-                    <button class="btn btn-sm btn-outline-primary ms-1 btn-editar" onclick="abrirEdicaoSolucao(${s.id}, false)" title="Editar"><i class="bi bi-pencil-square"></i></button> 
-                    <button class="btn btn-sm btn-outline-danger ms-1 btn-excluir" onclick="excluirSolucao(${s.id})" title="Excluir"><i class="bi bi-trash"></i></button>
-                `;
+                const diasRestantes = Math.ceil((new Date(s.validade) - new Date()) / (1000 * 60 * 60 * 24));
+                let valClass = diasRestantes < 0 ? "text-danger fw-bold" : (diasRestantes <= 30 ? "text-warning text-dark fw-bold" : "text-dark");
+                
+                const saldo = parseFloat(s.saldo_total || 0);
+                const minEstoque = parseFloat(s.estoque_minimo || 0);
+                
+                let rowClass = "";
+                let saldoClass = "text-success fw-bold";
+                
+                if (saldo <= 0) {
+                    saldoClass = "text-danger fw-bold";
+                    rowClass = "table-danger"; 
+                } else if (saldo <= minEstoque) {
+                    saldoClass = "text-warning text-dark fw-bold"; 
+                    if (saldo < minEstoque) rowClass = "table-danger"; 
+                }
+
+                if (diasRestantes <= 0) rowClass = "table-danger";
+
+                const tooltipEstoque = `Estoque Mínimo: ${minEstoque}`;
+                const sEncoded = encodeURIComponent(JSON.stringify(s));
+
+                let botoesAcao = '';
+                
+                botoesAcao += `<button class="btn btn-sm btn-outline-info ms-1" onclick="abrirEdicaoSolucao(${s.id}, true)" title="Detalhes"><i class="bi bi-eye"></i></button>`;
+
+                if(globalPerms.sol_desc) {
+                    botoesAcao += `<button class="btn btn-sm btn-outline-warning btn-descarte ms-1" onclick="abrirModalDescarte('${sEncoded}')" title="Registrar Descarte" ${s.saldo_total <= 0 ? 'disabled' : ''}><i class="bi bi-trash3 text-dark"></i></button>`;
+                }
+                if(globalPerms.sol_edit) {
+                    botoesAcao += `<button class="btn btn-sm btn-outline-primary ms-1 btn-editar" onclick="abrirEdicaoSolucao(${s.id}, false)" title="Editar"><i class="bi bi-pencil-square"></i></button>`;
+                }
+                if(globalPerms.sol_del) {
+                    botoesAcao += `<button class="btn btn-sm btn-light border text-danger shadow-sm ms-1 btn-excluir" onclick="excluirSolucao(${s.id})" title="Excluir do Banco"><i class="bi bi-x-lg"></i></button>`;
+                }
+
+                let tdAcoes = '';
+                if (globalPerms.sol_edit || globalPerms.sol_desc || globalPerms.sol_del || globalPerms.solucoes_edit) {
+                    tdAcoes = `<td class="text-center pe-4 text-nowrap col-acoes">${botoesAcao}</td>`;
+                }
 
                 tbody.innerHTML += `
-                    <tr>
-                        <td class="ps-4 fw-bold text-primary">${s.codigo || '-'}</td><td class="fw-bold">${s.nome}</td><td>${s.concentracao || s.concetracao || ''}</td>
-                        <td class="${valClass}">${s.validade_fmt}</td><td class="fw-bold fs-6">${s.saldo_total || s.salto_total} <small class="text-muted fw-normal">${s.unidade}</small></td>
+                    <tr class="${rowClass}">
+                        <td class="ps-4 fw-bold text-primary">${s.codigo || '-'}</td>
+                        <td class="fw-bold">${s.nome}</td>
+                        <td>${s.concentracao || s.concetracao || ''}</td>
+                        <td class="${valClass}">${s.validade_fmt}</td>
+                        <td class="text-center border-start fs-6 ${saldoClass}" title="${tooltipEstoque}">${saldo} <small class="text-muted fw-normal">${s.unidade}</small></td>
+                        <td class="text-center text-info fw-bold">${s.consumo_mes || 0} <small class="text-muted fw-normal">${s.unidade}</small></td>
+                        <td class="text-center text-warning text-dark fw-bold border-end">${s.consumo_ano || 0} <small class="text-muted fw-normal">${s.unidade}</small></td>
                         <td><span class="badge ${badgeCor}">${s.tipo_origem}</span></td>
-                        <td class="text-end pe-4 text-nowrap">${botoesAcao}</td>
+                        ${tdAcoes}
                     </tr>`;
             });
         }
 
         function habilitarCamposSolucao(isReadOnly) {
-            const campos = ["solNome", "solConcentracao", "solLote", "solFabricacao", "solValidade", "solSaldo", "solUnidade", "solObservacoes", "tipoItemReceita", "buscaCodInsumo", "selectInsumo", "qtdInsumoUsado"];
+            const campos = ["solNome", "solConcentracao", "solLote", "solFabricacao", "solValidade", "solSaldo", "solEstoqueMinimo", "solUnidade", "solObservacoes", "tipoItemReceita", "buscaCodInsumo", "selectInsumo", "qtdInsumoUsado"];
             campos.forEach(c => document.getElementById(c).disabled = isReadOnly);
             
             document.getElementById("areaAdicionarReceita").style.display = isReadOnly ? 'none' : 'flex';
@@ -388,11 +624,13 @@
         }
 
         function abrirModalNovaSolucao() {
-            document.getElementById("formSolucao").reset(); document.getElementById("solucaoIdEdicao").value = "";
+            document.getElementById("formSolucao").reset(); 
+            document.getElementById("solucaoIdEdicao").value = "";
             document.getElementById("solOrigem").disabled = false; 
+            document.getElementById("solEstoqueMinimo").value = "0";
             document.getElementById("tituloModalSolucao").innerHTML = '<i class="bi bi-droplet-fill"></i> Cadastrar Solução';
             
-            habilitarCamposSolucao(false); // Libera tudo para nova solução
+            habilitarCamposSolucao(false); 
 
             itensReceita = []; toggleReceitaArea(); 
             const modalEl = document.getElementById('modalSolucao');
@@ -421,15 +659,14 @@
                 if (sol.validade) document.getElementById("solValidade").value = String(sol.validade).split('T')[0];
                 
                 document.getElementById("solOrigem").value = sol.tipo_origem || 'COMPRADO'; 
-                document.getElementById("solOrigem").disabled = true; // A origem nunca pode mudar após criar
-                document.getElementById("solSaldo").value = sol.saldo_total || sol.salto_total || 0; 
+                document.getElementById("solOrigem").disabled = true; 
+                document.getElementById("solSaldo").value = sol.saldo_total || 0; 
+                document.getElementById("solEstoqueMinimo").value = sol.estoque_minimo || 0; 
                 document.getElementById("solUnidade").value = sol.unidade || 'mL';
                 document.getElementById("solObservacoes").value = sol.observacoes || '';
                 
-                // Altera o título de acordo com o modo
                 document.getElementById("tituloModalSolucao").innerHTML = isReadOnly ? '<i class="bi bi-eye"></i> Detalhes da Solução' : '<i class="bi bi-pencil-square"></i> Edição de Solução';
                 
-                // Habilita ou Desabilita os campos
                 habilitarCamposSolucao(isReadOnly);
 
                 if (sol.tipo_origem === 'CRIADO') {
@@ -469,11 +706,8 @@
                         let nomeExibicao = codBase ? `[${codBase}] ${nomeBase}` : nomeBase;
                         
                         itensReceita.push({ 
-                            tipo: 'REAGENTE', 
-                            id: idReagente, 
-                            nome: nomeExibicao, 
-                            qtd_usada: r.qtd_usada || r.quantidade || 0, 
-                            unidade: r.unidade || (infoGlobal ? infoGlobal.unidade : '') 
+                            tipo: 'REAGENTE', id: idReagente, nome: nomeExibicao, 
+                            qtd_usada: r.qtd_usada || r.quantidade || 0, unidade: r.unidade || (infoGlobal ? infoGlobal.unidade : '') 
                         });
                     });
 
@@ -485,11 +719,8 @@
                         let nomeExibicao = codBase ? `[${codBase}] ${nomeBase}` : nomeBase;
 
                         itensReceita.push({ 
-                            tipo: 'SOLUCAO', 
-                            id: idSolucao, 
-                            nome: nomeExibicao, 
-                            qtd_usada: s.qtd_usada || s.quantidade || 0, 
-                            unidade: s.unidade || (infoGlobal ? infoGlobal.unidade : '') 
+                            tipo: 'SOLUCAO', id: idSolucao, nome: nomeExibicao, 
+                            qtd_usada: s.qtd_usada || s.quantidade || 0, unidade: s.unidade || (infoGlobal ? infoGlobal.unidade : '') 
                         });
                     });
                     
@@ -504,7 +735,7 @@
                 modal.show();
             } catch(e) { 
                 console.error("Erro na leitura da Solução:", e); 
-                alert("Erro ao abrir os detalhes. Verifique o console.");
+                alert("Erro ao abrir os detalhes.");
             }
         }
 
@@ -547,7 +778,6 @@
             atualizarTabelaReceita(false);
         }
         
-        // Recebe isReadOnly para saber se desenha o botão de remover na tabela
         function atualizarTabelaReceita(isReadOnly = false) {
             const tbody = document.getElementById("listaReceitaTabela"); tbody.innerHTML = "";
             if(itensReceita.length === 0) { 
@@ -571,7 +801,9 @@
             const dados = {
                 nome: document.getElementById("solNome").value, concentracao: document.getElementById("solConcentracao").value, lote: document.getElementById("solLote").value, 
                 tipo_origem: origem, data_fabricacao: document.getElementById("solFabricacao").value, validade: document.getElementById("solValidade").value, 
-                saldo_total: document.getElementById("solSaldo").value, unidade: document.getElementById("solUnidade").value, observacoes: document.getElementById("solObservacoes").value, 
+                saldo_total: document.getElementById("solSaldo").value, 
+                estoque_minimo: document.getElementById("solEstoqueMinimo").value, 
+                unidade: document.getElementById("solUnidade").value, observacoes: document.getElementById("solObservacoes").value, 
                 reagentes_usados: reagUsados, solucoes_usadas_receita: solUsadas,
                 solucoes_reagentes: reagUsados, solucoes_solucoes: solUsadas
             };
@@ -594,20 +826,78 @@
             } catch(e) { console.error(e); alert("Erro de conexão com o servidor."); }
         }
         
-        async function excluirSolucao(id) { if(!confirm("A exclusão NÃO estorna estoques. Continuar?")) return; await fetch(`${API}/solucoes/${id}`, { method: 'DELETE' }); carregarTudo(); }
+        async function excluirSolucao(id) { 
+            if(!confirm("⚠️ AÇÃO ADMINISTRATIVA:\nTem certeza que deseja apagar esta solução do sistema?\n\n(A exclusão não estorna estoque. Se a solução acabou ou venceu, use o botão Descarte).")) return; 
+            await fetch(`${API}/solucoes/${id}`, { method: 'DELETE' }); 
+            carregarTudo(); 
+        }
+
+        // ==========================================
+        // REGISTRAR DESCARTE
+        // ==========================================
+        function abrirModalDescarte(solucaoStr) {
+            const sol = JSON.parse(decodeURIComponent(solucaoStr));
+            document.getElementById("formDescarte").reset();
+            document.getElementById("descSolucaoId").value = sol.id;
+            document.getElementById("descNomeSolucao").innerText = sol.nome;
+            document.getElementById("descLoteAtual").innerText = `Lote: ${sol.lote || 'N/A'}`;
+            document.getElementById("descUnidade").innerText = sol.unidade || 'mL';
+            document.getElementById("btnMaxDescarte").dataset.max = sol.saldo_total || 0;
+            
+            modalDescarte.show();
+        }
+
+        document.getElementById("formDescarte").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const idSolucao = document.getElementById("descSolucaoId").value;
+            const token = localStorage.getItem("limsToken");
+
+            const payload = {
+                solucao_id: idSolucao,
+                quantidade: document.getElementById("descQtd").value,
+                motivo: "DESCARTE: " + document.getElementById("descJustificativa").value
+            };
+
+            if (parseFloat(payload.quantidade) <= 0) return alert("A quantidade deve ser maior que zero.");
+
+            try {
+                const res = await fetch(`${API}/solucoes/descarte`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    modalDescarte.hide();
+                    alert("Descarte realizado com sucesso!");
+                    carregarTudo(); 
+                    if(document.getElementById('consumo-pane').classList.contains('active')) {
+                        carregarHistoricoUso(); 
+                    }
+                } else {
+                    alert("Erro ao descartar: " + (data.error || "Erro desconhecido"));
+                }
+            } catch (error) {
+                console.error("Erro na requisição de descarte:", error);
+                alert("Erro de conexão com o servidor.");
+            }
+        });
 
 
         // ==========================================
         // ABA 2: USO EM ANÁLISES 
         // ==========================================
-        document.getElementById("buscaUso").addEventListener("input", filtrarUso);
-        document.getElementById("filtroDataUso").addEventListener("change", filtrarUso);
-
         async function carregarHistoricoUso() {
             try {
                 const res = await fetch(`${API}/solucoes/uso/historico`);
                 listaGlobalUso = await res.json();
                 filtrarUso(); 
+                if(document.getElementById('consumo-pane').classList.contains('active')) {
+                    atualizarGraficoConsumo();
+                }
             } catch(e) { console.error(e); }
         }
 
@@ -623,6 +913,14 @@
 
         function renderizarTabelaUso(lista) {
             const tbody = document.getElementById("tabelaUsoSolucoes"); tbody.innerHTML = "";
+            
+            const thAcoes = document.querySelector(".col-acoes-uso");
+            if (!globalPerms.sol_edit && !globalPerms.sol_del && !globalPerms.solucoes_edit) {
+                if(thAcoes) thAcoes.style.display = 'none';
+            } else {
+                if(thAcoes) thAcoes.style.display = 'table-cell';
+            }
+
             if(lista.length === 0) { tbody.innerHTML = "<tr><td colspan='5' class='text-center py-4 text-muted'>Nenhum registro encontrado.</td></tr>"; return; }
             lista.forEach(u => {
                 let badge = "";
@@ -630,20 +928,28 @@
                 if(u.qtd_reagentes > 0) badge += `<span class="badge bg-secondary">${u.qtd_reagentes} Reagente(s)</span>`;
                 if(badge === "") badge = "-";
 
-                // TRUE para Visualizar, FALSE para Editar
-                const botoesAcao = `
-                    <button class="btn btn-sm btn-outline-info" onclick="visualizarEdicaoUso(${u.id}, true)" title="Detalhes"><i class="bi bi-eye"></i></button>
-                    <button class="btn btn-sm btn-outline-primary ms-1 btn-editar" onclick="visualizarEdicaoUso(${u.id}, false)" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-sm btn-outline-danger ms-1 btn-excluir" onclick="excluirUso(${u.id})" title="Excluir"><i class="bi bi-trash"></i></button>
-                `;
+                let botoesAcao = '';
+                botoesAcao += `<button class="btn btn-sm btn-outline-info" onclick="visualizarEdicaoUso(${u.id}, true)" title="Detalhes"><i class="bi bi-eye"></i></button>`;
+                
+                if(globalPerms.sol_edit) {
+                    botoesAcao += `<button class="btn btn-sm btn-outline-primary ms-1 btn-editar" onclick="visualizarEdicaoUso(${u.id}, false)" title="Editar"><i class="bi bi-pencil-square"></i></button>`;
+                }
+                if(globalPerms.sol_del) {
+                    botoesAcao += `<button class="btn btn-sm btn-outline-danger ms-1 btn-excluir" onclick="excluirUso(${u.id})" title="Excluir"><i class="bi bi-trash"></i></button>`;
+                }
+
+                let tdAcoes = '';
+                if (globalPerms.sol_edit || globalPerms.sol_del || globalPerms.solucoes_edit) {
+                    tdAcoes = `<td class="text-end pe-4 text-nowrap col-acoes-uso">${botoesAcao}</td>`;
+                }
 
                 tbody.innerHTML += `
                     <tr>
                         <td class="ps-4 fw-bold text-success">${u.analise_codigo}</td>
-                        <td>${u.data_fmt}</td>
+                        <td class="text-muted">${u.data_fmt}</td>
                         <td>${badge}</td>
                         <td class="text-muted small">${u.observacoes || '-'}</td>
-                        <td class="text-end pe-4 text-nowrap">${botoesAcao}</td>
+                        ${tdAcoes}
                     </tr>
                 `;
             });
@@ -705,7 +1011,7 @@
             document.getElementById("usoIdEdicao").value = ""; document.getElementById("usoAnaliseCod").value = ""; document.getElementById("usoObservacoes").value = "";
             document.getElementById("tituloModalUso").innerHTML = '<i class="bi bi-clipboard-plus"></i> Registrar Itens Utilizados na Análise';
             
-            habilitarCamposUso(false); // Libera tudo para o novo Uso
+            habilitarCamposUso(false); 
             
             limparBadgeStatus(); itensUsoAnalise = []; atualizarTabelaItensUso(false);
             await carregarAnalisesParaSelect(); mudarTipoInsumoUso();
@@ -860,12 +1166,105 @@
         }
 
         async function excluirUso(id) {
-            if(!confirm("Atenção: O saldo será devolvido. Excluir?")) return;
-            await fetch(`${API}/solucoes/uso/${id}`, { method: 'DELETE' }); carregarHistoricoUso(); carregarTudo();
+            if(!confirm("Atenção: O saldo será devolvido ao estoque. Deseja excluir este registro de uso?")) return;
+            await fetch(`${API}/solucoes/uso/${id}`, { method: 'DELETE' }); 
+            carregarHistoricoUso(); carregarTudo();
         }
 
-        // Init Geral
-        carregarTudo();
+        // ==========================================
+        // 🔥 ABA 3: GRÁFICO DE CONSUMO MENSAL
+        // ==========================================
+        async function atualizarGraficoConsumo() {
+            // Garante que temos a lista de uso carregada, caso o usuário tenha clicado direto na aba de gráfico
+            if (!listaGlobalUso || listaGlobalUso.length === 0) {
+                try {
+                    const res = await fetch(`${API}/solucoes/uso/historico`);
+                    listaGlobalUso = await res.json();
+                } catch(e) {}
+            }
+
+            // Opcional: Se a API tiver uma rota para trazer as quantidades brutas para o gráfico
+            // (Assumindo que a API atual já retorna o detalhado ou vamos construí-lo a partir dos agregados)
+            if (!window.dadosGraficoConsumoCarregados) {
+                try {
+                    const res = await fetch(`${API}/solucoes/uso/itens`); 
+                    if(res.ok) {
+                        dadosGraficoConsumo = await res.json();
+                        window.dadosGraficoConsumoCarregados = true;
+                    } else {
+                        dadosGraficoConsumo = [];
+                    }
+                } catch(e) { console.error(e); dadosGraficoConsumo = []; }
+            }
+
+            const anoSelecionado = document.getElementById("filtroConsumoAno").value;
+            const materialId = document.getElementById("filtroConsumoMaterial").value;
+
+            const totaisMes = new Array(12).fill(0);
+            let unidadeGeral = "";
+
+            dadosGraficoConsumo.forEach(u => {
+                const dataRaw = u.data_uso || u.data_registro || u.created_at || '';
+                const nData = normalizarData(dataRaw);
+                
+                if (nData && nData.ano === anoSelecionado) {
+                    const rId = String(u.solucao_id || u.id_solucao || u.item_id || '');
+                    
+                    if (materialId === "" || rId === materialId) {
+                        const mesIndex = parseInt(nData.mes) - 1;
+                        const qtd = parseFloat(u.quantidade || u.qtd || u.qtd_usada || 0);
+                        
+                        totaisMes[mesIndex] += qtd;
+                        unidadeGeral = u.unidade || unidadeGeral; 
+                    }
+                }
+            });
+
+            const somaAnual = totaisMes.reduce((a, b) => a + b, 0);
+            document.getElementById("totalConsumoAno").innerText = `Total ${anoSelecionado}: ${somaAnual.toFixed(2)} ${materialId ? unidadeGeral : 'unidades (várias)'}`;
+
+            const ctx = document.getElementById('chartConsumo').getContext('2d');
+            if (chartConsumoInstance) chartConsumoInstance.destroy();
+
+            chartConsumoInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                    datasets: [{
+                        label: materialId ? `Consumo (${unidadeGeral})` : 'Consumo Total Agregado',
+                        data: totaisMes,
+                        backgroundColor: '#198754', 
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { 
+                        y: { 
+                            beginAtZero: true,
+                            title: { display: true, text: 'Quantidade Consumida', font: { weight: 'bold' } }
+                        } 
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toFixed(2);
+                                        if (materialId) label += ' ' + unidadeGeral;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>

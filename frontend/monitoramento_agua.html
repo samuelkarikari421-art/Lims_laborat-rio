@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Monitoramento de Água - LIMS Kari Kari</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        .input-aprovado { border-color: #198754 !important; background-color: #f1fcf6 !important; color: #198754 !important; }
+        .input-reprovado { border-color: #dc3545 !important; background-color: #fdf2f3 !important; color: #dc3545 !important; }
+        .card-ponto { cursor: pointer; transition: all 0.2s; border-left: 4px solid transparent; }
+        .card-ponto:hover { transform: translateX(5px); background-color: #f8f9fa; }
+        .card-ponto.active { background-color: #e0f7fa; border-left-color: #0dcaf0 !important; box-shadow: 0 .125rem .25rem rgba(0,0,0,.075); }
+        .input-calc { font-family: 'Courier New', Courier, monospace; font-weight: bold; }
+        .form-switch .form-check-input { width: 2.5em; height: 1.25em; cursor: pointer; }
+        .form-switch .form-check-label { cursor: pointer; padding-top: 3px; margin-left: 10px; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <button id="btnToggle" class="btn-toggle-sidebar"><i class="bi bi-list"></i></button>
+        
+        <div class="sidebar-header">
+            <img src="assets/img/logo.png" alt="Logo Kari Kari" class="sidebar-logo">
+            <div class="brand-subtitle">Lab KariKari LIMS</div>
+        </div>
+
+        <div class="sidebar-menu">
+            <a href="#submenuLab" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-flask"></i> <span class="menu-text fw-bold">Laboratório</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse show" id="submenuLab">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <div class="sidebar-label mt-2 mb-1" style="font-size: 0.7rem;">Controle de Qualidade</div>
+                    <a href="dashboard.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                    <a href="amostras.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box-seam me-2"></i>Amostras</a>
+                    
+                    <a href="#submenuAnalises" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center py-1" style="font-size: 0.85rem;">
+                        <span><i class="bi bi-clipboard-data me-2"></i>Análises</span>
+                        <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
+                    </a>
+                    <div class="collapse" id="submenuAnalises">
+                        <div class="ps-3 ms-2 border-start border-secondary my-1">
+                            <a href="analises.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Bancada FIFO</a>
+                            <a href="calculos.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Cálculos</a>
+                            <a href="investigacao.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Investigação</a>
+                        </div>
+                    </div>
+
+                    <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
+                    <a href="monitoramento_agua.html" class="nav-link active py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
+                    <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
+                    <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
+                
+                    <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
+                    <a href="relatorios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up me-2"></i>Relatórios</a>
+                    <a href="produtos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-tags me-2"></i>Produtos</a>
+                    <a href="ponto.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-clock-history me-2"></i>Ponto</a>
+                    <a href="usuarios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-people me-2"></i>Usuários</a>
+                  
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-check2-square me-2"></i>Inspeções de Fábrica</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-exclamation-triangle me-2"></i>Não Conformidades</a>
+                </div>
+            </div>
+
+            <a href="#submenuPD" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center mt-2">
+                <span><i class="bi bi-lightbulb"></i> <span class="menu-text fw-bold">P&D</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse" id="submenuPD">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-tools me-2"></i>Projetos</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-journal-text me-2"></i>Fórmulas</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="sidebar-footer"><button onclick="window.location.href='login.html'" class="btn-logout"><i class="bi bi-box-arrow-left me-2"></i> <span>Sair</span></button></div>
+    </nav>
+
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-dark mb-0"><i class="bi bi-droplet text-info me-2"></i> Monitoramento de Água</h2>
+                <p class="text-muted small">Controle Físico-Químico da Qualidade da Água.</p>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs mb-4" id="monTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#nova-pane" type="button"><i class="bi bi-clipboard2-pulse"></i> Registrar Coleta</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link fw-bold text-success" data-bs-toggle="tab" data-bs-target="#historico-pane" type="button" onclick="carregarHistoricoAgua()"><i class="bi bi-clock-history"></i> Histórico de Controles</button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="nova-pane">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="sticky-top" style="top: 20px; z-index: 10;">
+                            <div class="card shadow-sm border-0 mb-3">
+                                <div class="card-header bg-dark text-white fw-bold"><i class="bi bi-geo-alt"></i> Pontos de Coleta</div>
+                                <div class="card-body bg-light p-2">
+                                    <div class="list-group list-group-flush" id="listaPontos">
+                                        <div class="card card-ponto mb-2 border-primary border-start" onclick="selecionarPonto('Poço Artesiano Principal', this)"><div class="card-body p-3 fw-bold text-primary">Poço Artesiano Principal</div></div>
+                                        <div class="card card-ponto mb-2 border-primary border-start" onclick="selecionarPonto(`Caixa D'água (Fábrica)`, this)"><div class="card-body p-3 fw-bold text-primary">Caixa D'água (Fábrica)</div></div>
+                                        <div class="card card-ponto mb-2 border-primary border-start" onclick="selecionarPonto('Torneira - Produção Linha 1', this)"><div class="card-body p-3 fw-bold text-primary">Torneira - Produção Linha 1</div></div>
+                                        <div class="card card-ponto mb-2 border-primary border-start" onclick="selecionarPonto('Torneira 1 - Laboratório', this)"><div class="card-body p-3 fw-bold text-primary">Torneira 1 - Laboratório</div></div>
+                                        <div class="card card-ponto mb-2 border-primary border-start" onclick="selecionarPonto('Torneira 2 - Laboratório', this)"><div class="card-body p-3 fw-bold text-primary">Torneira 2 - Laboratório</div></div>
+                                        <div class="card card-ponto mb-2 border-info border-start" onclick="selecionarPonto('Deionizador de Água (Laboratório)', this)"><div class="card-body p-3 fw-bold text-info text-dark">Deionizador de Água (Lab)</div></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card shadow-sm border-0" id="painelParametrosLateral" style="display: none;">
+                                <div class="card-header bg-info text-dark fw-bold"><i class="bi bi-ui-checks"></i> Parâmetros Analíticos</div>
+                                <div class="card-body bg-light p-3">
+                                    <div class="form-check form-switch mb-3 mt-1">
+                                        <input class="form-check-input param-checkbox" type="checkbox" id="chk-tr-cloro" onchange="toggleParametro('tr-cloro', this.checked)">
+                                        <label class="form-check-label fw-bold text-dark" for="chk-tr-cloro">Cloro Residual Livre</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input param-checkbox" type="checkbox" id="chk-tr-ph" onchange="toggleParametro('tr-ph', this.checked)">
+                                        <label class="form-check-label fw-bold text-dark" for="chk-tr-ph">Potencial Hidrogeniônico (pH)</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input param-checkbox" type="checkbox" id="chk-tr-condutividade" onchange="toggleParametro('tr-condutividade', this.checked)">
+                                        <label class="form-check-label fw-bold text-dark" for="chk-tr-condutividade">Condutividade (APHA)</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input param-checkbox" type="checkbox" id="chk-tr-tds" onchange="toggleParametro('tr-tds', this.checked)">
+                                        <label class="form-check-label fw-bold text-dark" for="chk-tr-tds">TDS (Sólidos Tot. Dissolvidos)</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input param-checkbox" type="checkbox" id="chk-tr-dureza" onchange="toggleParametro('tr-dureza', this.checked)">
+                                        <label class="form-check-label fw-bold text-dark" for="chk-tr-dureza">Dureza Total (CaCO₃)</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input param-checkbox" type="checkbox" id="chk-tr-acidez" onchange="toggleParametro('tr-acidez', this.checked)">
+                                        <label class="form-check-label fw-bold text-dark" for="chk-tr-acidez">Acidez (CaCO₃)</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-1">
+                                        <input class="form-check-input param-checkbox" type="checkbox" id="chk-tr-residuo" onchange="toggleParametro('tr-residuo', this.checked)">
+                                        <label class="form-check-label fw-bold text-dark" for="chk-tr-residuo">Resíduo p/ Evaporação</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-9">
+                        <div class="card shadow-sm border-0" id="painelRegistro" style="display: none;">
+                            <div class="card-header bg-white border-bottom border-info border-3 fw-bold py-3 d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-moisture"></i> Mesa de Trabalho (Resultados)</span>
+                                <span class="badge bg-info text-dark shadow-sm px-3 py-2" id="badgePontoSelecionado">Ponto</span>
+                            </div>
+                            <div class="card-body p-4">
+
+                                <div class="row mb-4 bg-light p-3 rounded border align-items-end">
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-bold text-muted">Cód. Registro (Auto)</label>
+                                        <input type="text" id="codigoRegistro" class="form-control border-secondary fw-bold text-secondary bg-white" readonly tabindex="-1">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-bold text-muted">Tipo de Água</label>
+                                        <input type="text" id="tipoAguaDetectado" class="form-control border-dark fw-bold text-primary bg-white" readonly tabindex="-1">
+                                    </div>
+                                    <div class="col-md-3"><label class="form-label small fw-bold text-muted">Data da Coleta *</label><input type="date" id="dataColeta" class="form-control border-dark fw-bold"></div>
+                                    <div class="col-md-3"><label class="form-label small fw-bold text-muted">Hora *</label><input type="time" id="horaColeta" class="form-control border-dark fw-bold"></div>
+                                </div>
+
+                                <div id="msgSemParametro" class="text-center text-muted py-5 border rounded bg-light mb-4">
+                                    <i class="bi bi-toggle-off fs-1 d-block mb-2 text-secondary"></i> Nenhum parâmetro ativado.<br><small>Ligue os interruptores no painel da esquerda para iniciar as análises.</small>
+                                </div>
+
+                                <table class="table table-bordered align-middle text-center mb-4 shadow-sm" id="tabelaParametros" style="display: none;">
+                                    <thead class="table-light"><tr><th class="text-start ps-3">Parâmetro Analítico</th><th>Especificação</th><th width="150px">Resultado</th><th width="180px">Status Final</th><th width="40px" title="Remover Teste"><i class="bi bi-trash"></i></th></tr></thead>
+                                    <tbody>
+                                        <tr id="tr-ph" style="display: none;">
+                                            <td class="text-start ps-3 fw-bold text-dark">pH</td>
+                                            <td class="text-muted small fw-bold" id="spec-ph-txt">---</td>
+                                            <td><input type="number" step="0.1" id="inpPh" class="form-control text-center fw-bold" placeholder="---" oninput="validarDinamicamente(this, 'ph', 'iconPh')"></td>
+                                            <td id="iconPh"><span class="badge bg-light text-muted border py-2 w-100">AGUARDANDO</span></td>
+                                            <td><button class="btn btn-sm btn-outline-danger border-0" onclick="removerParametro('tr-ph')"><i class="bi bi-x-lg"></i></button></td>
+                                        </tr>
+                                        <tr id="tr-condutividade" style="display: none;">
+                                            <td class="text-start ps-3 fw-bold text-dark">Condutividade (µS/cm)</td>
+                                            <td class="text-muted small fw-bold" id="spec-cond-txt">---</td>
+                                            <td><input type="number" step="0.1" id="inpCondutividade" class="form-control text-center fw-bold" placeholder="---" oninput="validarDinamicamente(this, 'condutividade', 'iconCondutividade')"></td>
+                                            <td id="iconCondutividade"><span class="badge bg-light text-muted border py-2 w-100">AGUARDANDO</span></td>
+                                            <td><button class="btn btn-sm btn-outline-danger border-0" onclick="removerParametro('tr-condutividade')"><i class="bi bi-x-lg"></i></button></td>
+                                        </tr>
+                                        <tr id="tr-tds" style="display: none;">
+                                            <td class="text-start ps-3 fw-bold text-dark">TDS (ppm)</td>
+                                            <td class="text-muted small fw-bold" id="spec-tds-txt">---</td>
+                                            <td><input type="number" step="0.1" id="inpTds" class="form-control text-center fw-bold" placeholder="---" oninput="validarDinamicamente(this, 'tds', 'iconTds')"></td>
+                                            <td id="iconTds"><span class="badge bg-light text-muted border py-2 w-100">AGUARDANDO</span></td>
+                                            <td><button class="btn btn-sm btn-outline-danger border-0" onclick="removerParametro('tr-tds')"><i class="bi bi-x-lg"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="collapse mb-4" id="calcCloroBox">
+                                    <div class="card card-body bg-light border-primary shadow-sm p-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-primary pb-2">
+                                            <h6 class="fw-bold text-primary mb-0"><i class="bi bi-moisture"></i> Calculadora de Cloro Residual Livre</h6>
+                                            <select id="cl_qtdReps" class="form-select form-select-sm w-auto fw-bold" onchange="toggleRepsCloro()">
+                                                <option value="1">1 Réplica</option><option value="2">2 Réplicas</option><option value="3" selected>3 Réplicas</option>
+                                            </select>
+                                        </div>
+                                        <div class="row g-2 mb-3">
+                                            <div class="col-md-4"><label class="small fw-bold text-muted">Vol. Branco (vb) mL</label><input type="number" step="0.01" id="cl_vb" class="form-control form-control-sm text-center fw-bold" value="0.00" oninput="calcularCloro()"></div>
+                                            <div class="col-md-4"><label class="small fw-bold text-muted">Conc. Tiossulfato (c)</label><input type="number" step="0.0001" id="cl_c" class="form-control form-control-sm text-center fw-bold" value="0.01" oninput="calcularCloro()"></div>
+                                            <div class="col-md-4"><label class="small fw-bold text-muted">Fator de Correção (fc)</label><input type="number" step="0.0001" id="cl_fc" class="form-control form-control-sm text-center fw-bold" value="1.0000" oninput="calcularCloro()"></div>
+                                        </div>
+                                        <table class="table table-sm table-bordered text-center align-middle bg-white mb-3">
+                                            <thead class="table-light"><tr><th>Rep</th><th>Vol. Amostra (va) mL</th><th>Vol. Gasto (vt) mL</th><th>Resultado (cr) mg/L</th></tr></thead>
+                                            <tbody>
+                                                <tr id="row_cl_r1"><td class="fw-bold bg-light">R1</td><td><input type="number" step="0.01" id="cl_va1" class="form-control form-control-sm text-center input-calc" oninput="calcularCloro()"></td><td><input type="number" step="0.01" id="cl_vt1" class="form-control form-control-sm text-center input-calc text-info" oninput="calcularCloro()"></td><td class="text-primary fw-bold fs-6" id="cl_r1">---</td></tr>
+                                                <tr id="row_cl_r2"><td class="fw-bold bg-light">R2</td><td><input type="number" step="0.01" id="cl_va2" class="form-control form-control-sm text-center input-calc" oninput="calcularCloro()"></td><td><input type="number" step="0.01" id="cl_vt2" class="form-control form-control-sm text-center input-calc text-info" oninput="calcularCloro()"></td><td class="text-primary fw-bold fs-6" id="cl_r2">---</td></tr>
+                                                <tr id="row_cl_r3"><td class="fw-bold bg-light">R3</td><td><input type="number" step="0.01" id="cl_va3" class="form-control form-control-sm text-center input-calc" oninput="calcularCloro()"></td><td><input type="number" step="0.01" id="cl_vt3" class="form-control form-control-sm text-center input-calc text-info" oninput="calcularCloro()"></td><td class="text-primary fw-bold fs-6" id="cl_r3">---</td></tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="row text-center mb-3">
+                                            <div class="col-6 p-2 bg-white border rounded shadow-sm me-1"><span class="small text-muted d-block fw-bold">Desvio RSD% (cr)</span><strong id="cl_rsd" class="text-danger fs-5">---</strong></div>
+                                            <div class="col-5 p-2 bg-white border rounded shadow-sm"><span class="small text-muted d-block fw-bold">CR Médio (mg/L)</span><strong id="cl_medio" class="text-dark fs-5">---</strong></div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center bg-white p-3 border border-primary border-2 rounded shadow-sm mt-3">
+                                            <div>
+                                                <span class="text-muted fw-bold mb-1 d-block">Resultado Final (Média):</span>
+                                                <span class="fs-3 fw-bold text-primary" id="cl_final">0.000</span> <small class="fw-bold text-secondary">mg/L</small>
+                                            </div>
+                                            <div class="text-end">
+                                                <label class="small fw-bold text-muted d-block mb-1" id="lblSpecCloro">Valor Registrado (---)</label>
+                                                <div class="d-flex align-items-center justify-content-end">
+                                                    <input type="number" step="0.01" id="inpCloro" class="form-control text-center fw-bold text-primary bg-light me-2" placeholder="---" style="width: 120px;" readonly tabindex="-1">
+                                                    <span id="iconCloro" style="width: 120px;"><span class="badge bg-light text-muted border py-2 w-100">AGUARDANDO</span></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="collapse mb-4" id="calcAcidezBox">
+                                    <div class="card card-body bg-white border-0 shadow p-4" style="border-radius: 12px;">
+                                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2" style="border-bottom: 2px solid #dc3545;">
+                                            <div>
+                                                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-moisture text-danger me-2"></i> CÁLCULO DE ACIDEZ</h5>
+                                                <small class="text-muted fw-bold">Expressa como CaCO₃</small>
+                                            </div>
+                                            <select id="acd_qtdReps" class="form-select form-select-sm w-auto fw-bold shadow-sm" onchange="toggleRepsAcidez()">
+                                                <option value="1">1 Réplica</option><option value="2">2 Réplicas</option><option value="3" selected>3 Réplicas</option>
+                                            </select>
+                                        </div>
+                                        <div class="row g-3 mb-4 mt-2">
+                                            <div class="col-md-4">
+                                                <label class="small fw-bold text-dark mb-1">Vol. Branco (Vb) mL</label>
+                                                <input type="number" step="0.01" id="acd_vb" class="form-control text-center fw-bold shadow-sm" value="0.00" oninput="calcularAcidez()">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="small fw-bold text-dark mb-1">Normalidade NaOH (N)</label>
+                                                <input type="number" step="0.0001" id="acd_n" class="form-control text-center fw-bold shadow-sm" value="0.01" oninput="calcularAcidez()">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="small fw-bold text-dark mb-1">Fator de Correção (fc)</label>
+                                                <input type="number" step="0.0001" id="acd_fc" class="form-control text-center fw-bold shadow-sm" value="1.0000" oninput="calcularAcidez()">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="text-center p-3 mb-4 rounded" style="background-color: #f8f9fa; border: 1px solid #e9ecef;">
+                                            <p class="mb-0 text-dark" style="font-family: Georgia, serif; font-size: 1.1rem; font-style: italic;">
+                                                Acidez (mg/L) = <strong>((V - Vb) × N × fc × 50.000) / mL da amostra</strong>
+                                            </p>
+                                        </div>
+
+                                        <table class="table table-bordered text-center align-middle mb-4">
+                                            <thead class="table-dark"><tr><th>Rep</th><th>mL da amostra (Va)</th><th>Vol. Gasto NaOH (V) mL</th><th>Resultado mg/L</th></tr></thead>
+                                            <tbody>
+                                                <tr id="row_acd_r1"><td class="fw-bold bg-light">R1</td><td><input type="number" step="0.01" id="acd_va1" class="form-control text-center input-calc" oninput="calcularAcidez()"></td><td><input type="number" step="0.01" id="acd_v1" class="form-control text-center input-calc text-danger" oninput="calcularAcidez()"></td><td class="text-dark fw-bold fs-5" id="acd_r1">---</td></tr>
+                                                <tr id="row_acd_r2"><td class="fw-bold bg-light">R2</td><td><input type="number" step="0.01" id="acd_va2" class="form-control text-center input-calc" oninput="calcularAcidez()"></td><td><input type="number" step="0.01" id="acd_v2" class="form-control text-center input-calc text-danger" oninput="calcularAcidez()"></td><td class="text-dark fw-bold fs-5" id="acd_r2">---</td></tr>
+                                                <tr id="row_acd_r3"><td class="fw-bold bg-light">R3</td><td><input type="number" step="0.01" id="acd_va3" class="form-control text-center input-calc" oninput="calcularAcidez()"></td><td><input type="number" step="0.01" id="acd_v3" class="form-control text-center input-calc text-danger" oninput="calcularAcidez()"></td><td class="text-dark fw-bold fs-5" id="acd_r3">---</td></tr>
+                                            </tbody>
+                                        </table>
+                                        
+                                        <div class="row text-center mb-4">
+                                            <div class="col-6"><div class="p-3 border rounded shadow-sm bg-light"><span class="small text-muted d-block fw-bold text-uppercase">Desvio RSD%</span><strong id="acd_rsd" class="text-danger fs-4">---</strong></div></div>
+                                            <div class="col-6"><div class="p-3 border rounded shadow-sm bg-light"><span class="small text-muted d-block fw-bold text-uppercase">Média (mg/L)</span><strong id="acd_medio" class="text-dark fs-4">---</strong></div></div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between align-items-center bg-white p-4 rounded shadow-sm mt-2" style="border: 2px solid #dc3545;">
+                                            <div>
+                                                <span class="text-muted fw-bold mb-1 d-block text-uppercase">Resultado Final:</span>
+                                                <span class="fw-bold text-danger" id="acd_final" style="font-size: 2.5rem; line-height: 1;">0.00</span> <span class="fw-bold text-secondary fs-5">mg/L</span>
+                                            </div>
+                                            <div class="text-end">
+                                                <label class="small fw-bold text-dark d-block mb-2" id="lblSpecAcidez">Valor Registrado (---)</label>
+                                                <div class="d-flex align-items-center justify-content-end">
+                                                    <input type="number" step="0.01" id="inpAcidez" class="form-control text-center fw-bold text-dark bg-light me-3 shadow-sm" placeholder="---" style="width: 140px; font-size: 1.2rem;" readonly tabindex="-1">
+                                                    <span id="iconAcidez" style="width: 140px;"><span class="badge bg-light text-muted border py-2 w-100 fs-6 shadow-sm">AGUARDANDO</span></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="collapse mb-4" id="calcDurezaBox">
+                                    <div class="card card-body bg-light border-primary shadow-sm p-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-primary pb-2">
+                                            <h6 class="fw-bold text-primary mb-0"><i class="bi bi-moisture"></i> Calculadora de Dureza Total (CaCO₃)</h6>
+                                            <select id="dur_qtdReps" class="form-select form-select-sm w-auto fw-bold" onchange="toggleRepsDureza()">
+                                                <option value="1">1 Réplica</option><option value="2">2 Réplicas</option><option value="3" selected>3 Réplicas</option>
+                                            </select>
+                                        </div>
+                                        <div class="row g-2 mb-3">
+                                            <div class="col-md-4"><label class="small fw-bold text-muted">Vol. Branco (VB) mL</label><input type="number" step="0.01" id="dur_vb" class="form-control form-control-sm text-center fw-bold" value="0.00" oninput="calcularDureza()"></div>
+                                            <div class="col-md-4"><label class="small fw-bold text-muted">Conc. EDTA (c)</label><input type="number" step="0.0001" id="dur_c" class="form-control form-control-sm text-center fw-bold" value="0.01" oninput="calcularDureza()"></div>
+                                            <div class="col-md-4"><label class="small fw-bold text-muted">Fator EDTA (fc)</label><input type="number" step="0.0001" id="dur_fc" class="form-control form-control-sm text-center fw-bold" value="1.0000" oninput="calcularDureza()"></div>
+                                        </div>
+                                        <table class="table table-sm table-bordered text-center align-middle bg-white mb-3">
+                                            <thead class="table-light"><tr><th>Rep</th><th>Vol. Amostra (Va) mL</th><th>Vol. EDTA (V) mL</th><th>Dureza (D) mg/L</th></tr></thead>
+                                            <tbody>
+                                                <tr id="row_dur_r1"><td class="fw-bold bg-light">R1</td><td><input type="number" step="0.01" id="dur_va1" class="form-control form-control-sm text-center input-calc" oninput="calcularDureza()"></td><td><input type="number" step="0.01" id="dur_v1" class="form-control form-control-sm text-center input-calc text-info" oninput="calcularDureza()"></td><td class="text-primary fw-bold fs-6" id="dur_d1">---</td></tr>
+                                                <tr id="row_dur_r2"><td class="fw-bold bg-light">R2</td><td><input type="number" step="0.01" id="dur_va2" class="form-control form-control-sm text-center input-calc" oninput="calcularDureza()"></td><td><input type="number" step="0.01" id="dur_v2" class="form-control form-control-sm text-center input-calc text-info" oninput="calcularDureza()"></td><td class="text-primary fw-bold fs-6" id="dur_d2">---</td></tr>
+                                                <tr id="row_dur_r3"><td class="fw-bold bg-light">R3</td><td><input type="number" step="0.01" id="dur_va3" class="form-control form-control-sm text-center input-calc" oninput="calcularDureza()"></td><td><input type="number" step="0.01" id="dur_v3" class="form-control form-control-sm text-center input-calc text-info" oninput="calcularDureza()"></td><td class="text-primary fw-bold fs-6" id="dur_d3">---</td></tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="row text-center mb-3">
+                                            <div class="col-3 p-2 bg-white border rounded shadow-sm me-1"><span class="small text-muted d-block fw-bold">V Médio (mL)</span><strong id="dur_v_medio" class="text-dark fs-5">---</strong></div>
+                                            <div class="col-3 p-2 bg-white border rounded shadow-sm me-1"><span class="small text-muted d-block fw-bold">Desvio RSD% V</span><strong id="dur_rsd_v" class="text-danger fs-5">---</strong></div>
+                                            <div class="col-3 p-2 bg-white border rounded shadow-sm me-1"><span class="small text-muted d-block fw-bold">D Médio (mg/L)</span><strong id="dur_d_medio" class="text-dark fs-5">---</strong></div>
+                                            <div class="col-3 p-2 bg-white border rounded shadow-sm"><span class="small text-muted d-block fw-bold">Desvio RSD% D</span><strong id="dur_rsd_d" class="text-danger fs-5">---</strong></div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center bg-white p-3 border border-primary border-2 rounded shadow-sm mt-3">
+                                            <div>
+                                                <span class="text-muted fw-bold mb-1 d-block">Resultado Final (Média):</span>
+                                                <span class="fs-3 fw-bold text-primary" id="dur_final">0.00</span> <small class="fw-bold text-secondary">mg/L CaCO₃</small>
+                                            </div>
+                                            <div class="text-end">
+                                                <label class="small fw-bold text-muted d-block mb-1" id="lblSpecDureza">Valor Registrado (---)</label>
+                                                <div class="d-flex align-items-center justify-content-end">
+                                                    <input type="number" step="0.01" id="inpDureza" class="form-control text-center fw-bold text-primary bg-light me-2" placeholder="---" style="width: 120px;" readonly tabindex="-1">
+                                                    <span id="iconDureza" style="width: 120px;"><span class="badge bg-light text-muted border py-2 w-100">AGUARDANDO</span></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="collapse mb-4" id="calcResiduoBox">
+                                    <div class="card card-body bg-light border-primary shadow-sm p-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-primary pb-2">
+                                            <h6 class="fw-bold text-primary mb-0"><i class="bi bi-moisture"></i> Calculadora Resíduo Evaporação</h6>
+                                            <select id="res_qtdReps" class="form-select form-select-sm w-auto fw-bold" onchange="toggleRepsResiduo()">
+                                                <option value="1">1 Réplica</option><option value="2">2 Réplicas</option><option value="3" selected>3 Réplicas</option>
+                                            </select>
+                                        </div>
+                                        <table class="table table-sm table-bordered text-center align-middle bg-white mb-3">
+                                            <thead class="table-light"><tr><th>Rep</th><th>Volume (v) mL</th><th>Massa Vazio (mv)</th><th>Massa+Resíduo (mc)</th><th>Resultado (r) mg/L</th></tr></thead>
+                                            <tbody>
+                                                <tr id="row_res_r1"><td class="fw-bold bg-light">R1</td><td><input type="number" step="0.01" id="res_v1" class="form-control form-control-sm text-center input-calc" oninput="calcularResiduo()"></td><td><input type="number" step="0.0001" id="res_mv1" class="form-control form-control-sm text-center input-calc text-secondary" oninput="calcularResiduo()"></td><td><input type="number" step="0.0001" id="res_mc1" class="form-control form-control-sm text-center input-calc text-danger" oninput="calcularResiduo()"></td><td class="text-primary fw-bold" id="res_r1">---</td></tr>
+                                                <tr id="row_res_r2"><td class="fw-bold bg-light">R2</td><td><input type="number" step="0.01" id="res_v2" class="form-control form-control-sm text-center input-calc" oninput="calcularResiduo()"></td><td><input type="number" step="0.0001" id="res_mv2" class="form-control form-control-sm text-center input-calc text-secondary" oninput="calcularResiduo()"></td><td><input type="number" step="0.0001" id="res_mc2" class="form-control form-control-sm text-center input-calc text-danger" oninput="calcularResiduo()"></td><td class="text-primary fw-bold" id="res_r2">---</td></tr>
+                                                <tr id="row_res_r3"><td class="fw-bold bg-light">R3</td><td><input type="number" step="0.01" id="res_v3" class="form-control form-control-sm text-center input-calc" oninput="calcularResiduo()"></td><td><input type="number" step="0.0001" id="res_mv3" class="form-control form-control-sm text-center input-calc text-secondary" oninput="calcularResiduo()"></td><td><input type="number" step="0.0001" id="res_mc3" class="form-control form-control-sm text-center input-calc text-danger" oninput="calcularResiduo()"></td><td class="text-primary fw-bold" id="res_r3">---</td></tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="row text-center mb-3">
+                                            <div class="col-4"><span class="small text-muted d-block fw-bold">Desvio ABS</span><strong id="res_desvio" class="text-danger">---</strong></div>
+                                            <div class="col-4"><span class="small text-muted d-block fw-bold">RSD%</span><strong id="res_rsd" class="text-danger">---</strong></div>
+                                            <div class="col-4"><span class="small text-muted d-block fw-bold">R Médio (mg/L)</span><strong id="res_medio" class="text-dark">---</strong></div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center bg-white p-2 border border-primary rounded mt-3">
+                                            <div>
+                                                <span class="text-muted small fw-bold">Resíduo Final:</span>
+                                                <span class="fs-4 fw-bold text-primary ms-2" id="res_final">0.00</span> <small>mg/L</small>
+                                            </div>
+                                            <div class="text-end">
+                                                <label class="small fw-bold text-muted d-block mb-1" id="lblSpecResiduo">Valor Registrado (---)</label>
+                                                <div class="d-flex align-items-center justify-content-end">
+                                                    <input type="number" step="0.01" id="inpResiduo" class="form-control text-center fw-bold text-primary bg-light me-2" placeholder="---" style="width: 120px;" readonly tabindex="-1">
+                                                    <span id="iconResiduo" style="width: 120px;"><span class="badge bg-light text-muted border py-2 w-100">AGUARDANDO</span></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 p-3 bg-light border border-secondary rounded shadow-sm">
+                                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                                        <h6 class="fw-bold text-secondary mb-0"><i class="bi bi-eyedropper"></i> Insumos Consumidos nesta Análise</h6>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="chkHabilitarInsumos" onchange="toggleInsumosArea()">
+                                            <label class="form-check-label small fw-bold text-dark" for="chkHabilitarInsumos">Registrar Baixa no Estoque</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="areaInsumos" style="display: none;">
+                                        <div class="row g-2 align-items-end mb-3">
+                                            <div class="col-md-2">
+                                                <label class="form-label small fw-bold">Tipo</label>
+                                                <select id="usoTipoItem" class="form-select" onchange="mudarTipoInsumoUso()">
+                                                    <option value="REAGENTE">Reagente</option>
+                                                    <option value="SOLUCAO">Solução</option>
+                                                    <option value="MATERIAL">Material</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label small fw-bold">Código/Busca</label>
+                                                <input type="text" id="usoBuscaCod" class="form-control" placeholder="Cód..." oninput="buscarInsumoPorCodigo('usoBuscaCod', 'usoSelectInsumo')">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label small fw-bold" id="usoLabelInsumo">Selecione o Item</label>
+                                                <select id="usoSelectInsumo" class="form-select" onchange="sincronizarCodigo('usoSelectInsumo', 'usoBuscaCod')"></select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label small fw-bold">Qtd</label>
+                                                <input type="number" step="0.01" id="usoQtd" class="form-control">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-secondary w-100 fw-bold" onclick="adicionarItemUso()"><i class="bi bi-plus"></i> Add</button>
+                                            </div>
+                                        </div>
+
+                                        <table class="table table-sm table-bordered mb-0 bg-white text-center">
+                                            <thead class="table-secondary"><tr><th>Tipo</th><th>Item Consumido</th><th>Quantidade</th><th width="40px">X</th></tr></thead>
+                                            <tbody id="tabelaItensUso">
+                                                <tr><td colspan="4" class="text-muted small py-2">Nenhum insumo registrado.</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4 mt-3">
+                                    <label class="form-label small fw-bold text-muted">Observações Gerais</label>
+                                    <textarea id="obsAgua" class="form-control" rows="2" placeholder="Descreva notas relevantes sobre a amostra ou análise..."></textarea>
+                                </div>
+
+                                <div class="text-end" id="boxRegistrarControle">
+                                    <button class="btn btn-info fw-bold px-5 text-white shadow-sm" onclick="salvarMonitoramento()"><i class="bi bi-check-circle"></i> Registrar Controle Físico-Químico</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="placeholderRegistro" class="text-center py-5 bg-white rounded shadow-sm border mt-3">
+                            <i class="bi bi-geo-alt display-1 text-light"></i>
+                            <p class="mt-3 text-muted">Selecione um Ponto de Coleta ao lado para preencher os dados.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="historico-pane">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white fw-bold py-3 text-success d-flex justify-content-between">
+                        <span><i class="bi bi-archive"></i> Registros de Monitoramento</span>
+                        <button class="btn btn-sm btn-outline-success" onclick="carregarHistoricoAgua()"><i class="bi bi-arrow-clockwise"></i> Atualizar</button>
+                    </div>
+                    <div class="card-body p-0" style="overflow-x: auto;">
+                        <table class="table table-hover align-middle mb-0 text-center" style="min-width: 950px;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4 text-start">Data / Hora</th>
+                                    <th class="text-start">Ponto de Coleta</th>
+                                    <th>pH</th>
+                                    <th>Cond. (µS/cm)</th>
+                                    <th>TDS (ppm)</th>
+                                    <th>Cloro (mg/L)</th>
+                                    <th>Dureza (mg/L)</th>
+                                    <th>Acidez (mg/L)</th>
+                                    <th>Resíduo (mg/L)</th>
+                                    <th>Status Geral</th>
+                                    <th class="text-center pe-4">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaHistoricoAgua"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalDetalhesAgua" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-info text-dark border-bottom-0">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-droplet"></i> Detalhes do Controle de Água</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p class="mb-1 text-muted small fw-bold">Ponto de Coleta</p>
+                            <h6 class="fw-bold text-dark" id="detPonto">---</h6>
+                        </div>
+                        <div class="col-md-3">
+                            <p class="mb-1 text-muted small fw-bold">Data / Hora</p>
+                            <h6 class="fw-bold text-dark" id="detData">---</h6>
+                        </div>
+                        <div class="col-md-3">
+                            <p class="mb-1 text-muted small fw-bold">Status Geral</p>
+                            <div id="detStatus">---</div>
+                        </div>
+                    </div>
+                    
+                    <h6 class="fw-bold text-secondary mb-3 mt-4 border-bottom pb-2">Resultados Físico-Químicos</h6>
+                    <table class="table table-bordered text-center align-middle bg-white shadow-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-start ps-3">Parâmetro</th>
+                                <th>Especificação</th>
+                                <th>Resultado</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detTabelaResultados"></tbody>
+                    </table>
+
+                    <div class="mt-4">
+                        <p class="mb-1 text-muted small fw-bold">Observações</p>
+                        <div class="p-3 bg-white border rounded text-dark" id="detObs" style="min-height: 60px;">---</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/sidebar.js"></script>
+    
+    <script>
+        const API = window.location.origin + "/api";
+        let pontoAtual = null;
+        let globalPerms = {};
+        
+        let itensUsoAgua = [];
+        let reagentesGlobais = [];
+        let solucoesGlobais = [];
+        let materiaisGlobais = [];
+        
+        let idEdicaoAgua = null;
+
+        function aplicarTravaTela() {
+            const userStr = localStorage.getItem("limsUser");
+            if (!userStr) return;
+            const user = JSON.parse(userStr);
+            const perfilUser = String(user.perfil || "").toUpperCase().trim();
+            const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
+            
+            globalPerms = user.permissoes || {};
+            
+            if (isAdmin) {
+                globalPerms.agua_start = true;
+                globalPerms.agua_view = true;
+                globalPerms.agua_del = true;
+                globalPerms.agua_edit = true; 
+            }
+
+            if (!globalPerms.agua_start) {
+                const styleReg = document.createElement('style');
+                styleReg.innerHTML = ` 
+                    .card-ponto { pointer-events: none !important; cursor: not-allowed !important; opacity: 0.6; }
+                    .form-check-input { pointer-events: none !important; }
+                    input[type="number"], input[type="date"], input[type="time"], textarea { pointer-events: none !important; background-color: #e9ecef !important; color: #6c757d !important; }
+                    #boxRegistrarControle { display: none !important; }
+                `;
+                document.head.appendChild(styleReg);
+            }
+        }
+
+        const specsAgua = {
+            'POCO': {
+                ph: { min: 6.0, max: 9.5, txt: '6,0 - 9,5' },
+                condutividade: { min: 0, max: 500, txt: '≤ 500 µS/cm' },
+                tds: { min: 100, max: 600, txt: '100 - 600 ppm' },
+                cloro: { min: 0, max: 0.1, txt: '≤ 0,1 mg/L' },
+                dureza: { min: 0, max: 300, txt: '≤ 300 mg/L' },
+                acidez: { min: 0, max: 50, txt: '≤ 50 mg/L' },
+                residuo: { min: 0, max: 500, txt: '≤ 500 mg/L' }
+            },
+            'REDE': {
+                ph: { min: 6.0, max: 9.5, txt: '6,0 - 9,5' },
+                condutividade: { min: 0, max: 250, txt: '≤ 250 µS/cm' },
+                tds: { min: 0, max: 1000, txt: '≤ 1000 ppm' },
+                cloro: { min: 0.2, max: 2.0, txt: '0,2 - 2,0 mg/L' },
+                dureza: { min: 0, max: 200, txt: '≤ 200 mg/L' },
+                acidez: { min: 0, max: 30, txt: '≤ 30 mg/L' },
+                residuo: { min: 0, max: 500, txt: '≤ 500 mg/L' }
+            },
+            'DI': {
+                ph: { min: 5.0, max: 7.0, txt: '5,0 - 7,0' },
+                condutividade: { min: 0, max: 10, txt: '≤ 10 µS/cm' },
+                tds: { min: 0, max: 10, txt: '≤ 10 ppm' },
+                cloro: { min: 0, max: 0, txt: '0 mg/L' },
+                dureza: { min: 0, max: 10, txt: '≤ 10 mg/L' },
+                acidez: { min: 0, max: 10, txt: '≤ 10 mg/L' },
+                residuo: { min: 0, max: 10, txt: '≤ 10 mg/L' }
+            }
+        };
+
+        function getWaterType(nome) {
+            if (!nome) return 'REDE';
+            const n = String(nome).toUpperCase();
+            if (n.includes('POÇO') || n.includes('POCO')) return 'POCO';
+            if (n.includes('DEIONIZADOR')) return 'DI';
+            return 'REDE'; 
+        }
+
+        function extrairValor(obj, ...chaves) {
+            if (!obj) return null;
+            for (let k of chaves) { if (obj[k] !== undefined && obj[k] !== null && obj[k] !== "") return obj[k]; }
+            const rowKeys = Object.keys(obj);
+            for (let k of chaves) {
+                const foundKey = rowKeys.find(rk => rk.toLowerCase() === k.toLowerCase());
+                if (foundKey && obj[foundKey] !== undefined && obj[foundKey] !== null && obj[foundKey] !== "") return obj[foundKey];
+            }
+            if (obj.resultados && typeof obj.resultados === 'object') {
+                const resKeys = Object.keys(obj.resultados);
+                for (let k of chaves) {
+                    const foundKey = resKeys.find(rk => rk.toLowerCase() === k.toLowerCase());
+                    if (foundKey && obj.resultados[foundKey] !== undefined && obj.resultados[foundKey] !== null && obj.resultados[foundKey] !== "") return obj.resultados[foundKey];
+                }
+            }
+            return null;
+        }
+
+        function obterValorCampo(id) {
+            const el = document.getElementById(id);
+            if (!el || el.value.trim() === "") return null;
+            const parsed = parseFloat(el.value.replace(',', '.'));
+            return isNaN(parsed) ? null : parsed;
+        }
+
+        function gerarCodigoAnaliseAgua() {
+            const data = new Date();
+            return "AG-" + data.getFullYear().toString().substring(2) + 
+                   String(data.getMonth() + 1).padStart(2, '0') + 
+                   String(data.getDate()).padStart(2, '0') + "-" + 
+                   String(data.getHours()).padStart(2, '0') + 
+                   String(data.getMinutes()).padStart(2, '0');
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            aplicarTravaTela();
+            const agora = new Date();
+            const tzOffset = agora.getTimezoneOffset() * 60000;
+            const dataLocal = new Date(agora - tzOffset);
+            
+            document.getElementById('codigoRegistro').value = gerarCodigoAnaliseAgua();
+
+            const inputData = document.getElementById("dataColeta");
+            const inputHora = document.getElementById("horaColeta");
+            if(inputData) inputData.value = dataLocal.toISOString().split('T')[0];
+            if(inputHora) inputHora.value = dataLocal.toISOString().split('T')[1].substring(0, 5);
+
+            carregarHistoricoAgua();
+            
+            try {
+                const resR = await fetch(`${API}/reagentes`); reagentesGlobais = await resR.json();
+                const resS = await fetch(`${API}/solucoes`); solucoesGlobais = await resS.json();
+                const resM = await fetch(`${API}/materiais`); materiaisGlobais = await resM.json();
+                mudarTipoInsumoUso();
+            } catch(e) { console.error("Erro ao carregar estoques:", e); }
+        });
+
+        function selecionarPonto(nomePonto, elemento) {
+            document.querySelectorAll('.card-ponto').forEach(c => c.classList.remove('active'));
+            elemento.classList.add('active');
+            
+            pontoAtual = nomePonto;
+            document.getElementById("badgePontoSelecionado").innerText = nomePonto;
+
+            const tipo = getWaterType(nomePonto);
+            const tipoNomeExibicao = tipo === 'POCO' ? "Água de Poço" : (tipo === 'DI' ? "Água Deionizada (DI)" : "Água de Rede / Torneira");
+            document.getElementById("tipoAguaDetectado").value = tipoNomeExibicao;
+
+            const s = specsAgua[tipo];
+            document.getElementById('spec-ph-txt').innerText = s.ph.txt;
+            document.getElementById('spec-cond-txt').innerText = s.condutividade.txt;
+            document.getElementById('spec-tds-txt').innerText = s.tds.txt;
+            
+            document.getElementById('lblSpecCloro').innerText = `Valor Registrado (${s.cloro.txt})`;
+            document.getElementById('lblSpecDureza').innerText = `Valor Registrado (${s.dureza.txt})`;
+            document.getElementById('lblSpecResiduo').innerText = `Valor Registrado (${s.residuo.txt})`;
+            document.getElementById('lblSpecAcidez').innerText = `Valor Registrado (${s.acidez.txt})`;
+
+            ['inpPh', 'inpCondutividade', 'inpTds', 'inpAcidez', 'inpCloro', 'inpDureza', 'inpResiduo'].forEach(id => {
+                const inp = document.getElementById(id);
+                if(inp && inp.value !== "") inp.dispatchEvent(new Event('input'));
+            });
+            
+            document.getElementById("placeholderRegistro").style.display = "none";
+            document.getElementById("painelRegistro").style.display = "block";
+            document.getElementById("painelParametrosLateral").style.display = "block";
+        }
+
+        window.validarDinamicamente = function(input, paramKey, iconId) {
+            if(!pontoAtual) return;
+            const tipo = getWaterType(pontoAtual);
+            const spec = specsAgua[tipo][paramKey];
+            validarAgua(input, spec.min, spec.max, iconId);
+        }
+
+        function validarAgua(input, min, max, iconId) {
+            const valText = input.value.replace(',', '.');
+            const val = parseFloat(valText);
+            const icon = document.getElementById(iconId);
+            
+            if (isNaN(val) || valText === "") {
+                input.classList.remove('input-aprovado', 'input-reprovado', 'text-danger');
+                icon.innerHTML = '<span class="badge bg-light text-muted border py-2 w-100">AGUARDANDO</span>';
+                return;
+            }
+            if (val >= min && val <= max) {
+                input.classList.remove('input-reprovado', 'text-danger');
+                input.classList.add('input-aprovado');
+                icon.innerHTML = '<span class="badge bg-success py-2 w-100"><i class="bi bi-check-circle me-1"></i> CONFORME</span>';
+            } else {
+                input.classList.remove('input-aprovado');
+                input.classList.add('input-reprovado', 'text-danger');
+                icon.innerHTML = '<span class="badge bg-danger py-2 w-100"><i class="bi bi-x-circle me-1"></i> NÃO CONFORME</span>';
+            }
+        }
+
+        window.toggleParametro = function(trId, isChecked) {
+            const trs = ['tr-ph', 'tr-condutividade', 'tr-tds']; 
+            const checkedTrs = ['chk-tr-ph', 'chk-tr-condutividade', 'chk-tr-tds'];
+
+            let hasTr = false;
+            checkedTrs.forEach(id => { if(document.getElementById(id).checked) hasTr = true; });
+
+            if (hasTr) document.getElementById("tabelaParametros").style.display = 'table';
+            else document.getElementById("tabelaParametros").style.display = 'none';
+
+            const isAnyChecked = document.getElementById('chk-tr-cloro').checked || hasTr ||
+                                 document.getElementById('chk-tr-dureza').checked || 
+                                 document.getElementById('chk-tr-residuo').checked ||
+                                 document.getElementById('chk-tr-acidez').checked;
+
+            if (isAnyChecked) document.getElementById("msgSemParametro").style.display = 'none';
+            else document.getElementById("msgSemParametro").style.display = 'block';
+
+            if (trId === 'tr-cloro') {
+                const painel = document.getElementById("calcCloroBox");
+                if (isChecked) { if (painel) new bootstrap.Collapse(painel, {toggle: false}).show(); } 
+                else { if (painel) new bootstrap.Collapse(painel, {toggle: false}).hide(); limparDadosDaLinha('tr-cloro'); }
+            }
+            if (trId === 'tr-ph') {
+                if(isChecked) document.getElementById(trId).style.display = 'table-row';
+                else { document.getElementById(trId).style.display = 'none'; limparDadosDaLinha('tr-ph'); }
+            }
+            if (trId === 'tr-condutividade') {
+                if(isChecked) document.getElementById(trId).style.display = 'table-row';
+                else { document.getElementById(trId).style.display = 'none'; limparDadosDaLinha('tr-condutividade'); }
+            }
+            if (trId === 'tr-tds') {
+                if(isChecked) document.getElementById(trId).style.display = 'table-row';
+                else { document.getElementById(trId).style.display = 'none'; limparDadosDaLinha('tr-tds'); }
+            }
+            if (trId === 'tr-acidez') {
+                const painel = document.getElementById("calcAcidezBox");
+                if (isChecked) { if (painel) new bootstrap.Collapse(painel, {toggle: false}).show(); } 
+                else { if (painel) new bootstrap.Collapse(painel, {toggle: false}).hide(); limparDadosDaLinha('tr-acidez'); }
+            }
+            if (trId === 'tr-dureza') {
+                const painel = document.getElementById("calcDurezaBox");
+                if (isChecked) { if (painel) new bootstrap.Collapse(painel, {toggle: false}).show(); } 
+                else { if (painel) new bootstrap.Collapse(painel, {toggle: false}).hide(); limparDadosDaLinha('tr-dureza'); }
+            }
+            if (trId === 'tr-residuo') {
+                const painel = document.getElementById("calcResiduoBox");
+                if (isChecked) { if (painel) new bootstrap.Collapse(painel, {toggle: false}).show(); } 
+                else { if (painel) new bootstrap.Collapse(painel, {toggle: false}).hide(); limparDadosDaLinha('tr-residuo'); }
+            }
+        }
+
+        window.removerParametro = function(trId) {
+            const checkbox = document.getElementById('chk-' + trId);
+            if(checkbox) checkbox.checked = false;
+            toggleParametro(trId, false);
+        }
+
+        function limparDadosDaLinha(trId) {
+            if (trId === 'tr-cloro') resetInput('inpCloro', 'iconCloro');
+            if (trId === 'tr-ph') resetInput('inpPh', 'iconPh');
+            if (trId === 'tr-condutividade') resetInput('inpCondutividade', 'iconCondutividade');
+            if (trId === 'tr-tds') resetInput('inpTds', 'iconTds');
+            if (trId === 'tr-acidez') resetInput('inpAcidez', 'iconAcidez');
+            if (trId === 'tr-dureza') resetInput('inpDureza', 'iconDureza');
+            if (trId === 'tr-residuo') resetInput('inpResiduo', 'iconResiduo');
+        }
+
+        function resetInput(inpId, iconId) {
+            const input = document.getElementById(inpId);
+            if(input) { input.value = ''; input.classList.remove('input-aprovado', 'input-reprovado', 'text-danger'); }
+            const icon = document.getElementById(iconId);
+            if(icon) icon.innerHTML = '<span class="badge bg-light text-muted border py-2 w-100">AGUARDANDO</span>';
+        }
+
+        // ===============================================
+        // CALCULADORAS AUTO-TRANSFER
+        // ===============================================
+        window.toggleRepsCloro = function() {
+            const numReps = parseInt(document.getElementById("cl_qtdReps").value);
+            document.getElementById("row_cl_r2").style.display = numReps >= 2 ? "table-row" : "none";
+            document.getElementById("row_cl_r3").style.display = numReps >= 3 ? "table-row" : "none";
+            calcularCloro(); 
+        }
+
+        window.toggleRepsDureza = function() {
+            const numReps = parseInt(document.getElementById("dur_qtdReps").value);
+            document.getElementById("row_dur_r2").style.display = numReps >= 2 ? "table-row" : "none";
+            document.getElementById("row_dur_r3").style.display = numReps >= 3 ? "table-row" : "none";
+            calcularDureza(); 
+        }
+
+        window.toggleRepsAcidez = function() {
+            const numReps = parseInt(document.getElementById("acd_qtdReps").value);
+            document.getElementById("row_acd_r2").style.display = numReps >= 2 ? "table-row" : "none";
+            document.getElementById("row_acd_r3").style.display = numReps >= 3 ? "table-row" : "none";
+            calcularAcidez(); 
+        }
+
+        window.toggleRepsResiduo = function() {
+            const numReps = parseInt(document.getElementById("res_qtdReps").value);
+            document.getElementById("row_res_r2").style.display = numReps >= 2 ? "table-row" : "none";
+            document.getElementById("row_res_r3").style.display = numReps >= 3 ? "table-row" : "none";
+            calcularResiduo(); 
+        }
+
+        window.calcularCloro = function() {
+            const numReps = parseInt(document.getElementById("cl_qtdReps").value);
+            const vb = parseFloat(document.getElementById("cl_vb").value) || 0;
+            const c = parseFloat(document.getElementById("cl_c").value) || 0;
+            const fc = parseFloat(document.getElementById("cl_fc").value) || 0;
+            let crArr = [];
+
+            for(let i=1; i<=3; i++) {
+                if (i <= numReps) {
+                    const va = parseFloat(document.getElementById(`cl_va${i}`).value);
+                    const vt = parseFloat(document.getElementById(`cl_vt${i}`).value);
+                    if(!isNaN(va) && !isNaN(vt) && va > 0) {
+                        const cr = ((vt - vb) * c * fc * 35450) / va;
+                        document.getElementById(`cl_r${i}`).innerText = cr.toFixed(3);
+                        crArr.push(cr);
+                    } else { document.getElementById(`cl_r${i}`).innerText = "---"; }
+                } else {
+                    document.getElementById(`cl_va${i}`).value = ""; document.getElementById(`cl_vt${i}`).value = ""; document.getElementById(`cl_r${i}`).innerText = "---";
+                }
+            }
+
+            const crMedio = crArr.length > 0 ? crArr.reduce((a,b) => a+b) / crArr.length : 0;
+            const calcSD = (arr, mean) => { if(arr.length < 2) return 0; const variance = arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / (arr.length - 1); return Math.sqrt(variance); };
+            const sdCR = calcSD(crArr, crMedio); const rsdCR = crMedio > 0 ? (sdCR / crMedio) * 100 : 0;
+
+            document.getElementById("cl_rsd").innerText = crArr.length > 1 ? rsdCR.toFixed(2) + "%" : "---";
+            document.getElementById("cl_medio").innerText = crArr.length > 0 ? crMedio.toFixed(3) : "---";
+            
+            const finalValStr = crArr.length > 0 ? crMedio.toFixed(3) : "";
+            document.getElementById("cl_final").innerText = crArr.length > 0 ? finalValStr : "0.000";
+
+            const inpCloro = document.getElementById("inpCloro");
+            if(inpCloro) {
+                inpCloro.value = finalValStr;
+                validarDinamicamente(inpCloro, 'cloro', 'iconCloro');
+            }
+        }
+
+        window.calcularDureza = function() {
+            const numReps = parseInt(document.getElementById("dur_qtdReps").value);
+            const vb = parseFloat(document.getElementById("dur_vb").value) || 0;
+            const c = parseFloat(document.getElementById("dur_c").value) || 0;
+            const fc = parseFloat(document.getElementById("dur_fc").value) || 0;
+            let vArr = []; let dArr = [];
+
+            for(let i=1; i<=3; i++) {
+                if (i <= numReps) {
+                    const va = parseFloat(document.getElementById(`dur_va${i}`).value);
+                    const v = parseFloat(document.getElementById(`dur_v${i}`).value);
+                    if(!isNaN(va) && !isNaN(v) && va > 0) {
+                        const d = ((v - vb) * c * fc * 50000) / va;
+                        document.getElementById(`dur_d${i}`).innerText = d.toFixed(2);
+                        vArr.push(v); dArr.push(d);
+                    } else { document.getElementById(`dur_d${i}`).innerText = "---"; }
+                } else {
+                    document.getElementById(`dur_va${i}`).value = ""; document.getElementById(`dur_v${i}`).value = ""; document.getElementById(`dur_d${i}`).innerText = "---";
+                }
+            }
+
+            const vMedio = vArr.length > 0 ? vArr.reduce((a,b) => a+b) / vArr.length : 0;
+            const dMedio = dArr.length > 0 ? dArr.reduce((a,b) => a+b) / dArr.length : 0;
+            const calcSD = (arr, mean) => { if(arr.length < 2) return 0; const variance = arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / (arr.length - 1); return Math.sqrt(variance); };
+            const sdV = calcSD(vArr, vMedio); const sdD = calcSD(dArr, dMedio);
+            const rsdV = vMedio > 0 ? (sdV / vMedio) * 100 : 0; const rsdD = dMedio > 0 ? (sdD / dMedio) * 100 : 0;
+
+            document.getElementById("dur_v_medio").innerText = vArr.length > 0 ? vMedio.toFixed(3) : "---";
+            document.getElementById("dur_d_medio").innerText = dArr.length > 0 ? dMedio.toFixed(2) : "---";
+            document.getElementById("dur_rsd_v").innerText = vArr.length > 1 ? rsdV.toFixed(2) + "%" : "---";
+            document.getElementById("dur_rsd_d").innerText = dArr.length > 1 ? rsdD.toFixed(2) + "%" : "---";
+            
+            const finalValStr = dArr.length > 0 ? dMedio.toFixed(2) : "";
+            document.getElementById("dur_final").innerText = dArr.length > 0 ? finalValStr : "0.00";
+
+            const inpDureza = document.getElementById("inpDureza");
+            if(inpDureza) {
+                inpDureza.value = finalValStr;
+                validarDinamicamente(inpDureza, 'dureza', 'iconDureza');
+            }
+        }
+
+        window.calcularAcidez = function() {
+            const numReps = parseInt(document.getElementById("acd_qtdReps").value);
+            const vb = parseFloat(document.getElementById("acd_vb").value) || 0;
+            const n = parseFloat(document.getElementById("acd_n").value) || 0;
+            const fc = parseFloat(document.getElementById("acd_fc").value) || 0;
+            let acdArr = [];
+
+            for(let i=1; i<=3; i++) {
+                if (i <= numReps) {
+                    const va = parseFloat(document.getElementById(`acd_va${i}`).value);
+                    const v = parseFloat(document.getElementById(`acd_v${i}`).value);
+                    if(!isNaN(va) && !isNaN(v) && va > 0) {
+                        const acidez = ((v - vb) * n * fc * 50000) / va;
+                        document.getElementById(`acd_r${i}`).innerText = acidez.toFixed(2);
+                        acdArr.push(acidez);
+                    } else { document.getElementById(`acd_r${i}`).innerText = "---"; }
+                } else {
+                    document.getElementById(`acd_va${i}`).value = ""; document.getElementById(`acd_v${i}`).value = ""; document.getElementById(`acd_r${i}`).innerText = "---";
+                }
+            }
+
+            const acdMedio = acdArr.length > 0 ? acdArr.reduce((a,b) => a+b) / acdArr.length : 0;
+            const calcSD = (arr, mean) => { if(arr.length < 2) return 0; const variance = arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / (arr.length - 1); return Math.sqrt(variance); };
+            const sdAcd = calcSD(acdArr, acdMedio); const rsdAcd = acdMedio > 0 ? (sdAcd / acdMedio) * 100 : 0;
+
+            document.getElementById("acd_rsd").innerText = acdArr.length > 1 ? rsdAcd.toFixed(2) + "%" : "---";
+            document.getElementById("acd_medio").innerText = acdArr.length > 0 ? acdMedio.toFixed(2) : "---";
+            
+            const finalValStr = acdArr.length > 0 ? acdMedio.toFixed(2) : "";
+            document.getElementById("acd_final").innerText = acdArr.length > 0 ? finalValStr : "0.00";
+
+            const inpAcidez = document.getElementById("inpAcidez");
+            if(inpAcidez) {
+                inpAcidez.value = finalValStr;
+                validarDinamicamente(inpAcidez, 'acidez', 'iconAcidez');
+            }
+        }
+
+        window.calcularResiduo = function() {
+            const numReps = parseInt(document.getElementById("res_qtdReps").value);
+            let rArr = [];
+            for(let i=1; i<=3; i++) {
+                if (i <= numReps) {
+                    const v = parseFloat(document.getElementById(`res_v${i}`).value);
+                    const mv = parseFloat(document.getElementById(`res_mv${i}`).value);
+                    const mc = parseFloat(document.getElementById(`res_mc${i}`).value);
+                    if(!isNaN(v) && !isNaN(mv) && !isNaN(mc) && v > 0) {
+                        const r = ((mc - mv) * 1000) / v;
+                        document.getElementById(`res_r${i}`).innerText = r.toFixed(2);
+                        rArr.push(r);
+                    } else { document.getElementById(`res_r${i}`).innerText = "---"; }
+                } else {
+                    document.getElementById(`res_v${i}`).value = ""; document.getElementById(`res_mv${i}`).value = ""; document.getElementById(`res_mc${i}`).value = ""; document.getElementById(`res_r${i}`).innerText = "---";
+                }
+            }
+
+            const rMedio = rArr.length > 0 ? rArr.reduce((a,b) => a+b) / rArr.length : 0;
+            const calcSD = (arr, mean) => { if(arr.length < 2) return 0; const variance = arr.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / (arr.length - 1); return Math.sqrt(variance); };
+            const sdR = calcSD(rArr, rMedio); const rsd = rMedio > 0 ? (sdR / rMedio) * 100 : 0;
+            let desvioAbs = "---"; if (rArr.length > 1) desvioAbs = Math.abs(Math.max(...rArr) - Math.min(...rArr)).toFixed(2);
+
+            document.getElementById("res_medio").innerText = rArr.length > 0 ? rMedio.toFixed(2) : "---";
+            document.getElementById("res_rsd").innerText = rArr.length > 1 ? rsd.toFixed(2) + "%" : "---";
+            document.getElementById("res_desvio").innerText = desvioAbs;
+            
+            const finalValStr = rArr.length > 0 ? rMedio.toFixed(2) : "";
+            document.getElementById("res_final").innerText = rArr.length > 0 ? finalValStr : "0.00";
+
+            const inpResiduo = document.getElementById("inpResiduo");
+            if(inpResiduo) {
+                inpResiduo.value = finalValStr;
+                validarDinamicamente(inpResiduo, 'residuo', 'iconResiduo');
+            }
+        }
+
+        // ===============================================
+        // LÓGICA DE INSUMOS CONSUMIDOS NA ÁGUA E EDIÇÃO
+        // ===============================================
+        window.toggleInsumosArea = function() {
+            const isChecked = document.getElementById("chkHabilitarInsumos").checked;
+            document.getElementById("areaInsumos").style.display = isChecked ? "block" : "none";
+            if (!isChecked) {
+                itensUsoAgua = [];
+                atualizarTabelaItensUso();
+            }
+        }
+
+        window.mudarTipoInsumoUso = function() {
+            const tipo = document.getElementById("usoTipoItem").value;
+            const sel = document.getElementById("usoSelectInsumo");
+            document.getElementById("usoBuscaCod").value = "";
+            sel.innerHTML = '<option value="">Selecione...</option>';
+
+            if (tipo === 'REAGENTE') {
+                document.getElementById("usoLabelInsumo").innerText = "Reagente do Estoque";
+                reagentesGlobais.forEach(r => sel.innerHTML += `<option value="${r.id}" data-codigo="${(r.codigo||'').toUpperCase()}" data-nome="${r.nome}" data-unidade="${r.unidade || ''}">${r.codigo ? r.codigo+' - ' : ''}${r.nome} (Estq: ${r.quantidade})</option>`);
+            } else if (tipo === 'SOLUCAO') {
+                document.getElementById("usoLabelInsumo").innerText = "Solução do Estoque";
+                solucoesGlobais.forEach(s => { if (parseFloat(s.saldo_total || s.salto_total) > 0) sel.innerHTML += `<option value="${s.id}" data-codigo="${(s.codigo||'').toUpperCase()}" data-nome="${s.nome}" data-unidade="${s.unidade}">${s.codigo ? s.codigo+' - ' : ''}${s.nome} (Estq: ${s.saldo_total || s.salto_total})</option>`; });
+            } else {
+                document.getElementById("usoLabelInsumo").innerText = "Material do Estoque";
+                materiaisGlobais.forEach(m => { if (parseFloat(m.quantidade) > 0) sel.innerHTML += `<option value="${m.id}" data-codigo="${(m.codigo||'').toUpperCase()}" data-nome="${m.nome}" data-unidade="${m.unidade}">${m.codigo ? m.codigo+' - ' : ''}${m.nome} (Estq: ${m.quantidade})</option>`; });
+            }
+        }
+
+        window.buscarInsumoPorCodigo = function(inputId, selectId) {
+            const inputCod = document.getElementById(inputId).value.trim().toUpperCase(); const sel = document.getElementById(selectId);
+            if (!inputCod) { sel.value = ""; return; }
+            let encontrou = false;
+            for (let i = 0; i < sel.options.length; i++) { 
+                const codDropdown = sel.options[i].getAttribute("data-codigo");
+                if (codDropdown && codDropdown.includes(inputCod)) { sel.value = sel.options[i].value; encontrou = true; break; } 
+            }
+            if(!encontrou) sel.value = "";
+        }
+
+        window.sincronizarCodigo = function(selectId, inputId) {
+            const sel = document.getElementById(selectId); const input = document.getElementById(inputId);
+            if (sel.selectedIndex > 0) { const cod = sel.options[sel.selectedIndex].getAttribute("data-codigo"); input.value = cod ? cod : ""; } else { input.value = ""; }
+        }
+
+        window.adicionarItemUso = function() {
+            const tipo = document.getElementById("usoTipoItem").value; 
+            const sel = document.getElementById("usoSelectInsumo"); 
+            const qtd = document.getElementById("usoQtd").value;
+            if(!sel.value || !qtd || parseFloat(qtd) <= 0) return alert("Selecione um item e informe uma quantidade válida.");
+            itensUsoAgua.push({ tipo: tipo, id: sel.value, nome_exibicao: sel.options[sel.selectedIndex].getAttribute('data-nome'), qtd_usada: parseFloat(qtd), unidade: sel.options[sel.selectedIndex].getAttribute('data-unidade') });
+            document.getElementById("usoQtd").value = ""; document.getElementById("usoBuscaCod").value = ""; sel.value = ""; 
+            atualizarTabelaItensUso();
+        }
+
+        function atualizarTabelaItensUso() {
+            const tbody = document.getElementById("tabelaItensUso"); tbody.innerHTML = "";
+            if(itensUsoAgua.length === 0) { 
+                tbody.innerHTML = `<tr><td colspan='4' class='text-center text-muted small py-2'>Nenhum insumo registrado.</td></tr>`; 
+                return; 
+            }
+            itensUsoAgua.forEach((s, index) => {
+                let badge = "";
+                if (s.tipo === 'REAGENTE') badge = '<span class="badge bg-secondary">Reagente</span>';
+                else if (s.tipo === 'SOLUCAO') badge = '<span class="badge bg-primary">Solução</span>';
+                else badge = '<span class="badge bg-info text-dark">Material</span>';
+
+                tbody.innerHTML += `<tr><td>${badge}</td><td class="fw-bold">${s.nome_exibicao}</td><td class="text-danger fw-bold">-${s.qtd_usada} ${s.unidade}</td><td class="text-center"><i class="bi bi-x-circle text-danger btn-excluir" style="cursor:pointer;" onclick="itensUsoAgua.splice(${index}, 1); atualizarTabelaItensUso()"></i></td></tr>`;
+            });
+        }
+
+        // ===============================================
+        // EDIÇÃO E SALVAMENTO DO MONITORAMENTO
+        // ===============================================
+        window.editarControleAgua = async function(hEncoded) {
+            let h = JSON.parse(decodeURIComponent(hEncoded));
+            
+            const triggerEl = document.querySelector('button[data-bs-target="#nova-pane"]');
+            bootstrap.Tab.getInstance(triggerEl)?.show() || new bootstrap.Tab(triggerEl).show();
+
+            idEdicaoAgua = h.id;
+            
+            document.getElementById("codigoRegistro").value = h.codigo || h.codigo_analise || `AG-ED-${h.id}`;
+
+            if (h.ponto || h.ponto_coleta) {
+                const pontoRef = h.ponto || h.ponto_coleta;
+                const cards = document.querySelectorAll('.card-ponto');
+                cards.forEach(c => {
+                    if (c.innerText.trim() === pontoRef.trim()) selecionarPonto(pontoRef, c);
+                });
+            }
+
+            const dataRef = h.data_fmt || h.data_coleta;
+            if (dataRef) {
+                const partes = dataRef.split(' ');
+                if (partes.length === 2) {
+                    const dParts = partes[0].split('/');
+                    if (dParts.length === 3) document.getElementById("dataColeta").value = `${dParts[2]}-${dParts[1]}-${dParts[0]}`;
+                    document.getElementById("horaColeta").value = partes[1];
+                }
+            }
+
+            const mapParams = [
+                { key: 'ph', chk: 'chk-tr-ph', inp: 'inpPh', icon: 'iconPh', val: extrairValor(h, 'ph', 'pH', 'resultado_ph') },
+                { key: 'condutividade', chk: 'chk-tr-condutividade', inp: 'inpCondutividade', icon: 'iconCondutividade', val: extrairValor(h, 'condutividade', 'cond') },
+                { key: 'tds', chk: 'chk-tr-tds', inp: 'inpTds', icon: 'iconTds', val: extrairValor(h, 'tds', 'resultado_tds') },
+                { key: 'cloro', chk: 'chk-tr-cloro', inp: 'inpCloro', icon: 'iconCloro', val: extrairValor(h, 'cloro', 'resultado_cloro') },
+                { key: 'dureza', chk: 'chk-tr-dureza', inp: 'inpDureza', icon: 'iconDureza', val: extrairValor(h, 'dureza', 'resultado_dureza') },
+                { key: 'acidez', chk: 'chk-tr-acidez', inp: 'inpAcidez', icon: 'iconAcidez', val: extrairValor(h, 'acidez', 'resultado_acidez') },
+                { key: 'residuo', chk: 'chk-tr-residuo', inp: 'inpResiduo', icon: 'iconResiduo', val: extrairValor(h, 'residuo_evaporacao', 'residuo') }
+            ];
+
+            mapParams.forEach(p => {
+                if (p.val !== null && p.val !== "" && p.val !== undefined) {
+                    document.getElementById(p.chk).checked = true;
+                    toggleParametro(`tr-${p.key}`, true);
+                    
+                    const numVal = typeof p.val === 'string' ? parseFloat(p.val.replace(',', '.')) : p.val;
+                    document.getElementById(p.inp).value = numVal;
+                    validarDinamicamente(document.getElementById(p.inp), p.key, p.icon);
+
+                    if (['cloro','dureza','acidez','residuo'].includes(p.key)) {
+                        document.getElementById(`${p.key}_final`).innerText = numVal;
+                    }
+                } else {
+                    document.getElementById(p.chk).checked = false;
+                    toggleParametro(`tr-${p.key}`, false);
+                    document.getElementById(p.inp).value = "";
+                }
+            });
+
+            document.getElementById("obsAgua").value = h.observacoes || "";
+
+            document.getElementById('boxRegistrarControle').innerHTML = `
+                <button class="btn btn-light fw-bold px-4 me-2 border shadow-sm" onclick="cancelarEdicao()">Cancelar</button>
+                <button class="btn btn-warning fw-bold px-5 text-dark shadow-sm" onclick="salvarMonitoramento()"><i class="bi bi-save"></i> Salvar Alterações</button>
+            `;
+        }
+
+        window.cancelarEdicao = function() {
+            idEdicaoAgua = null;
+            document.getElementById('codigoRegistro').value = gerarCodigoAnaliseAgua();
+            document.querySelectorAll('.param-checkbox').forEach(chk => { chk.checked = false; toggleParametro(chk.id.replace('chk-', ''), false); });
+            document.getElementById('boxRegistrarControle').innerHTML = `<button class="btn btn-info fw-bold px-5 text-white shadow-sm" onclick="salvarMonitoramento()"><i class="bi bi-check-circle"></i> Registrar Controle Físico-Químico</button>`;
+            document.getElementById("obsAgua").value = "";
+            document.querySelectorAll('.card-ponto').forEach(c => c.classList.remove('active'));
+            document.getElementById("painelRegistro").style.display = "none";
+            document.getElementById("painelParametrosLateral").style.display = "none";
+            document.getElementById("placeholderRegistro").style.display = "block";
+            pontoAtual = null;
+            document.getElementById("chkHabilitarInsumos").checked = false;
+            toggleInsumosArea();
+        }
+
+        async function salvarMonitoramento() {
+            const cloro = obterValorCampo("inpCloro");
+            const ph = obterValorCampo("inpPh");
+            const condutividade = obterValorCampo("inpCondutividade");
+            const tds = obterValorCampo("inpTds");
+            const acidez = obterValorCampo("inpAcidez");
+            const dureza = obterValorCampo("inpDureza");
+            const residuo = obterValorCampo("inpResiduo");
+            const observacoes = document.getElementById("obsAgua").value;
+
+            if(cloro === null && ph === null && condutividade === null && tds === null && dureza === null && residuo === null && acidez === null) {
+                alert("⚠️ Por favor, ative pelo menos um interruptor e preencha o resultado para registrar a coleta.");
+                return;
+            }
+
+            const isReprovado = document.querySelectorAll('.input-reprovado').length > 0;
+            const statusGeral = isReprovado ? "NÃO CONFORME" : "CONFORME";
+            
+            const dataStr = document.getElementById("dataColeta").value;
+            const horaStr = document.getElementById("horaColeta").value;
+            const dataFmt = dataStr.split('-').reverse().join('/') + " " + horaStr;
+
+            const reagUsados = itensUsoAgua.filter(i => i.tipo === 'REAGENTE').map(i => ({ reagente_id: i.id, qtd_usada: i.qtd_usada })); 
+            const solUsadas = itensUsoAgua.filter(i => i.tipo === 'SOLUCAO').map(i => ({ solucao_id: i.id, qtd_usada: i.qtd_usada })); 
+            const matUsados = itensUsoAgua.filter(i => i.tipo === 'MATERIAL').map(i => ({ material_id: i.id, qtd_usada: i.qtd_usada })); 
+
+            const codAuto = document.getElementById('codigoRegistro').value;
+
+            const payload = {
+                codigo: codAuto,
+                codigo_analise: codAuto,
+                ponto: pontoAtual,
+                ponto_coleta: pontoAtual,
+                data_fmt: dataFmt,
+                data_coleta: dataFmt,
+                
+                cloro: cloro, resultado_cloro: cloro,
+                ph: ph, pH: ph, resultado_ph: ph,
+                condutividade: condutividade, cond: condutividade, resultado_condutividade: condutividade,
+                tds: tds, resultado_tds: tds,
+                dureza: dureza, resultado_dureza: dureza,
+                acidez: acidez, resultado_acidez: acidez,
+                residuo_evaporacao: residuo, residuo: residuo, resultado_residuo: residuo,
+                
+                cor: null, odor: null,
+                observacoes: observacoes,
+                status: statusGeral,
+                status_geral: statusGeral,
+                
+                reagentes_usados: reagUsados,
+                solucoes_usadas: solUsadas,
+                materiais_usados: matUsados
+            };
+
+            console.log("🚀 Payload enviado para a API:", JSON.stringify(payload, null, 2));
+
+            try {
+                let url = `${API}/monitoramento/agua/salvar`;
+                let method = 'POST';
+
+                if (idEdicaoAgua) {
+                    url = `${API}/monitoramento/agua/${idEdicaoAgua}`;
+                    method = 'PUT'; 
+                }
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    alert(`✅ Sucesso! Controle gravado no servidor.`);
+                    cancelarEdicao();
+                    carregarHistoricoAgua();
+                } else {
+                    const errorJson = await res.json();
+                    alert("❌ Erro ao gravar dados no servidor:\n" + (errorJson.error || errorJson.message || "Erro Desconhecido"));
+                }
+            } catch (error) { console.error(error); alert("❌ Erro de comunicação com o servidor."); }
+        }
+
+        window.excluirControleAgua = async function(id) {
+            if(!confirm("Atenção: Tem certeza que deseja excluir permanentemente este registro de monitoramento de água?")) return;
+            try {
+                const token = localStorage.getItem("limsToken") || "";
+                
+                const res = await fetch(`${API}/monitoramento/agua/${id}`, { 
+                    method: 'DELETE',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    }
+                });
+                
+                if(res.ok) {
+                    alert("Registro excluído com sucesso!");
+                    carregarHistoricoAgua();
+                } else {
+                    let errorMsg = "Erro bloqueado pelo Banco de Dados. Verifique se existem insumos consumidos atrelados a esta análise (Chave Estrangeira).";
+                    try {
+                        const errData = await res.json();
+                        errorMsg = errData.error || errData.message || errorMsg;
+                    } catch(e) {}
+                    console.error("Erro da API ao Excluir:", errorMsg);
+                    alert("Erro ao excluir o registro:\n\n" + errorMsg);
+                }
+            } catch(e) { 
+                console.error("Falha de Rede:", e); 
+                alert("Erro de conexão com o servidor. O Banco de Dados pode ter rejeitado a requisição.");
+            }
+        };
+
+        function verificarSeConformeHistorico(valor, tipoPonto, parametro) {
+            if (valor === null || valor === "" || valor === undefined) return true;
+            const val = parseFloat(valor);
+            const spec = specsAgua[tipoPonto][parametro];
+            if (!spec) return true;
+            return (val >= spec.min && val <= spec.max);
+        }
+
+        async function carregarHistoricoAgua() {
+            const tbody = document.getElementById("tabelaHistoricoAgua");
+            tbody.innerHTML = "<tr><td colspan='11' class='text-muted py-4'><span class='spinner-border spinner-border-sm text-primary'></span> Conectando ao Banco de Dados...</td></tr>";
+
+            try {
+                const res = await fetch(`${API}/monitoramento/agua/historico`);
+                const historico = await res.json();
+                tbody.innerHTML = "";
+
+                if(historico.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='11' class='text-muted py-4'>Nenhum registro de água encontrado.</td></tr>";
+                    return;
+                }
+
+                historico.forEach(h => {
+                    const badge = h.status === 'CONFORME' ? '<span class="badge bg-success shadow-sm">Conforme</span>' : '<span class="badge bg-danger shadow-sm">Ação Corretiva</span>';
+                    const tipoPonto = getWaterType(h.ponto || h.ponto_coleta);
+        
+                    const formatarValorHist = (val, param) => {
+                        if (val === null || val === "" || val === undefined) return '<span class="text-muted">---</span>';
+                        
+                        const numVal = typeof val === 'string' ? parseFloat(val.replace(',', '.')) : parseFloat(val);
+                        if (isNaN(numVal)) return '<span class="text-muted">---</span>';
+                        
+                        const conforme = verificarSeConformeHistorico(numVal, tipoPonto, param);
+                        const displayVal = Number.isInteger(numVal) ? numVal : numVal.toFixed(2);
+                        
+                        if (!conforme) return `<span class="text-danger fw-bold" title="Fora de Especificação"><i class="bi bi-x-circle"></i> ${displayVal}</span>`;
+                        return `<span class="text-success fw-bold"><i class="bi bi-check-circle"></i> ${displayVal}</span>`;
+                    };
+
+                    const valPh = formatarValorHist(extrairValor(h, 'ph', 'pH', 'resultado_ph', 'valor_ph'), 'ph');
+                    const valCond = formatarValorHist(extrairValor(h, 'condutividade', 'cond', 'resultado_condutividade'), 'condutividade');
+                    const valTds = formatarValorHist(extrairValor(h, 'tds', 'resultado_tds'), 'tds');
+                    const valCloro = formatarValorHist(extrairValor(h, 'cloro', 'resultado_cloro'), 'cloro');
+                    const valDureza = formatarValorHist(extrairValor(h, 'dureza', 'resultado_dureza'), 'dureza');
+                    const valAcidez = formatarValorHist(extrairValor(h, 'acidez', 'resultado_acidez'), 'acidez');
+                    const valResiduo = formatarValorHist(extrairValor(h, 'residuo_evaporacao', 'residuo', 'resultado_residuo'), 'residuo');
+
+                    const hEncoded = encodeURIComponent(JSON.stringify(h));
+                    
+                    let botoes = `<button class="btn btn-sm btn-outline-primary shadow-sm" onclick="abrirDetalhesAgua('${hEncoded}')" title="Visualizar Detalhes"><i class="bi bi-eye"></i></button>`;
+                    if (globalPerms.agua_edit) {
+                        botoes += `<button class="btn btn-sm btn-outline-warning shadow-sm ms-1" onclick="editarControleAgua('${hEncoded}')" title="Editar Registro"><i class="bi bi-pencil-square"></i></button>`;
+                    }
+                    if (globalPerms.agua_del) {
+                        botoes += `<button class="btn btn-sm btn-light border text-danger shadow-sm ms-1" onclick="excluirControleAgua(${h.id})" title="Excluir Registro"><i class="bi bi-trash"></i></button>`;
+                    }
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="text-start ps-4 small text-muted">${h.data_fmt || h.data_coleta || '---'}</td>
+                            <td class="text-start fw-bold text-dark">${h.ponto || h.ponto_coleta || '---'}</td>
+                            <td class="fw-bold">${valPh}</td>
+                            <td class="fw-bold text-primary">${valCond}</td>
+                            <td class="fw-bold text-secondary">${valTds}</td>
+                            <td class="fw-bold text-info">${valCloro}</td>
+                            <td class="fw-bold text-secondary">${valDureza}</td>
+                            <td class="fw-bold text-danger">${valAcidez}</td>
+                            <td class="fw-bold text-warning text-dark">${valResiduo}</td>
+                            <td>${badge}</td>
+                            <td class="text-center pe-4 text-nowrap">${botoes}</td>
+                        </tr>
+                    `;
+                });
+            } catch (error) { 
+                console.error("Erro em carregarHistoricoAgua:", error);
+                const tbody = document.getElementById("tabelaHistoricoAgua");
+                tbody.innerHTML = "<tr><td colspan='11' class='text-danger py-4'><i class='bi bi-exclamation-triangle'></i> Erro ao carregar os dados. Verifique o console para mais detalhes.</td></tr>"; 
+            }
+        }
+
+        window.abrirDetalhesAgua = async function(hEncoded) {
+            let h = JSON.parse(decodeURIComponent(hEncoded));
+            
+            if (h.ph === undefined && h.condutividade === undefined && h.cloro === undefined) {
+                try {
+                    const res = await fetch(`${API}/monitoramento/agua/${h.id}`);
+                    if (res.ok) {
+                        const fullData = await res.json();
+                        h = { ...h, ...fullData };
+                    }
+                } catch(e) { console.warn("Fallback de detalhes falhou", e); }
+            }
+
+            document.getElementById('detPonto').innerText = h.ponto || h.ponto_coleta || '---';
+            document.getElementById('detData').innerText = h.data_fmt || h.data_coleta || '---';
+            
+            const badge = h.status === 'CONFORME' || h.status_geral === 'CONFORME' ? '<span class="badge bg-success fs-6 shadow-sm">CONFORME</span>' : '<span class="badge bg-danger fs-6 shadow-sm">AÇÃO CORRETIVA</span>';
+            document.getElementById('detStatus').innerHTML = badge;
+            document.getElementById('detObs').innerText = h.observacoes || 'Nenhuma observação registrada.';
+
+            const tipoPonto = getWaterType(h.ponto || h.ponto_coleta);
+            const tbody = document.getElementById('detTabelaResultados');
+            tbody.innerHTML = '';
+
+            const params = [
+                { key: 'ph', nome: 'pH', valor: extrairValor(h, 'ph', 'pH', 'resultado_ph', 'valor_ph'), unid: '' },
+                { key: 'condutividade', nome: 'Condutividade', valor: extrairValor(h, 'condutividade', 'cond', 'resultado_condutividade'), unid: 'µS/cm' },
+                { key: 'tds', nome: 'Sólidos Totais Dissolvidos (TDS)', valor: extrairValor(h, 'tds', 'resultado_tds'), unid: 'ppm' },
+                { key: 'cloro', nome: 'Cloro Residual Livre', valor: extrairValor(h, 'cloro', 'resultado_cloro'), unid: 'mg/L' },
+                { key: 'dureza', nome: 'Dureza Total (CaCO₃)', valor: extrairValor(h, 'dureza', 'resultado_dureza'), unid: 'mg/L' },
+                { key: 'acidez', nome: 'Acidez (CaCO₃)', valor: extrairValor(h, 'acidez', 'resultado_acidez'), unid: 'mg/L' },
+                { key: 'residuo', nome: 'Resíduo Evaporação', valor: extrairValor(h, 'residuo_evaporacao', 'residuo', 'resultado_residuo'), unid: 'mg/L' }
+            ];
+
+            params.forEach(p => {
+                if (p.valor !== null && p.valor !== "" && p.valor !== undefined) {
+                    const spec = specsAgua[tipoPonto][p.key];
+                    const numVal = typeof p.valor === 'string' ? parseFloat(p.valor.replace(',', '.')) : parseFloat(p.valor);
+                    const conforme = verificarSeConformeHistorico(numVal, tipoPonto, p.key);
+                    const statusHtml = conforme ? '<span class="text-success fw-bold"><i class="bi bi-check-circle"></i> OK</span>' : '<span class="text-danger fw-bold"><i class="bi bi-x-circle"></i> Fora</span>';
+                    const valClass = conforme ? 'text-dark' : 'text-danger fw-bold';
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="text-start ps-3 fw-bold">${p.nome}</td>
+                            <td class="text-muted small">${spec ? spec.txt : '---'}</td>
+                            <td class="${valClass}">${numVal} <small class="text-muted fw-normal">${p.unid}</small></td>
+                            <td>${statusHtml}</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            if (tbody.innerHTML === '') {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-muted py-3">Nenhum parâmetro registrado nesta coleta.</td></tr>';
+            }
+
+            const modalEl = document.getElementById('modalDetalhesAgua');
+            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            modal.show();
+        };
+
+    </script>
+</body>
+</html>

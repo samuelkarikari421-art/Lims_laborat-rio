@@ -9,8 +9,10 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^8.0.2",
     "pdfkit": "^0.17.2",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "electron": "^28.0.0"

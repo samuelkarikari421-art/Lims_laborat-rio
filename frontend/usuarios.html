@@ -7,12 +7,24 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        .perm-group { background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 10px 15px; height: 100%; }
-        .perm-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #6c757d; margin-bottom: 8px; display: block; border-bottom: 1px solid #e9ecef; padding-bottom: 5px; }
+        .perm-group { background-color: #fcfcfc; border: 1px solid #dee2e6; border-radius: 8px; padding: 10px 15px; margin-bottom: 15px; }
+        .perm-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; display: block; border-bottom: 1px solid #e9ecef; padding-bottom: 5px; }
         .form-check { min-height: 1.2rem; margin-bottom: 0.3rem; }
-        .form-check-label { font-size: 0.85rem; cursor: pointer; }
+        .form-check-label { font-size: 0.8rem; cursor: pointer; }
         .miniatura-assinatura { max-height: 35px; border-radius: 4px; border: 1px solid #ccc; padding: 2px; background: #fff; object-fit: contain; }
         .sem-assinatura { font-size: 0.75rem; color: #999; font-style: italic; }
+        .nav-tabs .nav-link { font-weight: bold; color: #6c757d; border-radius: 8px 8px 0 0; }
+        .nav-tabs .nav-link.active { color: #0d6efd; border-color: #dee2e6 #dee2e6 #fff; background-color: #fff; }
+        
+        /* Barra de rolagem customizada para o painel de permissões */
+        .painel-permissoes { max-height: 45vh; overflow-y: auto; overflow-x: hidden; padding-right: 5px; }
+        .painel-permissoes::-webkit-scrollbar { width: 6px; }
+        .painel-permissoes::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
+        
+        /* Estilos do Status Online */
+        .status-dot { height: 10px; width: 10px; background-color: #bbb; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .status-dot.online { background-color: #198754; box-shadow: 0 0 5px #198754; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -21,211 +33,270 @@
         <button id="btnToggle" class="btn-toggle-sidebar"><i class="bi bi-list"></i></button>
         <div class="sidebar-header">
             <img src="assets/img/logo.png" alt="Logo Kari Kari" class="sidebar-logo">
-            <div class="brand-subtitle">LabKAriKariLIMS</div>
+            <div class="brand-subtitle">Lab KariKari LIMS</div>
         </div>
         <div class="sidebar-menu">
-            <div class="sidebar-label">Operacional</div>
-            <a href="dashboard.html" class="nav-link"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
-            <a href="amostras.html" class="nav-link"><i class="bi bi-box-seam"></i> <span>Amostras</span></a>
-            <a href="analises.html" class="nav-link"><i class="bi bi-clipboard-data"></i> <span>Análises</span></a>
-            <a href="laudos.html" class="nav-link"><i class="bi bi-file-earmark-check"></i> <span>Laudos</span></a>
-            <a href="reagentes.html" class="nav-link"><i class="bi bi-droplet-half"></i> <span>Reagentes</span></a>
-            <a href="solucoes.html" class="nav-link"><i class="bi bi-eyedropper"></i> <span>Soluções</span></a>
-            <div class="sidebar-label">Gestão</div>
-            <a href="relatorios.html" class="nav-link"><i class="bi bi-graph-up"></i> <span>Relatórios</span></a>
-            <a href="produtos.html" class="nav-link"><i class="bi bi-tags"></i> <span>Produtos</span></a>
-            <a href="usuarios.html" class="nav-link active"><i class="bi bi-people"></i> <span>Usuários</span></a>
+            <a href="#submenuLab" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-flask"></i> <span class="menu-text fw-bold">Laboratório</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse show" id="submenuLab">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <div class="sidebar-label mt-2 mb-1" style="font-size: 0.7rem;">Controle de Qualidade</div>
+                    <a href="dashboard.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                    <a href="amostras.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box-seam me-2"></i>Amostras</a>
+                    <a href="#submenuAnalises" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center py-1" style="font-size: 0.85rem;">
+                        <span><i class="bi bi-clipboard-data me-2"></i>Análises</span>
+                        <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
+                    </a>
+                    <div class="collapse" id="submenuAnalises">
+                        <div class="ps-3 ms-2 border-start border-secondary my-1">
+                            <a href="analises.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Bancada FIFO</a>
+                            <a href="calculos.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Cálculos</a>
+                            <a href="investigacao.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Investigação</a>
+                        </div>
+                    </div>
+                    <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
+                    <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
+                    <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
+                    <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
+                    <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
+                    <a href="relatorios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up me-2"></i>Relatórios</a>
+                    <a href="produtos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-tags me-2"></i>Produtos</a>
+                    <a href="ponto.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-clock-history me-2"></i>Ponto</a>
+                    <a href="usuarios.html" class="nav-link active py-1" style="font-size: 0.85rem;"><i class="bi bi-people me-2"></i>Usuários</a>
+                </div>
+            </div>
+            <a href="#submenuPD" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center mt-2">
+                <span><i class="bi bi-lightbulb"></i> <span class="menu-text fw-bold">P&D</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse" id="submenuPD">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-tools me-2"></i>Projetos</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-journal-text me-2"></i>Fórmulas</a>
+                </div>
+            </div>
         </div>
         <div class="sidebar-footer"><button onclick="window.location.href='login.html'" class="btn-logout"><i class="bi bi-box-arrow-left me-2"></i> <span>Sair</span></button></div>
     </nav>
 
     <div class="main-content">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold text-dark">Gestão de Usuários</h2>
-            <button class="btn btn-primary px-4" id="btnNovoUsuario" onclick="abrirModal()">
-                <i class="bi bi-plus-lg"></i> Novo Usuário
+            <h2 class="fw-bold text-dark">Gestão do Sistema e Usuários</h2>
+            <button class="btn btn-primary px-4 fw-bold shadow-sm" id="btnNovoUsuario" onclick="abrirModal()">
+                <i class="bi bi-person-plus"></i> Novo Usuário
             </button>
         </div>
 
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-0">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-4 py-3">Nome</th>
-                            <th>Cargo</th>
-                            <th>Login</th>
-                            <th>Perfil Base</th>
-                            <th>Assinatura</th>
-                            <th>Nível de Acesso</th>
-                            <th class="text-end pe-4">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelaUsuarios"></tbody>
-                </table>
+        <ul class="nav nav-tabs mb-4" id="usersTab" role="tablist">
+            <li class="nav-item" role="presentation"><button class="nav-link active" id="gestao-tab" data-bs-toggle="tab" data-bs-target="#tab-gestao" type="button" role="tab"><i class="bi bi-people"></i> Equipe</button></li>
+            <li class="nav-item abaAuditoria" role="presentation" style="display: none;"><button class="nav-link text-danger" id="auditoria-tab" data-bs-toggle="tab" data-bs-target="#tab-auditoria" type="button" role="tab" onclick="carregarAuditoria()"><i class="bi bi-shield-lock"></i> Acessos e IPs</button></li>
+            <li class="nav-item abaAuditoria" role="presentation" style="display: none;"><button class="nav-link text-primary" id="atividades-tab" data-bs-toggle="tab" data-bs-target="#tab-atividades" type="button" role="tab" onclick="carregarAtividades()"><i class="bi bi-card-list"></i> Histórico de Atividades</button></li>
+        </ul>
+
+        <div class="tab-content" id="usersTabContent">
+            <div class="tab-pane fade show active" id="tab-gestao" role="tabpanel">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-0">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4 py-3">Status</th>
+                                    <th>Nome</th>
+                                    <th>Cargo</th>
+                                    <th>Login</th>
+                                    <th>E-mail</th>
+                                    <th>Perfil Base</th>
+                                    <th>Assinatura</th>
+                                    <th class="text-center">Alertas</th>
+                                    <th class="text-end pe-4">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaUsuarios"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-auditoria" role="tabpanel">
+                <div class="card shadow-sm border-0 border-top border-danger border-3">
+                    <div class="card-header bg-white fw-bold py-3 text-danger d-flex justify-content-between align-items-center"><span><i class="bi bi-eye"></i> Auditoria de Logins e Dispositivos</span></div>
+                    <div class="card-body p-0" style="max-height: 500px; overflow-y: auto;">
+                        <table class="table table-hover align-middle mb-0 text-center" style="font-size: 0.9rem;">
+                            <thead class="table-light sticky-top"><tr><th class="text-start ps-4">Usuário</th><th>Perfil</th><th>Data e Hora do Login</th><th>Endereço IP (Origem)</th><th>Sistema / Navegador</th></tr></thead>
+                            <tbody id="tabelaAuditoria"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-atividades" role="tabpanel">
+                <div class="card shadow-sm border-0 border-top border-primary border-3">
+                    <div class="card-header bg-white fw-bold py-3 text-primary d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-activity"></i> Rastreabilidade de Ações (Audit Trail)</span><button class="btn btn-sm btn-outline-primary" onclick="carregarAtividades()"><i class="bi bi-arrow-clockwise"></i> Atualizar Log</button>
+                    </div>
+                    <div class="card-body p-0" style="max-height: 500px; overflow-y: auto;">
+                        <table class="table table-hover align-middle mb-0 text-center" style="font-size: 0.9rem;">
+                            <thead class="table-light sticky-top"><tr><th class="text-start ps-4">Data e Hora</th><th>Usuário Responsável</th><th>Ação Realizada</th><th class="text-start">Detalhes / Identificação</th></tr></thead>
+                            <tbody id="tabelaAtividades"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="modal fade" id="modalUsuario" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header bg-white border-bottom-0">
                     <h5 class="modal-title fw-bold" id="modalTitle">Configurar Usuário</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-light">
                     <form id="formUsuario">
                         <input type="hidden" id="userId">
                         
                         <div class="row">
+                            <div class="col-md-6 mb-3"><label class="form-label text-muted small fw-bold">NOME COMPLETO *</label><input type="text" id="nome" class="form-control" required></div>
+                            <div class="col-md-6 mb-3"><label class="form-label text-muted small fw-bold">CARGO</label><input type="text" id="cargo" class="form-control" placeholder="Ex: Analista Jr."></div>
+                            <div class="col-md-3 mb-3"><label class="form-label text-muted small fw-bold">LOGIN *</label><input type="text" id="loginUser" class="form-control" required></div>
                             <div class="col-md-5 mb-3">
-                                <label class="form-label text-muted small fw-bold">NOME COMPLETO</label>
-                                <input type="text" id="nome" class="form-control" required>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label text-muted small fw-bold">CARGO</label>
-                                <input type="text" id="cargo" class="form-control" placeholder="Ex: Analista Jr.">
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label class="form-label text-muted small fw-bold">LOGIN</label>
-                                <input type="text" id="loginUser" class="form-control" required>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label text-muted small fw-bold">PERFIL DE ACESSO (SISTEMA)</label>
+                                <label class="form-label text-muted small fw-bold">PERFIL DE ACESSO (SISTEMA) *</label>
                                 <select id="perfil" class="form-select text-primary fw-bold" onchange="aplicarModeloPermissao()">
-                                    <option value="ANALISTA">Analista</option>
-                                    <option value="QUIMICO">Químico (Responsável)</option>
-                                    <option value="ADMIN">Administrador</option>
-                                    <option value="VISUALIZADOR">Somente Leitura</option>
+                                    <option value="ANALISTA">Analista</option><option value="QUIMICO">Químico (Responsável)</option>
+                                    <option value="ADMIN">Administrador</option><option value="VISUALIZADOR">Somente Leitura</option>
                                     <option value="APRENDIZ">Jovem Aprendiz</option>
                                 </select>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label text-muted small fw-bold">SENHA</label>
-                                <input type="password" id="senha" class="form-control" placeholder="Deixe em branco para não alterar">
+                            <div class="col-md-4 mb-3"><label class="form-label text-muted small fw-bold">SENHA</label><input type="password" id="senha" class="form-control" placeholder="Em branco para manter"></div>
+                            <div class="col-md-12 mb-3"><label class="form-label text-primary small fw-bold"><i class="bi bi-envelope"></i> E-MAIL CORPORATIVO</label><input type="email" id="usuEmail" class="form-control" placeholder="Necessário para receber alertas (Opcional)"></div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="form-check form-switch bg-white p-3 border rounded shadow-sm d-flex align-items-center">
+                                    <input class="form-check-input ms-0 me-3 border-danger" type="checkbox" id="recebeAlertas" style="width: 2.5em; height: 1.2em;">
+                                    <label class="form-check-label fw-bold text-danger mb-0" for="recebeAlertas"><i class="bi bi-bell-fill"></i> Ativar Notificações por E-mail (Laudo Reprovado)</label>
+                                </div>
                             </div>
                         </div>
 
                         <div class="row mb-4">
                             <div class="col-12">
-                                <label class="form-label text-muted small fw-bold"><i class="bi bi-pen"></i> IMAGEM DA ASSINATURA (Para Laudos)</label>
+                                <label class="form-label text-muted small fw-bold"><i class="bi bi-pen"></i> IMAGEM DA ASSINATURA</label>
                                 <div class="d-flex align-items-center gap-3">
                                     <input type="file" id="assinatura" class="form-control w-75" accept="image/png, image/jpeg, image/jpg">
-                                    
                                     <div id="containerAssinaturaAtual" style="display:none;" class="d-flex flex-column align-items-center">
                                         <img id="imgAssinaturaAtual" src="" class="miniatura-assinatura" style="max-height: 40px;">
-                                        <button type="button" class="btn btn-sm btn-link text-danger p-0 mt-1" onclick="apagarAssinatura()" style="font-size: 0.75rem; text-decoration: none;">
-                                            Remover
-                                        </button>
+                                        <button type="button" class="btn btn-sm btn-link text-danger p-0 mt-1" onclick="apagarAssinatura()" style="font-size: 0.75rem; text-decoration: none;">Remover</button>
                                     </div>
                                 </div>
-                                <small class="text-muted" style="font-size: 0.7rem;">Formatos aceitos: PNG, JPG. Fundo transparente recomendado.</small>
                             </div>
                         </div>
 
-                        <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">Controle de Acessos e Ações</h6>
+                        <h6 class="fw-bold text-dark border-bottom pb-2 mb-3 mt-4">Controles de Acesso Granular (Módulos e Ações)</h6>
                         
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <div class="perm-group">
-                                    <span class="perm-title"><i class="bi bi-box-seam"></i> Amostras</span>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="perm_amostras_view">
-                                        <label class="form-check-label" for="perm_amostras_view">Visualizar Lista</label>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="perm_amostras_edit">
-                                        <label class="form-check-label" for="perm_amostras_edit">Criar / Editar</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="perm-group">
-                                    <span class="perm-title"><i class="bi bi-clipboard-data"></i> Análises</span>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="perm_analises_view">
-                                        <label class="form-check-label" for="perm_analises_view">Visualizar</label>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="perm_analises_register">
-                                        <label class="form-check-label" for="perm_analises_register">Registrar Result.</label>
+                        <div class="painel-permissoes bg-white p-3 border rounded shadow-sm">
+                            <div class="row g-3">
+                                
+                                <div class="col-md-3">
+                                    <div class="perm-group border-primary">
+                                        <span class="perm-title text-primary"><i class="bi bi-box-seam"></i> 1. Amostras</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-primary" type="checkbox" id="perm_amostras_view"><label class="form-check-label" for="perm_amostras_view">Visualizar Tela</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-primary" type="checkbox" id="perm_amostras_create"><label class="form-check-label" for="perm_amostras_create">Criar Novas</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-primary" type="checkbox" id="perm_amostras_edit"><label class="form-check-label" for="perm_amostras_edit">Editar Amostras</label></div>
+                                        <div class="form-check form-switch border-bottom pb-2 mb-2"><input class="form-check-input border-danger" type="checkbox" id="perm_amostras_delete"><label class="form-check-label text-danger" for="perm_amostras_delete">Excluir Amostras</label></div>
+                                        
+                                        <span class="perm-title text-primary mt-3"><i class="bi bi-clipboard-data"></i> 2. Análises (FIFO)</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-primary" type="checkbox" id="perm_fifo_view"><label class="form-check-label" for="perm_fifo_view">Ver Bancada FIFO</label></div>
+                                        <div class="form-check form-switch border-bottom pb-2 mb-2"><input class="form-check-input border-primary" type="checkbox" id="perm_fifo_execute"><label class="form-check-label fw-bold" for="perm_fifo_execute">Fazer Análise</label></div>
+                                        
+                                        <span class="perm-title text-primary mt-3"><i class="bi bi-calculator"></i> 3. Calculadora</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-primary" type="checkbox" id="perm_calc_start"><label class="form-check-label" for="perm_calc_start">Iniciar Cálculo</label></div>
+                                        <div class="form-check form-switch border-bottom pb-2 mb-2"><input class="form-check-input border-primary" type="checkbox" id="perm_calc_send"><label class="form-check-label" for="perm_calc_send">Enviar p/ FIFO</label></div>
+                                        
+                                        <span class="perm-title text-primary mt-3"><i class="bi bi-search"></i> 4. Investigação</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-primary" type="checkbox" id="perm_inv_view"><label class="form-check-label" for="perm_inv_view">Ver Histórico</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-danger" type="checkbox" id="perm_inv_start"><label class="form-check-label text-danger fw-bold" for="perm_inv_start">Iniciar Investigação</label></div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="col-md-4">
-                                <div class="perm-group">
-                                    <span class="perm-title"><i class="bi bi-file-earmark-check"></i> Laudos</span>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="perm_laudos_view">
-                                        <label class="form-check-label" for="perm_laudos_view">Visualizar</label>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="perm_laudos_download">
-                                        <label class="form-check-label" for="perm_laudos_download">Baixar / Imprimir</label>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="perm_laudos_issue">
-                                        <label class="form-check-label text-primary fw-bold" for="perm_laudos_issue">Emitir / Assinar</label>
-                                    </div>
-                                    <div class="form-check form-switch mt-2 border-top pt-2">
-                                        <input class="form-check-input border-danger" type="checkbox" id="perm_laudos_cancel">
-                                        <label class="form-check-label text-danger fw-bold" for="perm_laudos_cancel">Cancelar Laudos</label>
+                                <div class="col-md-3">
+                                    <div class="perm-group border-info">
+                                        <span class="perm-title text-info text-dark"><i class="bi bi-file-earmark-check"></i> 5. Laudos</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_laudos_view"><label class="form-check-label" for="perm_laudos_view">Ver Laudos</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_laudos_download"><label class="form-check-label" for="perm_laudos_download">Imprimir PDF</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-success" type="checkbox" id="perm_laudos_issue"><label class="form-check-label text-success" for="perm_laudos_issue">Assinar Laudos</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-warning" type="checkbox" id="perm_laudos_remove_sig"><label class="form-check-label text-warning text-dark" for="perm_laudos_remove_sig">Remover Assinatura</label></div>
+                                        <div class="form-check form-switch border-bottom pb-2 mb-2"><input class="form-check-input border-danger" type="checkbox" id="perm_laudos_cancel"><label class="form-check-label text-danger" for="perm_laudos_cancel">Excluir Laudos</label></div>
+
+                                        <span class="perm-title text-info text-dark mt-3"><i class="bi bi-file-earmark-pdf"></i> 6. CoAs Externos</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_coa_reg"><label class="form-check-label" for="perm_coa_reg">Registrar CoA</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_coa_down"><label class="form-check-label" for="perm_coa_down">Baixar Anexo</label></div>
+                                        <div class="form-check form-switch border-bottom pb-2 mb-2"><input class="form-check-input border-danger" type="checkbox" id="perm_coa_del"><label class="form-check-label text-danger" for="perm_coa_del">Excluir CoA</label></div>
+
+                                        <span class="perm-title text-info text-dark mt-3"><i class="bi bi-tags"></i> 7. Produtos</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_prod_view"><label class="form-check-label" for="perm_prod_view">Visualizar Catálogo</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_prod_reg"><label class="form-check-label" for="perm_prod_reg">Cadastrar Produto</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_prod_edit"><label class="form-check-label" for="perm_prod_edit">Editar Produto</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_prod_regras"><label class="form-check-label fw-bold" for="perm_prod_regras">Gerenciar Regras</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-danger" type="checkbox" id="perm_prod_del"><label class="form-check-label text-danger" for="perm_prod_del">Excluir Produto</label></div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="perm-group">
-                                    <span class="perm-title"><i class="bi bi-tags"></i> Cadastros & Estoque</span>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="perm_reagentes_view">
-                                        <label class="form-check-label" for="perm_reagentes_view">Ver Reagentes</label>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="perm_reagentes_edit">
-                                        <label class="form-check-label" for="perm_reagentes_edit">Movimentar Reagentes</label>
-                                    </div>
-                                    
-                                    <div class="form-check form-switch mt-2 pt-2 border-top">
-                                        <input class="form-check-input" type="checkbox" id="perm_solucoes_view">
-                                        <label class="form-check-label" for="perm_solucoes_view">Ver Soluções</label>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="perm_solucoes_edit">
-                                        <label class="form-check-label text-primary fw-bold" for="perm_solucoes_edit">Gerir Soluções</label>
-                                    </div>
-
-                                    <div class="form-check form-switch mt-2 pt-2 border-top">
-                                        <input class="form-check-input" type="checkbox" id="perm_produtos_edit">
-                                        <label class="form-check-label" for="perm_produtos_edit">Gerir Produtos</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="perm-group">
-                                    <span class="perm-title text-danger"><i class="bi bi-shield-lock"></i> Administração</span>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="perm_dashboard_view">
-                                        <label class="form-check-label" for="perm_dashboard_view">Ver Dashboard</label>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="perm_users_edit">
-                                        <label class="form-check-label text-danger fw-bold" for="perm_users_edit">Gerir Usuários</label>
+                                
+                                <div class="col-md-3">
+                                    <div class="perm-group border-warning">
+                                        <span class="perm-title text-warning text-dark"><i class="bi bi-droplet-half"></i> 8. Reagentes</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-warning" type="checkbox" id="perm_reag_reg"><label class="form-check-label" for="perm_reag_reg">Registrar Novo</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-warning" type="checkbox" id="perm_reag_edit"><label class="form-check-label" for="perm_reag_edit">Editar</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-warning" type="checkbox" id="perm_reag_baixa"><label class="form-check-label" for="perm_reag_baixa">Dar Baixa (Uso)</label></div>
+                                        <div class="form-check form-switch border-bottom pb-2 mb-2"><input class="form-check-input border-danger" type="checkbox" id="perm_reag_del"><label class="form-check-label text-danger" for="perm_reag_del">Excluir Reagente</label></div>
+                                        
+                                        <span class="perm-title text-warning text-dark mt-3"><i class="bi bi-eyedropper"></i> 9. Soluções</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-warning" type="checkbox" id="perm_sol_create"><label class="form-check-label" for="perm_sol_create">Criar Nova</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-warning" type="checkbox" id="perm_sol_edit"><label class="form-check-label" for="perm_sol_edit">Editar</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-warning" type="checkbox" id="perm_sol_baixa"><label class="form-check-label" for="perm_sol_baixa">Dar Baixa (Uso)</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-warning" type="checkbox" id="perm_sol_desc"><label class="form-check-label" for="perm_sol_desc">Descartar</label></div>
+                                        <div class="form-check form-switch border-bottom pb-2 mb-2"><input class="form-check-input border-danger" type="checkbox" id="perm_sol_del"><label class="form-check-label text-danger" for="perm_sol_del">Excluir Solução</label></div>
+                                        
+                                        <span class="perm-title text-warning text-dark mt-3"><i class="bi bi-box2"></i> 10. Materiais Consumo</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-warning" type="checkbox" id="perm_mat_reg"><label class="form-check-label" for="perm_mat_reg">Cadastrar Material</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-warning" type="checkbox" id="perm_mat_edit"><label class="form-check-label" for="perm_mat_edit">Editar</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-warning" type="checkbox" id="perm_mat_uso"><label class="form-check-label" for="perm_mat_uso">Registrar/Ver Uso</label></div>
+                                        <div class="form-check form-switch border-bottom pb-2 mb-2"><input class="form-check-input border-danger" type="checkbox" id="perm_mat_del"><label class="form-check-label text-danger" for="perm_mat_del">Excluir Material</label></div>
+                                        
+                                        <span class="perm-title text-info text-dark mt-3"><i class="bi bi-droplet"></i> 11. Monit. Água</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_agua_view"><label class="form-check-label" for="perm_agua_view">Ver Histórico</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_agua_start"><label class="form-check-label fw-bold" for="perm_agua_start">Iniciar Análise</label></div>
                                     </div>
                                 </div>
+
+                                <div class="col-md-3">
+                                    <div class="perm-group border-danger">
+                                        <span class="perm-title text-secondary"><i class="bi bi-clock-history"></i> 12. Ponto & RH</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-secondary" type="checkbox" id="perm_registra_ponto"><label class="form-check-label text-primary" for="perm_registra_ponto">Sujeito a Bater Ponto</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-secondary" type="checkbox" id="perm_ponto_view"><label class="form-check-label" for="perm_ponto_view">Ver Tela Ponto</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-secondary" type="checkbox" id="perm_ponto_edit"><label class="form-check-label" for="perm_ponto_edit">Gerenciar RH</label></div>
+                                        <div class="form-check form-switch border-bottom pb-2 mb-2"><input class="form-check-input border-success" type="checkbox" id="perm_ponto_sign"><label class="form-check-label text-success" for="perm_ponto_sign">Assinar PDFs RH</label></div>
+
+                                        <span class="perm-title text-danger mt-3"><i class="bi bi-shield-lock"></i> 13. Gestão LIMS</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-danger" type="checkbox" id="perm_dashboard_view"><label class="form-check-label" for="perm_dashboard_view">Ver Dashboards (Geral)</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-warning" type="checkbox" id="perm_monitoramento_view"><label class="form-check-label text-warning text-dark" for="perm_monitoramento_view">Monitor. de Tendências</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-danger" type="checkbox" id="perm_users_edit"><label class="form-check-label text-danger fw-bold" for="perm_users_edit">Gerir Usuários LIMS</label></div>
+                                        <div class="form-check form-switch mt-1"><input class="form-check-input border-dark" type="checkbox" id="perm_logs_view"><label class="form-check-label text-dark fw-bold" for="perm_logs_view"><i class="bi bi-journal-code"></i> Ver Logs e Auditoria</label></div>
+                                    </div>
+                                </div>
+                                
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-end mt-4">
-                            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary px-4 fw-bold">Salvar Usuário</button>
+                            <button type="button" class="btn btn-light border me-2" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary px-5 fw-bold">Salvar Usuário</button>
                         </div>
                     </form>
                 </div>
@@ -240,26 +311,7 @@
         const API_URL = window.location.origin + "/api/usuarios";
         let modalInstance;
         let deveRemoverAssinatura = false;
-
-        function aplicarTravaGlobal() {
-            const userStr = localStorage.getItem("limsUser");
-            if (!userStr) return;
-
-            const user = JSON.parse(userStr);
-            const perfilUser = String(user.perfil || "").toUpperCase().trim();
-            const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
-            
-            const podeEditar = isAdmin || (user.permissoes && user.permissoes.users_edit === true);
-
-            if (!podeEditar) {
-                const style = document.createElement('style');
-                style.innerHTML = `
-                    #btnNovoUsuario { display: none !important; }
-                    button[onclick*="excluirUsuario"], button[onclick*="editarUsuario"] { display: none !important; }
-                `;
-                document.head.appendChild(style);
-            }
-        }
+        let updateInterval; // Variável para o loop de atualização do Status
 
         function getAuthHeaders() {
             const token = localStorage.getItem("limsToken");
@@ -267,13 +319,73 @@
             return { "Content-Type": "application/json", "Authorization": `Bearer ${token}` };
         }
 
-        // 🔥 MODELOS ATUALIZADOS COM "solucoes_view" E "solucoes_edit"
+        // 🔥 O NOVO MOTOR DE PERMISSÕES GRANULARES 🔥
         const modelos = {
-            'ADMIN': { amostras_view: true, amostras_edit: true, analises_view: true, analises_register: true, laudos_view: true, laudos_download: true, laudos_issue: true, laudos_cancel: true, reagentes_view: true, reagentes_edit: true, solucoes_view: true, solucoes_edit: true, produtos_edit: true, dashboard_view: true, users_edit: true },
-            'QUIMICO': { amostras_view: true, amostras_edit: true, analises_view: true, analises_register: true, laudos_view: true, laudos_download: true, laudos_issue: true, laudos_cancel: true, reagentes_view: true, reagentes_edit: true, solucoes_view: true, solucoes_edit: true, produtos_edit: true, dashboard_view: true, users_edit: false },
-            'ANALISTA': { amostras_view: true, amostras_edit: true, analises_view: true, analises_register: true, laudos_view: true, laudos_download: false, laudos_issue: false, laudos_cancel: false, reagentes_view: true, reagentes_edit: true, solucoes_view: true, solucoes_edit: true, produtos_edit: false, dashboard_view: true, users_edit: false },
-            'APRENDIZ': { amostras_view: true, amostras_edit: false, analises_view: true, analises_register: true, laudos_view: true, laudos_download: false, laudos_issue: false, laudos_cancel: false, reagentes_view: true, reagentes_edit: false, solucoes_view: true, solucoes_edit: false, produtos_edit: false, dashboard_view: true, users_edit: false },
-            'VISUALIZADOR': { amostras_view: true, amostras_edit: false, analises_view: true, analises_register: false, laudos_view: true, laudos_download: true, laudos_issue: false, laudos_cancel: false, reagentes_view: true, reagentes_edit: false, solucoes_view: true, solucoes_edit: false, produtos_edit: false, dashboard_view: true, users_edit: false }
+            'ADMIN': { 
+                amostras_view: true, amostras_create: true, amostras_edit: true, amostras_delete: true,
+                fifo_view: true, fifo_execute: true,
+                calc_start: true, calc_send: true,
+                inv_view: true, inv_start: true,
+                agua_view: true, agua_start: true,
+                reag_reg: true, reag_edit: true, reag_baixa: true, reag_del: true,
+                sol_create: true, sol_edit: true, sol_baixa: true, sol_desc: true, sol_del: true,
+                coa_reg: true, coa_down: true, coa_del: true,
+                mat_reg: true, mat_uso: true, mat_edit: true, mat_del: true,
+                prod_view: true, prod_reg: true, prod_edit: true, prod_regras: true, prod_del: true,
+                laudos_view: true, laudos_download: true, laudos_issue: true, laudos_remove_sig: true, laudos_cancel: true, dashboard_view: true, monitoramento_view: true, users_edit: true, registra_ponto: false, ponto_view: true, ponto_edit: true, ponto_sign: true, logs_view: true 
+            },
+            'QUIMICO': { 
+                amostras_view: true, amostras_create: true, amostras_edit: true, amostras_delete: false,
+                fifo_view: true, fifo_execute: true,
+                calc_start: true, calc_send: true,
+                inv_view: true, inv_start: true,
+                agua_view: true, agua_start: true,
+                reag_reg: true, reag_edit: true, reag_baixa: true, reag_del: false,
+                sol_create: true, sol_edit: true, sol_baixa: true, sol_desc: true, sol_del: false,
+                coa_reg: true, coa_down: true, coa_del: false,
+                mat_reg: true, mat_uso: true, mat_edit: true, mat_del: false,
+                prod_view: true, prod_reg: true, prod_edit: true, prod_regras: true, prod_del: false,
+                laudos_view: true, laudos_download: true, laudos_issue: true, laudos_remove_sig: true, laudos_cancel: false, dashboard_view: true, monitoramento_view: true, users_edit: false, registra_ponto: false, ponto_view: true, ponto_edit: true, ponto_sign: true, logs_view: false 
+            },
+            'ANALISTA': { 
+                amostras_view: true, amostras_create: true, amostras_edit: true, amostras_delete: false,
+                fifo_view: true, fifo_execute: true,
+                calc_start: true, calc_send: true,
+                inv_view: true, inv_start: true,
+                agua_view: true, agua_start: true,
+                reag_reg: false, reag_edit: false, reag_baixa: true, reag_del: false,
+                sol_create: true, sol_edit: true, sol_baixa: true, sol_desc: true, sol_del: false,
+                coa_reg: true, coa_down: true, coa_del: false,
+                mat_reg: false, mat_uso: true, mat_edit: false, mat_del: false,
+                prod_view: true, prod_reg: false, prod_edit: false, prod_regras: false, prod_del: false,
+                laudos_view: true, laudos_download: false, laudos_issue: false, laudos_remove_sig: false, laudos_cancel: false, dashboard_view: true, monitoramento_view: false, users_edit: false, registra_ponto: true, ponto_view: false, ponto_edit: false, ponto_sign: false, logs_view: false 
+            },
+            'APRENDIZ': { 
+                amostras_view: true, amostras_create: false, amostras_edit: false, amostras_delete: false,
+                fifo_view: true, fifo_execute: false,
+                calc_start: true, calc_send: false,
+                inv_view: true, inv_start: false,
+                agua_view: true, agua_start: false,
+                reag_reg: false, reag_edit: false, reag_baixa: false, reag_del: false,
+                sol_create: false, sol_edit: false, sol_baixa: false, sol_desc: false, sol_del: false,
+                coa_reg: false, coa_down: true, coa_del: false,
+                mat_reg: false, mat_uso: false, mat_edit: false, mat_del: false,
+                prod_view: true, prod_reg: false, prod_edit: false, prod_regras: false, prod_del: false,
+                laudos_view: true, laudos_download: false, laudos_issue: false, laudos_remove_sig: false, laudos_cancel: false, dashboard_view: true, monitoramento_view: false, users_edit: false, registra_ponto: true, ponto_view: false, ponto_edit: false, ponto_sign: false, logs_view: false 
+            },
+            'VISUALIZADOR': { 
+                amostras_view: true, amostras_create: false, amostras_edit: false, amostras_delete: false,
+                fifo_view: true, fifo_execute: false,
+                calc_start: false, calc_send: false,
+                inv_view: true, inv_start: false,
+                agua_view: true, agua_start: false,
+                reag_reg: false, reag_edit: false, reag_baixa: false, reag_del: false,
+                sol_create: false, sol_edit: false, sol_baixa: false, sol_desc: false, sol_del: false,
+                coa_reg: false, coa_down: true, coa_del: false,
+                mat_reg: false, mat_uso: false, mat_edit: false, mat_del: false,
+                prod_view: true, prod_reg: false, prod_edit: false, prod_regras: false, prod_del: false,
+                laudos_view: true, laudos_download: true, laudos_issue: false, laudos_remove_sig: false, laudos_cancel: false, dashboard_view: true, monitoramento_view: false, users_edit: false, registra_ponto: false, ponto_view: false, ponto_edit: false, ponto_sign: false, logs_view: false 
+            }
         };
 
         const fileToBase64 = file => new Promise((resolve, reject) => {
@@ -281,17 +393,33 @@
             reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error);
         });
 
+        // 🔥 FUNÇÃO VERIFICAR STATUS ONLINE
+        function isUserOnline(ultimoAcesso) {
+            if (!ultimoAcesso) return false;
+            const dataAcesso = new Date(ultimoAcesso);
+            const agora = new Date();
+            // Se a diferença for menor que 10 minutos (600000 ms), considera online
+            return (agora - dataAcesso) < 600000;
+        }
+
         async function carregarUsuarios() {
             try {
                 const res = await fetch(API_URL, { headers: getAuthHeaders() });
-                if (res.status === 401 || res.status === 403) {
-                    alert("Sessão expirada ou sem permissão.");
-                    window.location.href = "login.html";
-                    return;
-                }
-                const usuarios = await res.json();
+                if (res.status === 401 || res.status === 403) return window.location.href = "login.html";
+                
+                let usuarios = await res.json();
                 const tbody = document.getElementById("tabelaUsuarios");
                 tbody.innerHTML = "";
+
+                // Ordena a lista: Usuários Online Primeiro, depois por Ordem Alfabética
+                usuarios.sort((a, b) => {
+                    const aOnline = isUserOnline(a.ultimo_acesso);
+                    const bOnline = isUserOnline(b.ultimo_acesso);
+                    if (aOnline === bOnline) {
+                        return a.nome.localeCompare(b.nome);
+                    }
+                    return aOnline ? -1 : 1;
+                });
 
                 usuarios.forEach(u => {
                     let badge = "bg-secondary";
@@ -300,33 +428,36 @@
                     if(u.perfil === 'ANALISTA') badge = "bg-info text-dark";
                     if(u.perfil === 'APRENDIZ') badge = "bg-warning text-dark";
                     
-                    const perms = u.permissoes || {};
-                    const totalPerms = Object.values(perms).filter(v => v === true).length;
-                    const userString = encodeURIComponent(JSON.stringify(u));
-                    const htmlAssinatura = u.assinatura ? `<img src="${u.assinatura}" class="miniatura-assinatura" alt="Assinatura">` : `<span class="sem-assinatura">Pendente</span>`;
+                    const isOnline = isUserOnline(u.ultimo_acesso);
+                    const dotClass = isOnline ? "status-dot online" : "status-dot";
+                    const statusText = isOnline ? "<span class='text-success fw-bold small'>Online</span>" : "<span class='text-muted small'>Offline</span>";
 
-                    tbody.innerHTML += `
-                        <tr>
-                            <td class="ps-4 fw-bold text-dark">${u.nome}</td>
-                            <td class="text-muted">${u.cargo || '-'}</td>
-                            <td>${u.login}</td>
-                            <td><span class="badge ${badge}">${u.perfil}</span></td>
-                            <td>${htmlAssinatura}</td>
-                            <td><small class="text-muted">${totalPerms} permissões ativas</small></td>
-                            <td class="text-end pe-4 text-nowrap">
-                                <button onclick="editarUsuario('${userString}')" class="btn btn-sm btn-outline-primary me-1" title="Editar Usuário"><i class="bi bi-pencil"></i></button>
-                                <button onclick="excluirUsuario(${u.id})" class="btn btn-sm btn-outline-danger" title="Apagar Usuário"><i class="bi bi-trash"></i></button>
-                            </td>
-                        </tr>
-                    `;
+                    const userString = encodeURIComponent(JSON.stringify(u));
+                    const htmlAssinatura = u.assinatura ? `<img src="${u.assinatura}" class="miniatura-assinatura">` : `<span class="sem-assinatura">Pendente</span>`;
+                    const htmlEmail = u.email ? `<a href="mailto:${u.email}" class="text-decoration-none small">${u.email}</a>` : `-`;
+                    const htmlAlerta = u.recebe_alertas ? `<span class="badge bg-danger rounded-pill shadow-sm"><i class="bi bi-bell-fill"></i> Ativo</span>` : `<span class="badge bg-light text-muted border">OFF</span>`;
+
+                    tbody.innerHTML += `<tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <span class="${dotClass}" title="Último acesso: ${u.ultimo_acesso_fmt || 'Nunca'}"></span>
+                                ${statusText}
+                            </div>
+                        </td>
+                        <td class="fw-bold text-dark">${u.nome}</td>
+                        <td class="text-muted">${u.cargo || '-'}</td><td>${u.login}</td><td>${htmlEmail}</td>
+                        <td><span class="badge ${badge}">${u.perfil}</span></td><td>${htmlAssinatura}</td><td class="text-center">${htmlAlerta}</td>
+                        <td class="text-end pe-4 text-nowrap">
+                            <button onclick="editarUsuario('${userString}')" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-pencil"></i></button>
+                            <button onclick="excluirUsuario(${u.id})" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </td></tr>`;
                 });
             } catch(e) { console.error(e); }
         }
 
         function aplicarModeloPermissao() {
             const perfil = document.getElementById("perfil").value;
-            const regras = modelos[perfil];
-            for (const [key, value] of Object.entries(regras)) {
+            for (const [key, value] of Object.entries(modelos[perfil])) {
                 const el = document.getElementById(`perm_${key}`);
                 if (el) el.checked = value;
             }
@@ -348,7 +479,6 @@
         window.editarUsuario = function(userEncoded) {
             deveRemoverAssinatura = false;
             const u = JSON.parse(decodeURIComponent(userEncoded));
-            
             document.getElementById("userId").value = u.id;
             document.getElementById("nome").value = u.nome;
             document.getElementById("loginUser").value = u.login;
@@ -356,33 +486,23 @@
             document.getElementById("perfil").value = u.perfil;
             document.getElementById("senha").value = ""; 
             document.getElementById("assinatura").value = ""; 
+            document.getElementById("usuEmail").value = u.email || "";
+            document.getElementById("recebeAlertas").checked = u.recebe_alertas || false;
 
             const containerAssinatura = document.getElementById("containerAssinaturaAtual");
-            if (u.assinatura) {
-                document.getElementById("imgAssinaturaAtual").src = u.assinatura;
-                containerAssinatura.style.display = "flex";
-            } else {
-                containerAssinatura.style.display = "none";
-            }
+            if (u.assinatura) { document.getElementById("imgAssinaturaAtual").src = u.assinatura; containerAssinatura.style.display = "flex"; } 
+            else { document.getElementById("imgAssinaturaAtual").src = ""; containerAssinatura.style.display = "none"; }
 
             const p = u.permissoes || {};
-            // 🔥 ADICIONADO AS CHAVES "solucoes_view" E "solucoes_edit"
-            const allKeys = ['amostras_view', 'amostras_edit', 'analises_view', 'analises_register', 'laudos_view', 'laudos_download', 'laudos_issue', 'laudos_cancel', 'reagentes_view', 'reagentes_edit', 'solucoes_view', 'solucoes_edit', 'produtos_edit', 'dashboard_view', 'users_edit'];
-            allKeys.forEach(key => {
-                const el = document.getElementById(`perm_${key}`);
-                if(el) el.checked = p[key] === true;
-            });
+            const allKeys = Object.keys(modelos['ADMIN']);
+            allKeys.forEach(key => { const el = document.getElementById(`perm_${key}`); if(el) el.checked = p[key] === true; });
             
             document.getElementById("modalTitle").innerText = `Editar: ${u.nome}`;
             modalInstance = new bootstrap.Modal(document.getElementById('modalUsuario'));
             modalInstance.show();
         };
 
-        function apagarAssinatura() {
-            deveRemoverAssinatura = true; 
-            document.getElementById("containerAssinaturaAtual").style.display = "none"; 
-            document.getElementById("assinatura").value = ""; 
-        }
+        function apagarAssinatura() { deveRemoverAssinatura = true; document.getElementById("containerAssinaturaAtual").style.display = "none"; document.getElementById("assinatura").value = ""; }
 
         document.getElementById("formUsuario").addEventListener("submit", async (e) => {
             e.preventDefault();
@@ -391,75 +511,107 @@
             const fileInput = document.getElementById('assinatura').files[0];
             if (fileInput) assinaturaBase64 = await fileToBase64(fileInput);
             
-            const permissoesCustom = {
-                amostras_view: document.getElementById("perm_amostras_view").checked,
-                amostras_edit: document.getElementById("perm_amostras_edit").checked,
-                analises_view: document.getElementById("perm_analises_view").checked,
-                analises_register: document.getElementById("perm_analises_register").checked,
-                laudos_view: document.getElementById("perm_laudos_view").checked,
-                laudos_download: document.getElementById("perm_laudos_download").checked,
-                laudos_issue: document.getElementById("perm_laudos_issue").checked,
-                laudos_cancel: document.getElementById("perm_laudos_cancel").checked,
-                reagentes_view: document.getElementById("perm_reagentes_view").checked,
-                reagentes_edit: document.getElementById("perm_reagentes_edit").checked,
-                
-                // 🔥 AS CAPTURAS DOS NOVOS SWITCHES AQUI
-                solucoes_view: document.getElementById("perm_solucoes_view").checked,
-                solucoes_edit: document.getElementById("perm_solucoes_edit").checked,
-                
-                produtos_edit: document.getElementById("perm_produtos_edit").checked,
-                dashboard_view: document.getElementById("perm_dashboard_view").checked,
-                users_edit: document.getElementById("perm_users_edit").checked
-            };
+            const p = {};
+            Object.keys(modelos['ADMIN']).forEach(key => { 
+                const el = document.getElementById(`perm_${key}`);
+                if (el) p[key] = el.checked; 
+            });
 
             const payload = {
-                nome: document.getElementById("nome").value,
-                login: document.getElementById("loginUser").value,
-                cargo: document.getElementById("cargo").value,
-                perfil: document.getElementById("perfil").value,
-                senha: document.getElementById("senha").value,
-                permissoes: permissoesCustom,
-                assinatura: assinaturaBase64,
-                removerAssinatura: deveRemoverAssinatura
+                nome: document.getElementById("nome").value, login: document.getElementById("loginUser").value,
+                cargo: document.getElementById("cargo").value, perfil: document.getElementById("perfil").value,
+                senha: document.getElementById("senha").value, email: document.getElementById("usuEmail").value,
+                recebe_alertas: document.getElementById("recebeAlertas").checked, permissoes: p,
+                assinatura: assinaturaBase64, removerAssinatura: deveRemoverAssinatura
             };
 
-            let url = API_URL;
-            let method = "POST";
-            if (id) { url = `${API_URL}/${id}`; method = "PUT"; }
-
             try {
-                const res = await fetch(url, {
-                    method: method,
-                    headers: getAuthHeaders(),
-                    body: JSON.stringify(payload)
-                });
-                
+                const res = await fetch(id ? `${API_URL}/${id}` : API_URL, { method: id ? "PUT" : "POST", headers: getAuthHeaders(), body: JSON.stringify(payload) });
                 const data = await res.json();
-                if(res.ok && data.success) {
-                    modalInstance.hide();
-                    carregarUsuarios();
-                    alert(deveRemoverAssinatura ? "Usuário salvo e assinatura removida!" : "Usuário salvo com sucesso!");
-                } else {
-                    alert(data.message || "Erro ao salvar.");
-                }
+                if(res.ok && data.success) { modalInstance.hide(); carregarUsuarios(); } else { alert(data.message || "Erro ao salvar."); }
             } catch(err) { console.error(err); }
         });
 
         window.excluirUsuario = async function(id) {
             if(!confirm("Tem certeza que deseja remover este usuário?")) return;
-            const res = await fetch(`${API_URL}/${id}`, { 
-                method: "DELETE",
-                headers: getAuthHeaders()
-            });
-            const data = await res.json();
-            if(!res.ok) alert(data.message);
+            await fetch(`${API_URL}/${id}`, { method: "DELETE", headers: getAuthHeaders() });
             carregarUsuarios();
         };
 
-        document.addEventListener("DOMContentLoaded", () => {
-            aplicarTravaGlobal(); 
+        window.carregarAuditoria = async function() {
+            try {
+                const res = await fetch(`${API_URL}/auditoria`, { headers: getAuthHeaders() });
+                if (!res.ok) return document.getElementById("tabelaAuditoria").innerHTML = "<tr><td colspan='5' class='text-danger py-4 text-center fw-bold'>Acesso negado.</td></tr>";
+                const logs = await res.json();
+                const tbody = document.getElementById("tabelaAuditoria"); tbody.innerHTML = "";
+                if(logs.length === 0) return tbody.innerHTML = "<tr><td colspan='5' class='text-muted py-4 text-center'>Nenhum acesso.</td></tr>";
+                logs.forEach(l => {
+                    let badge = "bg-secondary"; if(l.perfil === 'ADMIN') badge = "bg-danger"; if(l.perfil === 'QUIMICO') badge = "bg-primary"; if(l.perfil === 'ANALISTA') badge = "bg-info text-dark";
+                    tbody.innerHTML += `<tr><td class="text-start ps-4 fw-bold text-dark">${l.nome}</td><td><span class="badge ${badge}">${l.perfil}</span></td><td class="fw-bold text-primary">${l.data_fmt}</td><td><span class="badge bg-light text-dark border"><i class="bi bi-hdd-network"></i> ${l.ip || 'Local'}</span></td><td class="small text-muted">${l.browser_resumo}</td></tr>`;
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        window.carregarAtividades = async function() {
+            try {
+                const res = await fetch(`${API_URL}/atividades`, { headers: getAuthHeaders() });
+                if (!res.ok) return document.getElementById("tabelaAtividades").innerHTML = "<tr><td colspan='4' class='text-danger py-4 text-center fw-bold'>Acesso negado.</td></tr>";
+                const logs = await res.json();
+                const tbody = document.getElementById("tabelaAtividades"); tbody.innerHTML = "";
+                if(logs.length === 0) return tbody.innerHTML = "<tr><td colspan='4' class='text-muted py-4 text-center'>O sistema começará a gravar atividades a partir de agora!</td></tr>";
+                logs.forEach(l => {
+                    let badgeColor = "bg-secondary"; const acaoUp = l.acao.toUpperCase();
+                    if(acaoUp.includes('CRIOU') || acaoUp.includes('NOVO') || acaoUp.includes('ADICIONOU') || acaoUp.includes('INICIOU')) badgeColor = "bg-success";
+                    if(acaoUp.includes('EDITOU') || acaoUp.includes('ANALISOU') || acaoUp.includes('ASSINOU')) badgeColor = "bg-primary";
+                    if(acaoUp.includes('EXCLUIU') || acaoUp.includes('REPROVOU') || acaoUp.includes('CANCELOU') || acaoUp.includes('LIMPOU') || acaoUp.includes('DESCARTOU')) badgeColor = "bg-danger";
+                    tbody.innerHTML += `<tr><td class="text-start ps-4 text-muted small">${l.data_fmt}</td><td class="fw-bold text-dark">${l.usuario_nome || 'Sistema'}</td><td><span class="badge ${badgeColor}">${l.acao}</span></td><td class="text-start small">${l.detalhes}</td></tr>`;
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        async function aplicarTravaGlobal() {
+            const userStr = localStorage.getItem("limsUser");
+            if (!userStr) return;
+
+            let user = JSON.parse(userStr);
+            try {
+                const res = await fetch(API_URL, { headers: getAuthHeaders() });
+                if (res.ok) {
+                    const todosUsuarios = await res.json();
+                    const dadosFrescos = todosUsuarios.find(u => u.id === user.id);
+                    if (dadosFrescos) { user = dadosFrescos; localStorage.setItem("limsUser", JSON.stringify(user)); }
+                }
+            } catch (e) {}
+
+            const perfilUser = String(user.perfil || "").toUpperCase().trim();
+            const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
+            const p = user.permissoes || {};
+
+            if (isAdmin || p.logs_view === true) {
+                document.querySelectorAll('.abaAuditoria').forEach(el => el.style.display = 'block');
+            }
+
+            if (!isAdmin && p.users_edit !== true) {
+                const style = document.createElement('style');
+                style.innerHTML = `#btnNovoUsuario { display: none !important; } button[onclick*="excluirUsuario"], button[onclick*="editarUsuario"] { display: none !important; }`;
+                document.head.appendChild(style);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            await aplicarTravaGlobal(); 
             carregarUsuarios();
+            
+            // 🔥 LOOP SILENCIOSO: Atualiza o status dos usuários a cada 30 segundos
+            updateInterval = setInterval(() => {
+                if (document.getElementById('tab-gestao').classList.contains('active')) {
+                    carregarUsuarios();
+                }
+            }, 30000);
         });
+
+        // Limpa o loop se o usuário sair da página
+        window.addEventListener('beforeunload', () => clearInterval(updateInterval));
     </script>
 </body>
 </html>

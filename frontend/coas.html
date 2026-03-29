@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>CoAs - Matéria-Prima | LIMS Kari Kari</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body>
+
+   <nav class="sidebar">
+        <button id="btnToggle" class="btn-toggle-sidebar"><i class="bi bi-list"></i></button>
+        
+        <div class="sidebar-header">
+            <img src="assets/img/logo.png" alt="Logo Kari Kari" class="sidebar-logo">
+            <div class="brand-subtitle">Lab KariKari LIMS</div>
+        </div>
+
+        <div class="sidebar-menu">
+            <a href="#submenuLab" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-flask"></i> <span class="menu-text fw-bold">Laboratório</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse show" id="submenuLab">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <div class="sidebar-label mt-2 mb-1" style="font-size: 0.7rem;">Controle de Qualidade</div>
+                    <a href="dashboard.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                    <a href="amostras.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box-seam me-2"></i>Amostras</a>
+                    
+                    <a href="#submenuAnalises" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center py-1" style="font-size: 0.85rem;">
+                        <span><i class="bi bi-clipboard-data me-2"></i>Análises</span>
+                        <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
+                    </a>
+                    <div class="collapse" id="submenuAnalises">
+                        <div class="ps-3 ms-2 border-start border-secondary my-1">
+                            <a href="analises.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Bancada FIFO</a>
+                            <a href="calculos.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Cálculos</a>
+                            <a href="investigacao.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Investigação</a>
+                        </div>
+                    </div>
+
+                    <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
+                    <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
+                    <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
+                    <a href="coas.html" class="nav-link active py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
+                
+                    <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
+                    <a href="relatorios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up me-2"></i>Relatórios</a>
+                    <a href="produtos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-tags me-2"></i>Produtos</a>
+                    <a href="ponto.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-clock-history me-2"></i>Ponto</a>
+                    <a href="usuarios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-people me-2"></i>Usuários</a>
+                  
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-check2-square me-2"></i>Inspeções de Fábrica</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-exclamation-triangle me-2"></i>Não Conformidades</a>
+                </div>
+            </div>
+
+            <a href="#submenuPD" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center mt-2">
+                <span><i class="bi bi-lightbulb"></i> <span class="menu-text fw-bold">P&D</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse" id="submenuPD">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-tools me-2"></i>Projetos</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-journal-text me-2"></i>Fórmulas</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="sidebar-footer"><button onclick="window.location.href='login.html'" class="btn-logout"><i class="bi bi-box-arrow-left me-2"></i> <span>Sair</span></button></div>
+    </nav>
+
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-dark mb-0"><i class="bi bi-file-earmark-pdf text-danger"></i> CoAs - Matéria-Prima</h2>
+                <p class="text-muted small">Repositório de Certificados de Análises Externos</p>
+            </div>
+            <button class="btn btn-danger fw-bold shadow-sm px-4" id="btnNovoCoA" onclick="abrirModalNovoCoA()">
+                <i class="bi bi-cloud-arrow-up"></i> Registrar CoA Externo
+            </button>
+        </div>
+
+        <div class="row mb-4 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-muted small mb-1">Buscar por Produto ou Código</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                    <input type="text" id="buscaProduto" class="form-control border-start-0" placeholder="Ex: Milho, KK-001..." oninput="filtrarTabela()">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold text-muted small mb-1">Data Inicial</label>
+                <input type="date" id="filtroDataInicio" class="form-control" onchange="filtrarTabela()">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold text-muted small mb-1">Data Final</label>
+                <input type="date" id="filtroDataFim" class="form-control" onchange="filtrarTabela()">
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Data / Hora</th>
+                            <th>Cód. Produto</th>
+                            <th>Nome do Produto</th>
+                            <th>Arquivo Anexado</th>
+                            <th class="text-center pe-4 col-acoes">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaCoas"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalNovoCoA" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-cloud-arrow-up"></i> Anexar Novo Certificado</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formCoA">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-primary">CÓDIGO (Busca Rápida)</label>
+                                <input type="text" id="cod_produto_busca" class="form-control border-primary" placeholder="Ex: KK-001">
+                            </div>
+                            <div class="col-md-9">
+                                <label class="form-label small fw-bold text-muted">PRODUTO / MATÉRIA-PRIMA *</label>
+                                <select id="produto_id" class="form-select" required></select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">DATA DO RECEBIMENTO *</label>
+                                <input type="date" id="dataRecebimento" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">HORA *</label>
+                                <input type="time" id="horaRecebimento" class="form-control" required>
+                            </div>
+
+                            <div class="col-12 mt-4">
+                                <label class="form-label small fw-bold text-danger"><i class="bi bi-file-earmark-pdf"></i> ARQUIVO PDF DO CERTIFICADO *</label>
+                                <input type="file" id="arquivoPdf" class="form-control border-danger border-2 p-3" accept="application/pdf, image/*" required>
+                                <div class="form-text mt-2"><i class="bi bi-info-circle"></i> O arquivo ficará salvo permanentemente no banco de dados.</div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mt-4 pt-3 border-top">
+                            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-danger px-4 fw-bold shadow-sm" id="btnSalvarCoA">Gravar no Sistema</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/sidebar.js"></script>
+    
+    <script>
+        const API = window.location.origin + "/api";
+        let listaProdutosGlobais = [];
+        let listaCoasGlobais = [];
+        let modalCoA;
+        let globalPerms = {};
+
+        // 🔥 MOTOR DE TRAVAS DA TELA 🔥
+        function aplicarTravaTela() {
+            const userStr = localStorage.getItem("limsUser");
+            if (!userStr) return;
+            const user = JSON.parse(userStr);
+            const perfilUser = String(user.perfil || "").toUpperCase().trim();
+            const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
+            
+            globalPerms = user.permissoes || {};
+            
+            if (isAdmin) {
+                globalPerms.coa_reg = true;
+                globalPerms.coa_down = true;
+                globalPerms.coa_del = true;
+            }
+
+            // Oculta botão "Registrar CoA" se não tiver permissão
+            if (!globalPerms.coa_reg) {
+                const btnNovo = document.getElementById("btnNovoCoA");
+                if (btnNovo) btnNovo.style.display = 'none';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            aplicarTravaTela();
+            modalCoA = new bootstrap.Modal(document.getElementById('modalNovoCoA'));
+            carregarProdutos();
+            carregarCoAs();
+        });
+
+        // Converte Arquivo para Base64
+        const fileToBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader(); reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error);
+        });
+
+        // ==========================================
+        // LÓGICA DE PRODUTOS (Busca Cruzada)
+        // ==========================================
+        async function carregarProdutos() {
+            try {
+                const res = await fetch(`${API}/produtos`);
+                listaProdutosGlobais = await res.json();
+                const sel = document.getElementById("produto_id");
+                sel.innerHTML = "<option value='' disabled selected>Selecione o Produto...</option>";
+                
+                listaProdutosGlobais.forEach(p => {
+                    const nome = p.nome_produto || p.nome;
+                    sel.innerHTML += `<option value="${p.id}">${nome}</option>`;
+                });
+            } catch(e) { console.error("Erro ao carregar produtos:", e); }
+        }
+
+        document.getElementById("cod_produto_busca").addEventListener("input", function(e) {
+            const codDigitado = e.target.value.trim().toUpperCase();
+            const produto = listaProdutosGlobais.find(p => (p.cod_produto || p.codigo_interno || "").toUpperCase() === codDigitado);
+            if (produto) document.getElementById("produto_id").value = produto.id;
+            else document.getElementById("produto_id").value = "";
+        });
+
+        document.getElementById("produto_id").addEventListener("change", function(e) {
+            const produto = listaProdutosGlobais.find(p => p.id == e.target.value);
+            if (produto) document.getElementById("cod_produto_busca").value = produto.cod_produto || produto.codigo_interno || "";
+        });
+
+        // ==========================================
+        // LÓGICA DO COA (Listar e Filtrar)
+        // ==========================================
+        async function carregarCoAs() {
+            try {
+                const res = await fetch(`${API}/coas`);
+                listaCoasGlobais = await res.json();
+                filtrarTabela();
+            } catch (e) { console.error(e); }
+        }
+
+        function filtrarTabela() {
+            const termo = document.getElementById("buscaProduto").value.toLowerCase();
+            const dataInicio = document.getElementById("filtroDataInicio").value;
+            const dataFim = document.getElementById("filtroDataFim").value;
+
+            const filtrados = listaCoasGlobais.filter(c => {
+                const cod = (c.cod_produto || "").toLowerCase();
+                const nome = (c.nome_produto || "").toLowerCase();
+                const dataIso = c.data_recebimento ? c.data_recebimento.split('T')[0] : '';
+
+                const matchTexto = cod.includes(termo) || nome.includes(termo);
+                let matchData = true;
+                if (dataInicio && dataIso < dataInicio) matchData = false;
+                if (dataFim && dataIso > dataFim) matchData = false;
+
+                return matchTexto && matchData;
+            });
+
+            renderizarTabela(filtrados);
+        }
+
+        function renderizarTabela(lista) {
+            const tbody = document.getElementById("tabelaCoas");
+            tbody.innerHTML = "";
+
+            const thAcoes = document.querySelector(".col-acoes");
+            if (!globalPerms.coa_down && !globalPerms.coa_del) {
+                if(thAcoes) thAcoes.style.display = 'none';
+            } else {
+                if(thAcoes) thAcoes.style.display = 'table-cell';
+            }
+
+            if(lista.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='5' class='text-center py-4 text-muted'>Nenhum certificado encontrado.</td></tr>";
+                return;
+            }
+
+            lista.forEach(c => {
+                let botoesAcao = '';
+                
+                if (globalPerms.coa_down) {
+                    botoesAcao += `<a href="${c.arquivo_base64}" download="${c.nome_arquivo}" class="btn btn-sm btn-outline-danger fw-bold shadow-sm" title="Baixar PDF"><i class="bi bi-file-pdf"></i> Baixar</a>`;
+                }
+                
+                if (globalPerms.coa_del) {
+                    botoesAcao += `<button class="btn btn-sm btn-light border text-danger shadow-sm ms-2" onclick="excluirCoA(${c.id})" title="Excluir"><i class="bi bi-trash"></i></button>`;
+                }
+
+                let tdAcoes = '';
+                if (botoesAcao !== '') {
+                    tdAcoes = `<td class="text-center col-acoes">${botoesAcao}</td>`;
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="ps-4 fw-bold text-muted">${c.data_fmt} <br><small class="fw-normal">${c.hora_recebimento.substring(0,5)}</small></td>
+                        <td class="fw-bold text-primary">${c.cod_produto || '-'}</td>
+                        <td class="fw-bold text-dark">${c.nome_produto}</td>
+                        <td class="text-muted"><i class="bi bi-paperclip"></i> ${c.nome_arquivo}</td>
+                        ${tdAcoes}
+                    </tr>
+                `;
+            });
+        }
+
+        // ==========================================
+        // CADASTRAR / SALVAR COA
+        // ==========================================
+        function abrirModalNovoCoA() {
+            document.getElementById("formCoA").reset();
+            
+            const agora = new Date();
+            const tzOffset = agora.getTimezoneOffset() * 60000;
+            const dataLocal = new Date(agora - tzOffset);
+            
+            document.getElementById("dataRecebimento").value = dataLocal.toISOString().split('T')[0];
+            document.getElementById("horaRecebimento").value = dataLocal.toISOString().split('T')[1].substring(0, 5);
+            
+            modalCoA.show();
+        }
+
+        document.getElementById("formCoA").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("btnSalvarCoA");
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> A gravar...';
+            btn.disabled = true;
+
+            const inputPdf = document.getElementById("arquivoPdf");
+            let base64 = "";
+            let nomeFile = "";
+
+            if(inputPdf.files.length > 0) {
+                base64 = await fileToBase64(inputPdf.files[0]);
+                nomeFile = inputPdf.files[0].name;
+            }
+
+            const payload = {
+                produto_id: document.getElementById("produto_id").value,
+                data_recebimento: document.getElementById("dataRecebimento").value,
+                hora_recebimento: document.getElementById("horaRecebimento").value,
+                nome_arquivo: nomeFile,
+                arquivo_base64: base64
+            };
+
+            try {
+                const res = await fetch(`${API}/coas`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if(res.ok) {
+                    modalCoA.hide();
+                    carregarCoAs();
+                    alert("Certificado gravado com sucesso no Banco de Dados!");
+                } else {
+                    alert("Erro ao gravar. O arquivo pode ser demasiado grande.");
+                }
+            } catch(err) {
+                console.error(err); alert("Erro de conexão.");
+            } finally {
+                btn.innerHTML = 'Gravar no Sistema'; btn.disabled = false;
+            }
+        });
+
+        // ==========================================
+        // EXCLUIR
+        // ==========================================
+        async function excluirCoA(id) {
+            if(!confirm("Atenção: Tem certeza que deseja apagar permanentemente este certificado?")) return;
+            
+            try {
+                const res = await fetch(`${API}/coas/${id}`, { method: 'DELETE' });
+                if(res.ok) carregarCoAs();
+                else alert("Erro ao excluir.");
+            } catch(e) { console.error(e); }
+        }
+
+    </script>
+</body>
+</html>

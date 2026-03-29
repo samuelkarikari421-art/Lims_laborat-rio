@@ -10,9 +10,17 @@
     <style>
         .kpi-card { border-left: 5px solid; transition: transform 0.2s; }
         .kpi-card:hover { transform: translateY(-5px); }
-        .kpi-title { font-size: 0.85rem; font-weight: bold; text-transform: uppercase; color: #6c757d; }
-        .kpi-value { font-size: 2rem; font-weight: 800; color: #212529; }
-        .chart-container { position: relative; height: 300px; width: 100%; }
+        .kpi-title { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: #6c757d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .kpi-value { font-size: 1.8rem; font-weight: 800; color: #212529; }
+        .chart-container { position: relative; height: 300px; min-width: 100%; } 
+        
+        .dropdown-menu-custom { max-height: 400px; overflow-y: auto; overflow-x: hidden; padding: 10px 5px; width: 100%; border-radius: 8px; }
+        .item-produto { padding: 8px 15px; border-radius: 5px; transition: background 0.2s; }
+        .item-produto:hover { background-color: #f8f9fa; }
+        .chk-produto { cursor: pointer; flex-shrink: 0; }
+        
+        .bg-dark-kpi { background-color: #212529; color: #fff; }
+        .kpi-lead-time { font-size: 3.5rem; font-weight: 800; line-height: 1; margin: 10px 0; }
     </style>
 </head>
 <body>
@@ -26,17 +34,57 @@
         </div>
 
         <div class="sidebar-menu">
-            <div class="sidebar-label">Operacional</div>
-            <a href="dashboard.html" class="nav-link active"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
-            <a href="amostras.html" class="nav-link"><i class="bi bi-box-seam"></i> <span>Amostras</span></a>
-            <a href="analises.html" class="nav-link"><i class="bi-clipboard-data"></i> <span>Análises</span></a>
-            <a href="laudos.html" class="nav-link"><i class="bi bi-file-earmark-check"></i> <span>Laudos</span></a>
-            <a href="reagentes.html" class="nav-link"><i class="bi bi-droplet-half"></i> <span>Reagentes</span></a>
-            <a href="solucoes.html" class="nav-link"><i class="bi bi-eyedropper"></i> <span>Soluções</span></a>
-            <div class="sidebar-label">Gestão</div>
-            <a href="relatorios.html" class="nav-link"><i class="bi bi-graph-up"></i> <span>Relatórios</span></a>
-            <a href="produtos.html" class="nav-link"><i class="bi bi-tags"></i> <span>Produtos</span></a>
-            <a href="usuarios.html" class="nav-link"><i class="bi bi-people"></i> <span>Usuários</span></a>
+            <a href="#submenuLab" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-flask"></i> <span class="menu-text fw-bold">Laboratório</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse show" id="submenuLab">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <div class="sidebar-label mt-2 mb-1" style="font-size: 0.7rem;">Controle de Qualidade</div>
+                    <a href="dashboard.html" class="nav-link active py-1" style="font-size: 0.85rem;"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                    <a href="amostras.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box-seam me-2"></i>Amostras</a>
+                    
+                    <a href="#submenuAnalises" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center py-1" style="font-size: 0.85rem;">
+                        <span><i class="bi bi-clipboard-data me-2"></i>Análises</span>
+                        <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
+                    </a>
+                    <div class="collapse" id="submenuAnalises">
+                        <div class="ps-3 ms-2 border-start border-secondary my-1">
+                            <a href="analises.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Bancada FIFO</a>
+                            <a href="calculos.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Cálculos</a>
+                            <a href="investigacao.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Investigação</a>
+                        </div>
+                    </div>
+
+                    <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
+                    <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
+                    <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
+                    <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
+                
+                    <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
+                    <a href="relatorios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up me-2"></i>Relatórios</a>
+                    <a href="produtos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-tags me-2"></i>Produtos</a>
+                    <a href="ponto.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-clock-history me-2"></i>Ponto</a>
+                    <a href="usuarios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-people me-2"></i>Usuários</a>
+                  
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-check2-square me-2"></i>Inspeções de Fábrica</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-exclamation-triangle me-2"></i>Não Conformidades</a>
+                </div>
+            </div>
+
+            <a href="#submenuPD" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center mt-2">
+                <span><i class="bi bi-lightbulb"></i> <span class="menu-text fw-bold">P&D</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse" id="submenuPD">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-tools me-2"></i>Projetos</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-journal-text me-2"></i>Fórmulas</a>
+                </div>
+            </div>
+
         </div>
         <div class="sidebar-footer"><button onclick="window.location.href='login.html'" class="btn-logout"><i class="bi bi-box-arrow-left me-2"></i> <span>Sair</span></button></div>
     </nav>
@@ -47,32 +95,107 @@
                 <h2 class="fw-bold text-dark mb-0">Painel Gerencial (Dashboard)</h2>
                 <small class="text-muted">Estatísticas em tempo real do laboratório</small>
             </div>
-            <button class="btn btn-outline-primary shadow-sm" onclick="carregarDashboard()"><i class="bi bi-arrow-clockwise"></i> Atualizar</button>
+            <button class="btn btn-outline-primary shadow-sm fw-bold" onclick="atualizarTudo(true)"><i class="bi bi-arrow-clockwise"></i> Atualizar Dados</button>
         </div>
 
-        <div class="row g-3 mb-4">
-            <div class="col-md-3">
-                <div class="card shadow-sm border-0 p-3 kpi-card" style="border-left-color: #b22222 !important;">
-                    <div class="kpi-title">Aprovação Geral (%)</div>
+        <div class="row mb-4 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-center">
+            <div class="col-md-9">
+                <label class="form-label fw-bold text-muted small mb-1">Filtrar por Produtos Específicos</label>
+                <div class="dropdown">
+                    <button class="btn btn-light border w-100 text-start d-flex justify-content-between align-items-center" type="button" id="btnDropdownProdutos" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                        <span id="txtProdutosSelecionados" class="fw-bold text-primary text-truncate" style="max-width: 90%;">Todos os Produtos</span>
+                        <i class="bi bi-chevron-down text-muted"></i>
+                    </button>
+                    
+                    <ul class="dropdown-menu dropdown-menu-custom shadow border-0" aria-labelledby="btnDropdownProdutos">
+                        <li class="px-3 mb-3 sticky-top bg-white pt-2 pb-1">
+                            <input type="text" class="form-control border-primary" id="buscaFiltroProd" placeholder="Buscar por código ou nome..." oninput="filtrarDropdown()">
+                        </li>
+                        <li class="px-3 pb-2 mb-2 border-bottom">
+                            <div class="d-flex align-items-center gap-2">
+                                <input class="form-check-input border-secondary m-0" type="checkbox" id="chkTodos" checked onchange="toggleTodos()" style="cursor: pointer;">
+                                <label class="form-check-label fw-bold text-dark mb-0" for="chkTodos" style="cursor: pointer;">Selecionar Todos</label>
+                            </div>
+                        </li>
+                        <div id="listaFiltroProdutos">
+                            <div class="text-center py-3 small text-muted"><span class="spinner-border spinner-border-sm"></span> Carregando catálogo...</div>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-3 text-end mt-3 mt-md-0">
+                <button class="btn btn-primary fw-bold w-100 shadow-sm" onclick="carregarDashboard()"><i class="bi bi-filter"></i> Aplicar Filtro aos Gráficos</button>
+            </div>
+        </div>
+
+        <div class="row g-2 mb-4 d-flex justify-content-center">
+            <div class="col-6 col-md-4 col-xl">
+                <div class="card shadow-sm border-0 p-3 h-100 kpi-card" style="border-left-color: #b22222 !important;" title="Aprovação Geral (%)">
+                    <div class="kpi-title">Aprovação Geral</div>
                     <div class="kpi-value text-primary" id="kpiAprovacao">0%</div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card shadow-sm border-0 p-3 kpi-card" style="border-left-color: #198754 !important;">
-                    <div class="kpi-title">Amostras (Mês Atual)</div>
+            <div class="col-6 col-md-4 col-xl">
+                <div class="card shadow-sm border-0 p-3 h-100 kpi-card" style="border-left-color: #198754 !important;" title="Amostras recebidas no Mês Atual">
+                    <div class="kpi-title">Amostras (Mês)</div>
                     <div class="kpi-value text-success" id="kpiAmostras">0</div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card shadow-sm border-0 p-3 kpi-card" style="border-left-color: #ffc107 !important;">
-                    <div class="kpi-title">Total de Laudos</div>
+            <div class="col-6 col-md-4 col-xl">
+                <div class="card shadow-sm border-0 p-3 h-100 kpi-card" style="border-left-color: #ffc107 !important;" title="Total Histórico de Laudos">
+                    <div class="kpi-title">Laudos (Total)</div>
                     <div class="kpi-value text-warning" id="kpiLaudos">0</div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card shadow-sm border-0 p-3 kpi-card" style="border-left-color: #dc3545 !important;">
-                    <div class="kpi-title">Reagentes em Alerta</div>
+            <div class="col-6 col-md-4 col-xl">
+                <div class="card shadow-sm border-0 p-3 h-100 kpi-card" style="border-left-color: #0dcaf0 !important;" title="Laudos emitidos no Mês Atual">
+                    <div class="kpi-title">Laudos do Mês</div>
+                    <div class="kpi-value text-info" id="kpiLaudosMes">0</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-xl">
+                <div class="card shadow-sm border-0 p-3 h-100 kpi-card" style="border-left-color: #6610f2 !important;" title="Amostras Pendentes ou Em Análise">
+                    <div class="kpi-title">Amostras Fifo</div>
+                    <div class="kpi-value text-purple" id="kpiFilaFifo" style="color: #6610f2;">0</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-xl">
+                <div class="card shadow-sm border-0 p-3 h-100 kpi-card" style="border-left-color: #dc3545 !important;" title="Reagentes com estoque baixo">
+                    <div class="kpi-title">Reagentes Alerta</div>
                     <div class="kpi-value text-danger" id="kpiReagentes">0</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-xl">
+                <div class="card shadow-sm border-0 p-3 h-100 kpi-card" style="border-left-color: #fd7e14 !important;" title="Materiais de consumo com estoque baixo">
+                    <div class="kpi-title">Materiais Alerta</div>
+                    <div class="kpi-value" id="kpiMateriais" style="color: #fd7e14;">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100 bg-dark-kpi p-4 rounded-3 d-flex flex-column justify-content-center" title="Métrica Global do Laboratório - Não alterada pelos filtros acima.">
+                    <div class="text-uppercase fw-bold text-secondary mb-1 d-flex justify-content-between align-items-center" style="font-size: 0.85rem; letter-spacing: 1px;">
+                        Lead Time Médio
+                        <span class="badge bg-dark border border-secondary text-light fw-normal" style="font-size: 0.65rem;"><i class="bi bi-globe"></i> Global</span>
+                    </div>
+                    <div class="kpi-lead-time" id="kpiTempo">0.0 h</div>
+                    <div class="small opacity-75 mt-auto">Tempo médio entre a entrada da amostra e a emissão do laudo (Turnaround Time).</div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0 h-100" title="Métrica Global do Laboratório - Não alterada pelos filtros acima.">
+                    <div class="card-header bg-white fw-bold py-3 border-bottom d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-bar-chart-fill text-danger me-2"></i> Volume Mensal de Amostras</span>
+                        <span class="badge bg-light border text-muted fw-normal" style="font-size: 0.7rem;"><i class="bi bi-globe"></i> Dados Globais</span>
+                    </div>
+                    <div class="card-body pb-0">
+                        <div class="chart-container" style="height: 250px;">
+                            <canvas id="chartVolume"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -80,9 +203,9 @@
         <div class="row g-4 mb-4">
             <div class="col-md-6">
                 <div class="card shadow-sm border-0 h-100">
-                    <div class="card-header bg-white fw-bold py-3"><i class="bi bi-bar-chart-line text-primary"></i> Desempenho por Produto</div>
-                    <div class="card-body">
-                        <div class="chart-container">
+                    <div class="card-header bg-white fw-bold py-3"><i class="bi bi-bar-chart-line text-primary me-2"></i> Desempenho por Produto</div>
+                    <div class="card-body" style="overflow-x: auto; overflow-y: hidden;">
+                        <div class="chart-container" id="containerGraficoProdutos">
                             <canvas id="graficoProdutos"></canvas>
                         </div>
                     </div>
@@ -91,7 +214,7 @@
 
             <div class="col-md-6">
                 <div class="card shadow-sm border-0 h-100">
-                    <div class="card-header bg-white fw-bold py-3"><i class="bi bi-graph-up-arrow text-success"></i> Tendência Mensal de Análises</div>
+                    <div class="card-header bg-white fw-bold py-3"><i class="bi bi-graph-up-arrow text-success me-2"></i> Tendência Mensal de Aprovações</div>
                     <div class="card-body">
                         <div class="chart-container">
                             <canvas id="graficoTendencia"></canvas>
@@ -100,6 +223,92 @@
                 </div>
             </div>
         </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-12">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white fw-bold py-3 d-flex justify-content-between align-items-center">
+                        <span class="text-dark fs-5"><i class="bi bi-boxes text-info me-2"></i> Consumo Global de Insumos</span>
+                        <button class="btn btn-sm btn-outline-info fw-bold" onclick="carregarDadosConsumoDashboard()"><i class="bi bi-arrow-clockwise"></i> Sincronizar Insumos</button>
+                    </div>
+                    <div class="card-body bg-light p-4">
+                        
+                        <div class="row g-3 mb-4 p-3 bg-white rounded shadow-sm border align-items-end">
+                            <div class="col-md-5">
+                                <label class="form-label small fw-bold text-muted mb-2"><i class="bi bi-funnel"></i> Exibir no Gráfico:</label>
+                                <div class="d-flex gap-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="chkDashReag" checked onchange="atualizarGraficoConsumoGlobal()" style="cursor: pointer;">
+                                        <label class="form-check-label fw-bold text-secondary" for="chkDashReag" style="cursor: pointer;">Reagentes</label>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="chkDashSol" checked onchange="atualizarGraficoConsumoGlobal()" style="cursor: pointer;">
+                                        <label class="form-check-label fw-bold text-primary" for="chkDashSol" style="cursor: pointer;">Soluções</label>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="chkDashMat" checked onchange="atualizarGraficoConsumoGlobal()" style="cursor: pointer;">
+                                        <label class="form-check-label fw-bold text-warning text-dark" for="chkDashMat" style="cursor: pointer;">Materiais</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-calendar-event"></i> Ano Analisado</label>
+                                <select id="filtroAnoDash" class="form-select fw-bold border-secondary" onchange="atualizarGraficoConsumoGlobal()">
+                                    <option value="2026" selected>2026</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-calendar-month"></i> Nível de Detalhe (Mês)</label>
+                                <select id="filtroMesDash" class="form-select fw-bold border-secondary" onchange="atualizarGraficoConsumoGlobal()">
+                                    <option value="" selected>📊 Visão Anual (Todos os Meses)</option>
+                                    <option value="01">Janeiro (Ver por Dia)</option>
+                                    <option value="02">Fevereiro (Ver por Dia)</option>
+                                    <option value="03">Março (Ver por Dia)</option>
+                                    <option value="04">Abril (Ver por Dia)</option>
+                                    <option value="05">Maio (Ver por Dia)</option>
+                                    <option value="06">Junho (Ver por Dia)</option>
+                                    <option value="07">Julho (Ver por Dia)</option>
+                                    <option value="08">Agosto (Ver por Dia)</option>
+                                    <option value="09">Setembro (Ver por Dia)</option>
+                                    <option value="10">Outubro (Ver por Dia)</option>
+                                    <option value="11">Novembro (Ver por Dia)</option>
+                                    <option value="12">Dezembro (Ver por Dia)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-3 rounded border shadow-sm chart-container" style="height: 400px;">
+                            <canvas id="graficoConsumoGlobal"></canvas>
+                        </div>
+                        
+                        <div class="row mt-4 text-center">
+                            <div class="col-4">
+                                <div class="p-2 rounded border bg-white shadow-sm">
+                                    <span class="d-block text-muted small fw-bold text-uppercase">Total Reagentes</span>
+                                    <h4 class="mb-0 fw-bold text-secondary" id="kpiTotReag">0</h4>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="p-2 rounded border bg-white shadow-sm">
+                                    <span class="d-block text-muted small fw-bold text-uppercase">Total Soluções</span>
+                                    <h4 class="mb-0 fw-bold text-primary" id="kpiTotSol">0</h4>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="p-2 rounded border bg-white shadow-sm">
+                                    <span class="d-block text-muted small fw-bold text-uppercase">Total Materiais</span>
+                                    <h4 class="mb-0 fw-bold text-warning text-dark" id="kpiTotMat">0</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -108,25 +317,124 @@
         const API = window.location.origin + "/api";
         let chartProdutos = null;
         let chartTendencia = null;
+        let chartVolumeInstance = null;
+        
+        // Variáveis Globais para o Novo Gráfico de Consumo
+        let dadosConsumoReagentes = [];
+        let dadosConsumoSolucoes = [];
+        let dadosConsumoMateriais = [];
+        let chartConsumoGlobal = null;
 
-        async function carregarDashboard() {
+        // ==========================================
+        // 🔥 LÓGICA DO DROPDOWN DE MÚLTIPLA ESCOLHA
+        // ==========================================
+        async function carregarListaProdutos() {
             try {
-                const res = await fetch(`${API}/dashboard/estatisticas`);
+                const res = await fetch(`${API}/produtos`);
+                const produtos = await res.json();
+                const divLista = document.getElementById("listaFiltroProdutos");
+                divLista.innerHTML = "";
+                
+                produtos.forEach(p => {
+                    const codigo = p.cod_produto ? `<span class="badge bg-secondary me-1 mb-1" style="font-size:0.65rem;">${p.cod_produto}</span>` : '';
+                    
+                    divLista.innerHTML += `
+                        <div class="item-produto d-flex align-items-start gap-2">
+                            <input class="form-check-input chk-produto border-secondary mt-1 flex-shrink-0 m-0" type="checkbox" value="${p.id}" checked id="prod_${p.id}" onchange="verificarSelecao()">
+                            <label class="form-check-label w-100" for="prod_${p.id}" style="cursor:pointer; white-space: normal; word-break: break-word; line-height: 1.3;" title="${p.nome_produto}">
+                                ${codigo} ${p.nome_produto}
+                            </label>
+                        </div>
+                    `;
+                });
+                atualizarTextoBotao();
+            } catch (e) { console.error("Erro ao carregar catálogo:", e); }
+        }
+
+        function filtrarDropdown() {
+            const termo = document.getElementById("buscaFiltroProd").value.toLowerCase();
+            document.querySelectorAll(".item-produto").forEach(item => {
+                const texto = item.innerText.toLowerCase();
+                if (texto.includes(termo)) {
+                    item.classList.remove('d-none');
+                    item.classList.add('d-flex');
+                } else {
+                    item.classList.remove('d-flex');
+                    item.classList.add('d-none');
+                }
+            });
+        }
+
+        function toggleTodos() {
+            const checked = document.getElementById("chkTodos").checked;
+            document.querySelectorAll(".chk-produto").forEach(chk => {
+                if (!chk.closest('.item-produto').classList.contains("d-none")) {
+                    chk.checked = checked;
+                }
+            });
+            atualizarTextoBotao();
+        }
+
+        function verificarSelecao() {
+            const totalVisivel = Array.from(document.querySelectorAll(".item-produto")).filter(i => !i.classList.contains("d-none")).length;
+            const selecionados = document.querySelectorAll(".chk-produto:checked").length;
+            
+            document.getElementById("chkTodos").checked = (totalVisivel > 0 && selecionados >= totalVisivel);
+            atualizarTextoBotao();
+        }
+
+        function atualizarTextoBotao() {
+            const selecionados = document.querySelectorAll(".chk-produto:checked");
+            const total = document.querySelectorAll(".chk-produto").length;
+            const span = document.getElementById("txtProdutosSelecionados");
+            
+            if (selecionados.length === total || total === 0) {
+                span.innerText = "Todos os Produtos";
+            } else if (selecionados.length === 1) {
+                let texto = selecionados[0].nextElementSibling.innerText.trim();
+                if(texto.includes('\n')) texto = texto.split('\n')[1].trim(); 
+                span.innerText = texto; 
+            } else {
+                span.innerText = `${selecionados.length} produtos selecionados`;
+            }
+        }
+
+        // ==========================================
+        // 🔥 MOTOR 1: CARREGAR GRÁFICOS DO DASHBOARD E KPIS
+        // ==========================================
+        async function carregarDashboard(forcarBotaoLimpo = false) {
+            try {
+                let queryParams = "";
+                const selecionados = Array.from(document.querySelectorAll(".chk-produto:checked")).map(chk => chk.value);
+                const total = document.querySelectorAll(".chk-produto").length;
+                
+                if (selecionados.length > 0 && selecionados.length < total && !forcarBotaoLimpo) {
+                    queryParams = `?produtos=${selecionados.join(',')}`;
+                }
+
+                const res = await fetch(`${API}/dashboard/estatisticas${queryParams}`);
                 const data = await res.json();
 
-                // 1. Atualizar KPIs Topo
-                document.getElementById("kpiAprovacao").innerText = `${data.kpis.aprovacao_geral}%`;
-                document.getElementById("kpiAmostras").innerText = data.kpis.amostras_mes;
-                document.getElementById("kpiLaudos").innerText = data.kpis.laudos_emitidos;
-                document.getElementById("kpiReagentes").innerText = data.kpis.reagentes_alerta;
+                // Atualizando os KPIs
+                document.getElementById("kpiAprovacao").innerText = `${data.kpis.aprovacao_geral || 0}%`;
+                document.getElementById("kpiAmostras").innerText = data.kpis.amostras_mes || 0;
+                document.getElementById("kpiLaudos").innerText = data.kpis.laudos_emitidos || 0;
+                document.getElementById("kpiLaudosMes").innerText = data.kpis.laudos_mes || 0;
+                document.getElementById("kpiFilaFifo").innerText = data.kpis.amostras_fila || 0;
+                document.getElementById("kpiReagentes").innerText = data.kpis.reagentes_alerta || 0;
+                document.getElementById("kpiMateriais").innerText = data.kpis.materiais_alerta || 0;
 
-                // 2. Gráfico Desempenho por Produto
+                // Gráfico Desempenho por Produto
                 const ctxProd = document.getElementById('graficoProdutos').getContext('2d');
                 if (chartProdutos) chartProdutos.destroy();
                 
                 const labelsProd = data.desempenho_produtos.map(p => p.produto);
                 const aprovadasProd = data.desempenho_produtos.map(p => p.aprovadas);
                 const reprovadasProd = data.desempenho_produtos.map(p => p.reprovadas);
+
+                const larguraMinima = document.getElementById("containerGraficoProdutos").parentElement.clientWidth;
+                const larguraDesejada = Math.max(larguraMinima, labelsProd.length * 80);
+                document.getElementById("containerGraficoProdutos").style.width = larguraDesejada + "px";
 
                 chartProdutos = new Chart(ctxProd, {
                     type: 'bar',
@@ -137,10 +445,17 @@
                             { label: 'Reprovadas', data: reprovadasProd, backgroundColor: 'rgba(220, 53, 69, 0.8)' }
                         ]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        scales: { 
+                            y: { beginAtZero: true },
+                            x: { ticks: { maxRotation: 45, minRotation: 45 } }
+                        } 
+                    }
                 });
 
-                // 3. Gráfico de Tendência Mensal
+                // Gráfico Tendência
                 const ctxTend = document.getElementById('graficoTendencia').getContext('2d');
                 if (chartTendencia) chartTendencia.destroy();
 
@@ -153,7 +468,6 @@
                     data: {
                         labels: labelsTend,
                         datasets: [
-                            // Usando o vermelho Kari Kari para a linha de Total
                             { label: 'Total Analisado', data: totaisTend, borderColor: '#b22222', backgroundColor: 'rgba(178, 34, 34, 0.1)', fill: true, tension: 0.3 },
                             { label: 'Aprovadas', data: aprovadasTend, borderColor: '#198754', borderDash: [5, 5], tension: 0.3 }
                         ]
@@ -166,8 +480,214 @@
             }
         }
 
-        // Carrega automaticamente ao entrar na página
-        carregarDashboard();
+        // ==========================================
+        // 🔥 MOTOR 2: CARREGAR A PERFORMANCE GERAL 
+        // ==========================================
+        async function carregarPerformance() {
+            try {
+                const res = await fetch(`${API}/relatorios/performance`);
+                const data = await res.json();
+
+                document.getElementById("kpiTempo").innerText = `${data.tempoMedioHoras} h`;
+
+                const ctx = document.getElementById('chartVolume').getContext('2d');
+                if (chartVolumeInstance) chartVolumeInstance.destroy();
+
+                chartVolumeInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.volumeMensal.map(d => d.mes),
+                        datasets: [{
+                            label: 'Qtd Amostras',
+                            data: data.volumeMensal.map(d => d.qtd),
+                            backgroundColor: '#b22222', 
+                            borderRadius: 5,
+                            barPercentage: 0.5
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top', align: 'end' }
+                        },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            } catch(e) { 
+                console.error("Erro ao carregar a performance do laboratório:", e); 
+            }
+        }
+
+        // ==============================================================
+        // 🔥 NOVA LÓGICA: GRÁFICO DE CONSUMO GLOBAL (REAG + SOL + MAT)
+        // ==============================================================
+        function normalizarDataInsumos(dataString) {
+            if (!dataString) return null;
+            if (dataString.includes('/')) {
+                const partes = dataString.split(' ')[0].split('/');
+                if(partes.length === 3) return { dia: partes[0], mes: partes[1], ano: partes[2] };
+            }
+            if (dataString.includes('-')) {
+                const partes = dataString.split('T')[0].split('-');
+                if(partes.length === 3) return { ano: partes[0], mes: partes[1], dia: partes[2] };
+            }
+            return null;
+        }
+
+        function extrairQtdInsumos(obj) {
+            const val = parseFloat(obj.quantidade || obj.qtd_usada || obj.qtd || obj.quantidade_consumida || 0);
+            return isNaN(val) ? 0 : val;
+        }
+
+        async function carregarDadosConsumoDashboard() {
+            try {
+                // Inicia as 3 requisições em paralelo para não travar a tela
+                const requests = [
+                    fetch(`${API}/reagentes/uso`).catch(() => ({ ok: false })),
+                    fetch(`${API}/solucoes/uso/itens`).catch(() => ({ ok: false })),
+                    fetch(`${API}/materiais/uso`).catch(() => ({ ok: false }))
+                ];
+
+                const [resR, resS, resM] = await Promise.all(requests);
+
+                if(resR.ok) dadosConsumoReagentes = await resR.json();
+                if(resS.ok) dadosConsumoSolucoes = await resS.json();
+                if(resM.ok) dadosConsumoMateriais = await resM.json();
+
+            } catch (error) {
+                console.error("Erro ao sincronizar insumos no Dashboard:", error);
+            } finally {
+                atualizarGraficoConsumoGlobal();
+            }
+        }
+
+        function atualizarGraficoConsumoGlobal() {
+            const ano = document.getElementById("filtroAnoDash").value;
+            const mes = document.getElementById("filtroMesDash").value;
+
+            const showReagentes = document.getElementById("chkDashReag").checked;
+            const showSolucoes = document.getElementById("chkDashSol").checked;
+            const showMateriais = document.getElementById("chkDashMat").checked;
+
+            let rotulosX = [];
+            let arrayR = [];
+            let arrayS = [];
+            let arrayM = [];
+
+            let somaR = 0, somaS = 0, somaM = 0;
+
+            // Lógica Anual (12 Meses)
+            if (mes === "") {
+                rotulosX = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+                arrayR = new Array(12).fill(0);
+                arrayS = new Array(12).fill(0);
+                arrayM = new Array(12).fill(0);
+
+                const processarAnual = (dadosFonte, arrayDestino, flagMostrar) => {
+                    let somaLocal = 0;
+                    if (!flagMostrar) return 0;
+                    dadosFonte.forEach(item => {
+                        const d = normalizarDataInsumos(item.data_uso || item.data_descarte || item.data_registro || item.created_at);
+                        if (d && d.ano === ano) {
+                            const qtd = extrairQtdInsumos(item);
+                            const mesIndex = parseInt(d.mes) - 1;
+                            arrayDestino[mesIndex] += qtd;
+                            somaLocal += qtd;
+                        }
+                    });
+                    return somaLocal;
+                };
+
+                somaR = processarAnual(dadosConsumoReagentes, arrayR, showReagentes);
+                somaS = processarAnual(dadosConsumoSolucoes, arrayS, showSolucoes);
+                somaM = processarAnual(dadosConsumoMateriais, arrayM, showMateriais);
+
+            } 
+            // Lógica Mensal Específica (Dias do Mês)
+            else {
+                const diasNoMes = new Date(ano, parseInt(mes), 0).getDate(); 
+                for(let i=1; i<=diasNoMes; i++) rotulosX.push(i.toString().padStart(2, '0') + `/${mes}`);
+                
+                arrayR = new Array(diasNoMes).fill(0);
+                arrayS = new Array(diasNoMes).fill(0);
+                arrayM = new Array(diasNoMes).fill(0);
+
+                const processarMensal = (dadosFonte, arrayDestino, flagMostrar) => {
+                    let somaLocal = 0;
+                    if (!flagMostrar) return 0;
+                    dadosFonte.forEach(item => {
+                        const d = normalizarDataInsumos(item.data_uso || item.data_descarte || item.data_registro || item.created_at);
+                        if (d && d.ano === ano && d.mes === mes) {
+                            const qtd = extrairQtdInsumos(item);
+                            const diaIndex = parseInt(d.dia) - 1;
+                            arrayDestino[diaIndex] += qtd;
+                            somaLocal += qtd;
+                        }
+                    });
+                    return somaLocal;
+                };
+
+                somaR = processarMensal(dadosConsumoReagentes, arrayR, showReagentes);
+                somaS = processarMensal(dadosConsumoSolucoes, arrayS, showSolucoes);
+                somaM = processarMensal(dadosConsumoMateriais, arrayM, showMateriais);
+            }
+
+            // Atualiza os Totais
+            document.getElementById("kpiTotReag").innerText = somaR.toFixed(2);
+            document.getElementById("kpiTotSol").innerText = somaS.toFixed(2);
+            document.getElementById("kpiTotMat").innerText = somaM.toFixed(2);
+
+            // Constroi Séries
+            const datasetsAtivos = [];
+            if (showReagentes) datasetsAtivos.push({ label: 'Reagentes (un. brutas)', data: arrayR, backgroundColor: '#6c757d', borderRadius: 4 });
+            if (showSolucoes) datasetsAtivos.push({ label: 'Soluções (un. brutas)', data: arrayS, backgroundColor: '#0d6efd', borderRadius: 4 });
+            if (showMateriais) datasetsAtivos.push({ label: 'Materiais (un. brutas)', data: arrayM, backgroundColor: '#ffc107', borderRadius: 4 });
+
+            if (chartConsumoGlobal) chartConsumoGlobal.destroy();
+
+            const ctx = document.getElementById('graficoConsumoGlobal').getContext('2d');
+            chartConsumoGlobal = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: rotulosX, datasets: datasetsAtivos },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: { 
+                        x: { stacked: false },
+                        y: { beginAtZero: true, title: { display: true, text: 'Quantidade Consumida', font: { weight: 'bold' } } } 
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label = label.split(' ')[0] + ': ';
+                                    if (context.parsed.y !== null) label += context.parsed.y.toFixed(2);
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ==========================================
+        // 🔥 INICIALIZAÇÃO GERAL
+        // ==========================================
+        function atualizarTudo(forcarLimpo = false) {
+            carregarDashboard(forcarLimpo); 
+            carregarPerformance();          
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            await carregarListaProdutos(); 
+            atualizarTudo(true);          
+            carregarDadosConsumoDashboard(); // Inicializa o novo gráfico
+        });
     </script>
 </body>
 </html>

@@ -86,43 +86,53 @@
     </footer>
 
 <script>
-        document.getElementById("formLogin").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const btn = document.querySelector("button");
-            const msg = document.getElementById("msg");
-            btn.disabled = true; 
-            btn.innerText = "Entrando...";
+    document.getElementById("formLogin").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.querySelector("button");
+        const msg = document.getElementById("msg");
+        btn.disabled = true; 
+        btn.innerText = "Entrando...";
+        
+        try {
+            const API = window.location.origin + "/api";
             
-            try {
-                const API = window.location.origin + "/api";
+            const res = await fetch(`${API}/auth/login`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    login: document.getElementById("login").value,
+                    senha: document.getElementById("senha").value
+                })
+            });
+            
+            const data = await res.json();
+            
+            if(data.success) {
+                // 1. Guarda o objeto completo do usuário (para info geral)
+                localStorage.setItem("limsUser", JSON.stringify(data.user));
                 
-                const res = await fetch(`${API}/auth/login`, {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({
-                        login: document.getElementById("login").value,
-                        senha: document.getElementById("senha").value
-                    })
-                });
+                // 2. Guarda o Token (Crachá de acesso às APIs)
+                localStorage.setItem("limsToken", data.token);
+
+                // 🔥 3. DADOS PARA O CONTROLE DE ACESSO (sidebar.js ler)
+                // Guardamos o perfil (ADMIN, ANALISTA, etc)
+                localStorage.setItem("perfil", data.user.perfil);
                 
-                const data = await res.json();
-                
-                if(data.success) {
-                    // GUARDA O USUÁRIO E O TOKEN NO NAVEGADOR
-                    localStorage.setItem("limsUser", JSON.stringify(data.user));
-                    localStorage.setItem("limsToken", data.token); // <--- ESTA É A LINHA MÁGICA
-                    window.location.href = "dashboard.html";
-                } else {
-                    msg.innerText = data.message;
-                    btn.disabled = false; 
-                    btn.innerText = "ENTRAR";
-                }
-            } catch(err) {
-                msg.innerText = "Erro de conexão com o Servidor.";
+                // Guardamos o JSON de permissões específicas
+                localStorage.setItem("permissoes", JSON.stringify(data.user.permissoes || {}));
+
+                window.location.href = "dashboard.html";
+            } else {
+                msg.innerText = data.message;
                 btn.disabled = false; 
                 btn.innerText = "ENTRAR";
             }
-        });
-    </script>
+        } catch(err) {
+            msg.innerText = "Erro de conexão com o Servidor.";
+            btn.disabled = false; 
+            btn.innerText = "ENTRAR";
+        }
+    });
+</script>
 </body>
 </html>

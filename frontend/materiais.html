@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Materiais de Consumo - LIMS Kari Kari</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <button id="btnToggle" class="btn-toggle-sidebar"><i class="bi bi-list"></i></button>
+        
+        <div class="sidebar-header">
+            <img src="assets/img/logo.png" alt="Logo Kari Kari" class="sidebar-logo">
+            <div class="brand-subtitle">Lab KariKari LIMS</div>
+        </div>
+
+        <div class="sidebar-menu">
+            <a href="#submenuLab" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-flask"></i> <span class="menu-text fw-bold">Laboratório</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse show" id="submenuLab">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <div class="sidebar-label mt-2 mb-1" style="font-size: 0.7rem;">Controle de Qualidade</div>
+                    <a href="dashboard.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                    <a href="amostras.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box-seam me-2"></i>Amostras</a>
+                    
+                    <a href="#submenuAnalises" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center py-1" style="font-size: 0.85rem;">
+                        <span><i class="bi bi-clipboard-data me-2"></i>Análises</span>
+                        <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
+                    </a>
+                    <div class="collapse" id="submenuAnalises">
+                        <div class="ps-3 ms-2 border-start border-secondary my-1">
+                            <a href="analises.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Bancada FIFO</a>
+                            <a href="calculos.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Cálculos</a>
+                            <a href="investigacao.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Investigação</a>
+                        </div>
+                    </div>
+
+                    <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
+                    <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
+                    <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
+                    <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="materiais.html" class="nav-link active py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
+                
+                    <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
+                    <a href="relatorios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up me-2"></i>Relatórios</a>
+                    <a href="produtos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-tags me-2"></i>Produtos</a>
+                    <a href="ponto.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-clock-history me-2"></i>Ponto</a>
+                    <a href="usuarios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-people me-2"></i>Usuários</a>
+                  
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-check2-square me-2"></i>Inspeções de Fábrica</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-exclamation-triangle me-2"></i>Não Conformidades</a>
+                </div>
+            </div>
+
+            <a href="#submenuPD" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center mt-2">
+                <span><i class="bi bi-lightbulb"></i> <span class="menu-text fw-bold">P&D</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse" id="submenuPD">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-tools me-2"></i>Projetos</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-journal-text me-2"></i>Fórmulas</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="sidebar-footer"><button onclick="window.location.href='login.html'" class="btn-logout"><i class="bi bi-box-arrow-left me-2"></i> <span>Sair</span></button></div>
+    </nav>
+
+    <div class="main-content">
+        <h2 class="fw-bold mb-4"><i class="bi bi-box2 text-secondary me-2"></i> Gestão de Materiais </h2>
+
+        <ul class="nav nav-tabs mb-4" id="materiaisTab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active fw-bold" id="estoque-tab" data-bs-toggle="tab" data-bs-target="#estoque-pane" type="button"><i class="bi bi-boxes"></i> Estoque</button>
+            </li>
+            <li class="nav-item" id="nav-uso-tab">
+                <button class="nav-link fw-bold" id="uso-tab" data-bs-toggle="tab" data-bs-target="#uso-pane" type="button" onclick="carregarHistoricoUso()"><i class="bi bi-clipboard2-pulse"></i> Histórico de Uso</button>
+            </li>
+            <li class="nav-item" id="nav-consumo-tab">
+                <button class="nav-link fw-bold text-primary" id="consumo-tab" data-bs-toggle="tab" data-bs-target="#consumo-pane" type="button" onclick="atualizarGraficoConsumo()"><i class="bi bi-bar-chart-steps"></i> Consumo por Mês</button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="estoque-pane">
+                <div class="d-flex justify-content-end mb-3">
+                    <button class="btn btn-secondary text-white fw-bold shadow-sm px-4" id="btnNovoMaterial" onclick="abrirModalNovo()">
+                        <i class="bi bi-plus-lg"></i> Cadastrar Material
+                    </button>
+                </div>
+
+                <div class="row mb-4 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold text-muted small mb-1">Buscar Material</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                            <input type="text" id="buscaMaterial" class="form-control border-start-0" placeholder="Nome, Código ou Fabricante..." oninput="filtrarTabela()">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-muted small mb-1">Alerta de Estoque</label>
+                        <select id="filtroEstoque" class="form-select" onchange="filtrarTabela()">
+                            <option value="">Todos</option>
+                            <option value="BAIXO">Estoque Abaixo do Mínimo / Zerado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-0" style="overflow-x: auto;">
+                        <table class="table table-hover align-middle mb-0" style="min-width: 900px;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Código</th>
+                                    <th>Material / Descrição</th>
+                                    <th>Fornecedor / Fab.</th>
+                                    <th class="text-center">Validade</th>
+                                    <th class="text-center border-start">Estoque Atual</th>
+                                    <th class="text-center text-info" title="Consumo acumulado neste mês">Consumo (Mês)</th>
+                                    <th class="text-center text-warning text-dark border-end" title="Consumo acumulado neste ano">Consumo (Ano)</th>
+                                    <th class="text-center pe-4 col-acoes">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaMateriais"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="uso-pane">
+                <div class="d-flex justify-content-end mb-3">
+                    <button class="btn btn-success shadow-sm fw-bold px-4" onclick="abrirModalUso()">
+                        <i class="bi bi-box-arrow-right"></i> Registrar Utilização
+                    </button>
+                </div>
+
+                <div class="row mb-3 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold text-muted small mb-1">Buscar Registro</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                            <input type="text" id="buscaUso" class="form-control border-start-0" placeholder="Nome do material, setor ou observações..." oninput="filtrarUso()">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-muted small mb-1">Mês do Uso</label>
+                        <input type="month" id="filtroMesUso" class="form-control" onchange="filtrarUso()">
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Data</th>
+                                <th>Material Consumido</th>
+                                <th>Qtd Retirada</th>
+                                <th>Setor / Destino</th>
+                                <th>Observações</th>
+                                <th>Registrado Por</th>
+                                <th class="text-end pe-4">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaHistoricoUso"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="consumo-pane">
+                <div class="row mb-3 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
+                    <div class="col-md-7">
+                        <label class="form-label fw-bold text-muted small mb-1">Selecionar Material Específico</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-funnel"></i></span>
+                            <select id="filtroConsumoMaterial" class="form-select border-start-0" onchange="atualizarGraficoConsumo()">
+                                <option value="">Visão Global (Todos os Materiais somados)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-muted small mb-1">Ano Analisado</label>
+                        <select id="filtroConsumoAno" class="form-select" onchange="atualizarGraficoConsumo()">
+                            <option value="2026" selected>2026</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-primary w-100 fw-bold" onclick="atualizarGraficoConsumo()"><i class="bi bi-arrow-clockwise"></i> Atualizar</button>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white fw-bold py-3 d-flex justify-content-between align-items-center">
+                        <span class="text-primary"><i class="bi bi-bar-chart-fill"></i> Tendência de Consumo Mensal</span>
+                        <span class="badge bg-light text-dark border" id="totalConsumoAno">Total Ano: 0</span>
+                    </div>
+                    <div class="card-body">
+                        <div style="position: relative; height: 350px; width: 100%;">
+                            <canvas id="chartConsumo"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalMaterial" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-secondary text-white">
+                    <h5 class="modal-title fw-bold" id="modalTitle"><i class="bi bi-box2"></i> Novo Material</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formMaterial">
+                        <input type="hidden" id="mat_id">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-muted">CÓDIGO</label>
+                                <input type="text" id="mat_codigo" class="form-control bg-light fw-bold text-primary" placeholder="Gerado Auto." readonly>
+                            </div>
+                            <div class="col-md-9">
+                                <label class="form-label small fw-bold text-muted">NOME DO MATERIAL *</label>
+                                <input type="text" id="mat_nome" class="form-control" placeholder="Ex: Luva Nitrílica M" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">FORNECEDOR / FABRICANTE</label>
+                                <input type="text" id="mat_fabricante" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">LOTE (Opcional)</label>
+                                <input type="text" id="mat_lote" class="form-control">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-muted">RECEBIMENTO</label>
+                                <input type="date" id="mat_data" class="form-control">
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-muted">VALIDADE</label>
+                                <input type="date" id="mat_validade" class="form-control">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-primary">ESTOQUE ATUAL *</label>
+                                <input type="number" step="0.01" id="mat_quantidade" class="form-control border-primary fw-bold" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-warning text-dark">ESTOQUE MÍN. *</label>
+                                <input type="number" step="0.01" id="mat_estoque_minimo" class="form-control border-warning fw-bold text-dark" value="5" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-muted">UNIDADE *</label>
+                                <select id="mat_unidade" class="form-select" required>
+                                    <option value="un">Unidade (un)</option>
+                                    <option value="cx">Caixa (cx)</option>
+                                    <option value="pct">Pacote (pct)</option>
+                                    <option value="rolo">Rolo</option>
+                                    <option value="par">Par</option>
+                                    <option value="L">Litros (L)</option>
+                                    <option value="pç">Peça (pç)</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12 mt-3 border-top pt-3">
+                                <h6 class="fw-bold text-dark small"><i class="bi bi-paperclip"></i> Anexos (Opcional)</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-muted"><i class="bi bi-file-earmark-pdf"></i> CERTIFICADO / CoA</label>
+                                        <input type="file" id="mat_certificado" class="form-control form-control-sm" accept=".pdf, image/*">
+                                        
+                                        <div id="boxCertificadoAtual" class="mt-2 p-2 border rounded bg-light" style="display:none; font-size: 0.85rem;">
+                                            <span class="text-success fw-bold d-block mb-2"><i class="bi bi-check-circle"></i> Anexado: <span id="nomeCertificadoAtual" class="text-dark"></span></span>
+                                            <a id="btnVerCertificado" href="#" download="" class="btn btn-sm btn-primary fw-bold text-decoration-none shadow-sm me-2"><i class="bi bi-download"></i> Baixar / Ver</a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger fw-bold btn-remover-anexo" onclick="removerAnexoCertificado()"><i class="bi bi-trash"></i> Remover</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-muted"><i class="bi bi-image"></i> IMAGEM / FOTO DO MATERIAL</label>
+                                        <input type="file" id="mat_imagem" class="form-control form-control-sm" accept="image/*, .pdf">
+                                        
+                                        <div id="boxImagemAtual" class="mt-2 p-2 border rounded bg-light" style="display:none; font-size: 0.85rem;">
+                                            <span class="text-success fw-bold d-block mb-2"><i class="bi bi-check-circle"></i> Anexado: <span id="nomeImagemAtual" class="text-dark"></span></span>
+                                            <a id="btnVerImagem" href="#" download="" class="btn btn-sm btn-info fw-bold text-dark text-decoration-none shadow-sm me-2"><i class="bi bi-image"></i> Baixar / Ver</a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger fw-bold btn-remover-anexo" onclick="removerAnexoImagem()"><i class="bi bi-trash"></i> Remover</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mt-3">
+                                <label class="form-label small fw-bold text-muted">OBSERVAÇÕES</label>
+                                <textarea id="mat_observacoes" class="form-control" rows="2" placeholder="Especificações, local de armazenamento..."></textarea>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mt-4 pt-3 border-top">
+                            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Cancelar / Fechar</button>
+                            <button type="submit" class="btn btn-secondary px-4 fw-bold shadow-sm" id="btnSalvarMaterial">Salvar Material</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalUsoMaterial" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-box-arrow-right"></i> Registrar Retirada / Consumo</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formUsoMaterial">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted small">SELECIONE O MATERIAL *</label>
+                            <select id="usoMaterialId" class="form-select border-success" required>
+                                <option value="" disabled selected>Carregando estoque...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-muted small">DATA DA RETIRADA *</label>
+                                <input type="date" id="usoData" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-danger small">QUANTIDADE A BAIXAR *</label>
+                                <div class="input-group">
+                                    <input type="number" step="0.01" id="usoQtd" class="form-control fw-bold border-danger" required>
+                                    <span class="input-group-text bg-light" id="usoUnidadeTxt">---</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted small">SETOR / DESTINO</label>
+                            <select id="usoSetor" class="form-select">
+                                <option value="Laboratório Físico-Químico">Laboratório Físico-Químico</option>
+                                <option value="Laboratório Microbiologia">Laboratório Microbiologia</option>
+                                <option value="Linha de Produção">Linha de Produção</option>
+                                <option value="Tratamento de Água">Tratamento de Água</option>
+                                <option value="Manutenção">Manutenção</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted small">JUSTIFICATIVA / OBSERVAÇÃO</label>
+                            <textarea id="usoObservacoes" class="form-control" rows="2" placeholder="Motivo da retirada..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 fw-bold py-2 mt-2 shadow-sm" id="btnSalvarUsoMaterial">Confirmar Baixa no Estoque</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/sidebar.js"></script>
+    
+    <script>
+        const API = window.location.origin + "/api";
+        let listaMateriais = [];
+        let listaHistoricoUso = [];
+        let modalObj;
+        let modalUso;
+        let chartConsumoInstance = null;
+
+        let removerCertificado = false;
+        let removerImagem = false;
+        let globalPerms = {};
+
+        // Blindagem de Leitura de Datas
+        function normalizarDataInsumos(dataString) {
+            if (!dataString) return null;
+            if (dataString.includes('/')) {
+                const partes = dataString.split(' ')[0].split('/');
+                if(partes.length === 3) return { dia: partes[0], mes: partes[1], ano: partes[2] };
+            }
+            if (dataString.includes('-')) {
+                const partes = dataString.split('T')[0].split('-');
+                if(partes.length === 3) return { ano: partes[0], mes: partes[1], dia: partes[2] };
+            }
+            return null;
+        }
+
+        // Motor de Travas
+        function aplicarTravaTela() {
+            const userStr = localStorage.getItem("limsUser");
+            if (!userStr) return;
+            const user = JSON.parse(userStr);
+            const perfilUser = String(user.perfil || "").toUpperCase().trim();
+            const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
+            
+            globalPerms = user.permissoes || {};
+            
+            if (isAdmin) {
+                globalPerms.mat_reg = true;
+                globalPerms.mat_edit = true;
+                globalPerms.mat_uso = true;
+                globalPerms.mat_del = true;
+            }
+
+            if (!globalPerms.mat_uso) {
+                const navUso = document.getElementById("nav-uso-tab");
+                const navConsumo = document.getElementById("nav-consumo-tab");
+                if(navUso) navUso.style.display = 'none';
+                if(navConsumo) navConsumo.style.display = 'none';
+            }
+
+            if (!globalPerms.mat_reg) {
+                const btnNovo = document.getElementById("btnNovoMaterial");
+                if(btnNovo) btnNovo.style.display = 'none';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            aplicarTravaTela();
+            modalObj = new bootstrap.Modal(document.getElementById('modalMaterial'));
+            modalUso = new bootstrap.Modal(document.getElementById('modalUsoMaterial'));
+            
+            const hoje = new Date();
+            document.getElementById("usoData").value = new Date(hoje - hoje.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+            
+            document.getElementById("usoMaterialId").addEventListener("change", function(e) {
+                const mat = listaMateriais.find(m => m.id == e.target.value);
+                if(mat) document.getElementById("usoUnidadeTxt").innerText = mat.unidade || '';
+            });
+
+            carregarMateriais();
+            if(globalPerms.mat_uso) {
+                carregarHistoricoUso(); 
+            }
+        });
+
+        function verificarStatusValidade(dataValidadeStr) {
+            if (!dataValidadeStr) return { classe: 'bg-secondary', texto: 'Sem data' };
+            const dataValidade = new Date(dataValidadeStr);
+            const dataAtual = new Date();
+            dataAtual.setHours(0,0,0,0);
+            dataValidade.setUTCHours(0,0,0,0);
+
+            const diferencaTempo = dataValidade.getTime() - dataAtual.getTime();
+            const diasRestantes = Math.ceil(diferencaTempo / (1000 * 60 * 60 * 24));
+
+            if (diasRestantes < 0) return { classe: 'bg-danger', texto: 'Vencido' };
+            else if (diasRestantes <= 30) return { classe: 'bg-warning text-dark', texto: `Vence em ${diasRestantes} d` };
+            else return { classe: 'bg-success', texto: 'Dentro do prazo' };
+        }
+
+        async function carregarMateriais() {
+            try {
+                const res = await fetch(`${API}/materiais`);
+                listaMateriais = await res.json();
+                filtrarTabela();
+                preencherDropdownUso();
+                preencherDropdownConsumo();
+            } catch (e) { console.error("Erro ao carregar materiais:", e); }
+        }
+
+        function preencherDropdownUso() {
+            const sel = document.getElementById("usoMaterialId");
+            sel.innerHTML = '<option value="" disabled selected>Selecione um material...</option>';
+            const disponiveis = listaMateriais.filter(m => parseFloat(m.quantidade) > 0);
+            disponiveis.forEach(m => {
+                sel.innerHTML += `<option value="${m.id}">${m.codigo ? m.codigo+' - ' : ''}${m.nome} (Estoque: ${m.quantidade} ${m.unidade})</option>`;
+            });
+        }
+
+        function preencherDropdownConsumo() {
+            const sel = document.getElementById("filtroConsumoMaterial");
+            sel.innerHTML = '<option value="">Visão Global (Todos os Materiais somados)</option>';
+            listaMateriais.forEach(m => {
+                sel.innerHTML += `<option value="${m.id}">${m.codigo ? m.codigo+' - ' : ''}${m.nome}</option>`;
+            });
+        }
+
+        function filtrarTabela() {
+            const termo = document.getElementById("buscaMaterial").value.toLowerCase();
+            const filtroQtd = document.getElementById("filtroEstoque").value;
+
+            const filtrados = listaMateriais.filter(m => {
+                const texto = `${m.codigo || ''} ${m.nome} ${m.fabricante || ''}`.toLowerCase();
+                const matchTexto = texto.includes(termo);
+                
+                let matchQtd = true;
+                const minEstoque = parseFloat(m.estoque_minimo || 0);
+                if (filtroQtd === "BAIXO") matchQtd = parseFloat(m.quantidade) <= minEstoque;
+
+                return matchTexto && matchQtd;
+            });
+
+            renderizarTabela(filtrados);
+        }
+
+        function renderizarTabela(lista) {
+            const tbody = document.getElementById("tabelaMateriais");
+            tbody.innerHTML = "";
+
+            const thAcoes = document.querySelector(".col-acoes");
+            if (thAcoes) thAcoes.style.display = 'table-cell'; // Sempre exibe pois todos têm botão "Detalhes"
+
+            if(lista.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='8' class='text-center py-4 text-muted'>Nenhum material encontrado.</td></tr>";
+                return;
+            }
+
+            lista.forEach(m => {
+                const qtd = parseFloat(m.quantidade);
+                const minEstoque = parseFloat(m.estoque_minimo || 0);
+                
+                const emAlerta = qtd <= minEstoque;
+                const qtdClass = emAlerta ? "text-danger fw-bold" : "text-success fw-bold";
+                const rowClass = qtd < minEstoque ? "table-danger" : ""; 
+                
+                let tooltipEstoque = `Estoque Mínimo: ${minEstoque}`;
+
+                const statusVal = verificarStatusValidade(m.data_validade);
+                const dataFmt = m.data_validade ? m.data_validade.split('T')[0].split('-').reverse().join('/') : '-';
+                const badgeValidadeHTML = m.data_validade 
+                    ? `<span class="badge ${statusVal.classe} shadow-sm w-100">${statusVal.texto}</span><br><small class="text-muted" style="font-size: 0.7rem">${dataFmt}</small>` 
+                    : `<span class="badge bg-light text-muted border w-100">Não inf.</span>`;
+
+                // Botão Detalhes (Visualizar)
+                let botoesAcao = `<button class="btn btn-sm btn-outline-info shadow-sm" onclick="abrirEdicao(${m.id}, true)" title="Detalhes"><i class="bi bi-eye"></i></button>`;
+                
+                if(globalPerms.mat_edit || globalPerms.materiais_edit) {
+                    botoesAcao += `<button class="btn btn-sm btn-outline-primary shadow-sm ms-1" onclick="abrirEdicao(${m.id}, false)" title="Editar"><i class="bi bi-pencil-square"></i></button>`;
+                }
+                if(globalPerms.mat_del) {
+                    botoesAcao += `<button class="btn btn-sm btn-light border text-danger shadow-sm ms-1" onclick="excluirMaterial(${m.id})" title="Excluir"><i class="bi bi-trash"></i></button>`;
+                }
+
+                let tdAcoes = `<td class="text-center pe-4 text-nowrap col-acoes">${botoesAcao}</td>`;
+                
+                tbody.innerHTML += `
+                    <tr class="${rowClass}">
+                        <td class="ps-4 fw-bold text-primary">${m.codigo || '-'}</td>
+                        <td class="fw-bold text-dark">${m.nome}</td>
+                        <td>${m.fabricante || '-'}</td>
+                        <td class="text-center align-middle" style="min-width: 100px;">${badgeValidadeHTML}</td>
+                        <td class="text-center border-start ${qtdClass} fs-6" title="${tooltipEstoque}">${qtd} <small class="text-muted fw-normal">${m.unidade}</small></td>
+                        <td class="text-center text-info fw-bold">${m.consumo_mes || 0} <small class="text-muted fw-normal">${m.unidade}</small></td>
+                        <td class="text-center text-warning text-dark fw-bold border-end">${m.consumo_ano || 0} <small class="text-muted fw-normal">${m.unidade}</small></td>
+                        ${tdAcoes}
+                    </tr>
+                `;
+            });
+        }
+
+        // Função para habilitar ou desabilitar campos dependendo do modo (Leitura ou Edição)
+        function habilitarCamposMaterial(isReadOnly) {
+            const campos = [
+                "mat_nome", "mat_fabricante", "mat_lote", "mat_data", 
+                "mat_validade", "mat_quantidade", "mat_estoque_minimo", 
+                "mat_unidade", "mat_observacoes"
+            ];
+            
+            campos.forEach(c => {
+                const el = document.getElementById(c);
+                if (el) el.disabled = isReadOnly;
+            });
+            
+            document.getElementById("btnSalvarMaterial").style.display = isReadOnly ? 'none' : 'inline-block';
+            
+            // Esconder inputs de upload no modo leitura
+            document.getElementById("mat_certificado").style.display = isReadOnly ? 'none' : 'block';
+            document.getElementById("mat_imagem").style.display = isReadOnly ? 'none' : 'block';
+            
+            // Esconder apenas os botões de remover, manter os de visualizar
+            const btnsRemover = document.querySelectorAll(".btn-remover-anexo");
+            btnsRemover.forEach(btn => btn.style.display = isReadOnly ? 'none' : 'inline-block');
+        }
+
+        function abrirModalNovo() {
+            document.getElementById("formMaterial").reset();
+            document.getElementById("mat_id").value = "";
+            document.getElementById("mat_codigo").value = ""; 
+            document.getElementById("mat_estoque_minimo").value = "5"; 
+            document.getElementById("mat_validade").value = "";
+            
+            removerCertificado = false;
+            removerImagem = false;
+            document.getElementById("boxCertificadoAtual").style.display = "none";
+            document.getElementById("boxImagemAtual").style.display = "none";
+
+            document.getElementById("modalTitle").innerHTML = '<i class="bi bi-box2"></i> Novo Material';
+            
+            const hoje = new Date();
+            document.getElementById("mat_data").value = new Date(hoje - hoje.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+            
+            habilitarCamposMaterial(false);
+            modalObj.show();
+        }
+
+        function abrirEdicao(id, isReadOnly = false) {
+            const mat = listaMateriais.find(m => m.id === id);
+            if (!mat) return;
+
+            document.getElementById("formMaterial").reset();
+            document.getElementById("mat_id").value = mat.id;
+            
+            document.getElementById("modalTitle").innerHTML = isReadOnly 
+                ? '<i class="bi bi-eye"></i> Detalhes do Material' 
+                : '<i class="bi bi-pencil-square"></i> Editar Material';
+
+            document.getElementById("mat_codigo").value = mat.codigo || "MAT-0";
+            document.getElementById("mat_nome").value = mat.nome || "";
+            document.getElementById("mat_fabricante").value = mat.fabricante || "";
+            document.getElementById("mat_lote").value = mat.lote || "";
+            document.getElementById("mat_data").value = mat.data_recebimento ? mat.data_recebimento.split('T')[0] : "";
+            document.getElementById("mat_validade").value = mat.data_validade ? mat.data_validade.split('T')[0] : "";
+            document.getElementById("mat_quantidade").value = mat.quantidade;
+            document.getElementById("mat_estoque_minimo").value = mat.estoque_minimo || 0;
+            document.getElementById("mat_unidade").value = mat.unidade;
+            document.getElementById("mat_observacoes").value = mat.observacoes || "";
+
+            removerCertificado = false;
+            removerImagem = false;
+
+            if(mat.certificado_nome) {
+                document.getElementById("nomeCertificadoAtual").innerText = mat.certificado_nome;
+                document.getElementById("btnVerCertificado").href = mat.certificado_base64;
+                document.getElementById("btnVerCertificado").download = mat.certificado_nome;
+                document.getElementById("boxCertificadoAtual").style.display = "block";
+            } else { document.getElementById("boxCertificadoAtual").style.display = "none"; }
+
+            if(mat.imagem_nome) {
+                document.getElementById("nomeImagemAtual").innerText = mat.imagem_nome;
+                document.getElementById("btnVerImagem").href = mat.imagem_base64;
+                document.getElementById("btnVerImagem").download = mat.imagem_nome;
+                document.getElementById("boxImagemAtual").style.display = "block";
+            } else { document.getElementById("boxImagemAtual").style.display = "none"; }
+
+            habilitarCamposMaterial(isReadOnly);
+            modalObj.show();
+        }
+
+        function removerAnexoCertificado() {
+            removerCertificado = true;
+            document.getElementById("boxCertificadoAtual").style.display = "none";
+            document.getElementById("mat_certificado").value = "";
+        }
+
+        function removerAnexoImagem() {
+            removerImagem = true;
+            document.getElementById("boxImagemAtual").style.display = "none";
+            document.getElementById("mat_imagem").value = "";
+        }
+
+        const fileToBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader(); reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error);
+        });
+
+        document.getElementById("formMaterial").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("btnSalvarMaterial");
+            const btnTextoOriginal = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> A gravar...';
+            btn.disabled = true;
+
+            const idEdicao = document.getElementById("mat_id").value;
+
+            const payload = {
+                nome: document.getElementById("mat_nome").value,
+                fabricante: document.getElementById("mat_fabricante").value,
+                lote: document.getElementById("mat_lote").value,
+                data_recebimento: document.getElementById("mat_data").value,
+                data_validade: document.getElementById("mat_validade").value,
+                quantidade: document.getElementById("mat_quantidade").value,
+                estoque_minimo: document.getElementById("mat_estoque_minimo").value,
+                unidade: document.getElementById("mat_unidade").value,
+                observacoes: document.getElementById("mat_observacoes").value,
+                remover_certificado: removerCertificado,
+                remover_imagem: removerImagem
+            };
+
+            const fileCert = document.getElementById("mat_certificado").files[0];
+            if (fileCert) {
+                payload.certificado_nome = fileCert.name;
+                payload.certificado_base64 = await fileToBase64(fileCert);
+            }
+
+            const fileImg = document.getElementById("mat_imagem").files[0];
+            if (fileImg) {
+                payload.imagem_nome = fileImg.name;
+                payload.imagem_base64 = await fileToBase64(fileImg);
+            }
+
+            try {
+                let url = `${API}/materiais`;
+                let method = 'POST';
+
+                if (idEdicao) {
+                    url = `${API}/materiais/${idEdicao}`;
+                    method = 'PUT';
+                }
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if(res.ok) {
+                    modalObj.hide();
+                    carregarMateriais();
+                } else {
+                    alert("Erro ao gravar. Verifique os dados.");
+                }
+            } catch(err) {
+                console.error(err); alert("Erro de conexão.");
+            } finally {
+                btn.innerHTML = btnTextoOriginal; btn.disabled = false;
+            }
+        });
+
+        async function excluirMaterial(id) {
+            if(!confirm("Atenção: Tem certeza que deseja remover permanentemente este material?")) return;
+            try {
+                const res = await fetch(`${API}/materiais/${id}`, { method: 'DELETE' });
+                if(res.ok) carregarMateriais();
+                else alert("Erro ao excluir.");
+            } catch(e) { console.error(e); }
+        }
+
+        // ==========================================
+        // ABA 2: REGISTRAR USO E ESTORNAR
+        // ==========================================
+        function abrirModalUso() {
+            document.getElementById("formUsoMaterial").reset();
+            const hoje = new Date();
+            document.getElementById("usoData").value = new Date(hoje - hoje.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+            document.getElementById("usoUnidadeTxt").innerText = "---";
+            modalUso.show();
+        }
+
+        document.getElementById("formUsoMaterial").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("btnSalvarUsoMaterial");
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Registrando...';
+            btn.disabled = true;
+
+            const setor = document.getElementById("usoSetor").value;
+            const obs = document.getElementById("usoObservacoes").value;
+
+            const payload = {
+                material_id: document.getElementById("usoMaterialId").value,
+                quantidade: document.getElementById("usoQtd").value,
+                setor: setor,
+                observacoes: obs
+            };
+
+            try {
+                const res = await fetch(`${API}/materiais/descarte`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    modalUso.hide();
+                    carregarMateriais(); 
+                    carregarHistoricoUso(); 
+                    alert("Uso registrado com sucesso!");
+                } else {
+                    const errorData = await res.json();
+                    alert("Erro ao registrar: " + (errorData.error || "Estoque insuficiente."));
+                }
+            } catch(e) { console.error(e); alert("Erro de conexão com o servidor."); } 
+            finally {
+                btn.innerHTML = 'Confirmar Baixa no Estoque'; btn.disabled = false;
+            }
+        });
+
+        async function carregarHistoricoUso() {
+            try {
+                const res = await fetch(`${API}/materiais/uso`);
+                listaHistoricoUso = await res.json();
+                filtrarUso();
+                atualizarGraficoConsumo(); // Se estiver carregado, atualiza o gráfico também
+            } catch(e) { console.error("Erro ao carregar histórico:", e); }
+        }
+
+        function filtrarUso() {
+            const termo = document.getElementById("buscaUso").value.toLowerCase();
+            const mesEscolhido = document.getElementById("filtroMesUso").value;
+
+            const filtrados = listaHistoricoUso.filter(u => {
+                const texto = `${u.material_nome} ${u.setor || ''} ${u.observacoes || ''}`.toLowerCase();
+                const matchTexto = texto.includes(termo);
+                
+                let matchData = true;
+                if(mesEscolhido) {
+                    const dataObj = u.data_uso.split('T')[0];
+                    matchData = dataObj.startsWith(mesEscolhido);
+                }
+
+                return matchTexto && matchData;
+            });
+
+            renderizarTabelaUso(filtrados);
+        }
+
+        function renderizarTabelaUso(lista) {
+            const tbody = document.getElementById("tabelaHistoricoUso"); 
+            tbody.innerHTML = "";
+            
+            if(lista.length === 0) { 
+                tbody.innerHTML = "<tr><td colspan='7' class='text-center py-4 text-muted'>Nenhum registro encontrado para este filtro.</td></tr>"; 
+                return; 
+            }
+            
+            lista.forEach(u => {
+                const dataFmt = u.data_uso.split('T')[0].split('-').reverse().join('/');
+                const responsavel = u.usuario_nome || 'Sistema'; 
+                
+                const btnEstornar = globalPerms.mat_del ? `<button class="btn btn-sm btn-light border text-danger" onclick="excluirUsoMaterial(${u.id})" title="Excluir (Devolve ao estoque)"><i class="bi bi-arrow-counterclockwise"></i> Estornar</button>` : '';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="ps-4 text-muted">${dataFmt}</td>
+                        <td class="fw-bold text-dark">${u.material_codigo || '-'} - ${u.material_nome}</td>
+                        <td class="text-danger fw-bold">-${u.quantidade} <small class="text-muted fw-normal">${u.unidade}</small></td>
+                        <td>${u.setor || '-'}</td>
+                        <td class="small text-muted">${u.observacoes || '-'}</td>
+                        <td class="small text-primary fw-bold"><i class="bi bi-person-circle"></i> ${responsavel}</td>
+                        <td class="text-end pe-4">${btnEstornar}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function excluirUsoMaterial(id) {
+            if(!confirm("Atenção: Ao estornar este registro, a quantidade será DEVOLVIDA ao estoque principal. Continuar?")) return;
+            try {
+                const res = await fetch(`${API}/materiais/uso/${id}`, { method: 'DELETE' });
+                if(res.ok) { 
+                    carregarMateriais(); 
+                    carregarHistoricoUso(); 
+                    alert("Estoque estornado com sucesso!");
+                } else {
+                    alert("Erro ao estornar registro.");
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        // ==========================================
+        // 🔥 NOVA ABA: GRÁFICO DE CONSUMO MENSAL
+        // ==========================================
+        function atualizarGraficoConsumo() {
+            const ano = document.getElementById("filtroConsumoAno").value;
+            const materialId = document.getElementById("filtroConsumoMaterial").value;
+
+            const totaisMes = new Array(12).fill(0);
+            let unidadeGeral = "";
+
+            listaHistoricoUso.forEach(u => {
+                const nData = normalizarDataInsumos(u.data_uso);
+                
+                if (nData && nData.ano === ano) {
+                    if (materialId === "" || String(u.material_id) === materialId) {
+                        totaisMes[parseInt(nData.mes) - 1] += parseFloat(u.quantidade);
+                        unidadeGeral = u.unidade; 
+                    }
+                }
+            });
+
+            const somaAnual = totaisMes.reduce((a, b) => a + b, 0);
+            document.getElementById("totalConsumoAno").innerText = `Total ${ano}: ${somaAnual.toFixed(2)} ${materialId ? unidadeGeral : 'unidades/variadas'}`;
+
+            const ctx = document.getElementById('chartConsumo').getContext('2d');
+            if (chartConsumoInstance) chartConsumoInstance.destroy();
+
+            chartConsumoInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                    datasets: [{
+                        label: materialId ? `Consumo (${unidadeGeral})` : 'Consumo Total Agregado',
+                        data: totaisMes,
+                        backgroundColor: '#0d6efd',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { 
+                        y: { 
+                            beginAtZero: true,
+                            title: { display: true, text: 'Quantidade Consumida', font: { weight: 'bold' } }
+                        } 
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toFixed(2);
+                                        if (materialId) label += ' ' + unidadeGeral;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -6,6 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -16,300 +17,275 @@
             <img src="assets/img/logo.png" alt="Logo Kari Kari" class="sidebar-logo">
             <div class="brand-subtitle">Lab KariKari LIMS</div>
         </div>
-        
+
         <div class="sidebar-menu">
-            <div class="sidebar-label">Operacional</div>
-            <a href="dashboard.html" class="nav-link"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
-            <a href="amostras.html" class="nav-link"><i class="bi bi-box-seam"></i> <span>Amostras</span></a>
-            <a href="analises.html" class="nav-link"><i class="bi bi-clipboard-data"></i> <span>Análises</span></a>
-            <a href="laudos.html" class="nav-link"><i class="bi bi-file-earmark-check"></i> <span>Laudos</span></a>
-            <a href="reagentes.html" class="nav-link active"><i class="bi bi-droplet-half"></i> <span>Reagentes</span></a>
-            <a href="solucoes.html" class="nav-link"><i class="bi bi-eyedropper"></i> <span>Soluções</span></a>
-            <div class="sidebar-label">Gestão</div>
-            <a href="relatorios.html" class="nav-link"><i class="bi bi-graph-up"></i> <span>Relatórios</span></a>
-            <a href="produtos.html" class="nav-link"><i class="bi bi-tags"></i> <span>Produtos</span></a>
-            <a href="usuarios.html" class="nav-link"><i class="bi bi-people"></i> <span>Usuários</span></a>
+            <a href="#submenuLab" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-flask"></i> <span class="menu-text fw-bold">Laboratório</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse show" id="submenuLab">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <div class="sidebar-label mt-2 mb-1" style="font-size: 0.7rem;">Controle de Qualidade</div>
+                    <a href="dashboard.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                    <a href="amostras.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box-seam me-2"></i>Amostras</a>
+                    
+                    <a href="#submenuAnalises" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center py-1" style="font-size: 0.85rem;">
+                        <span><i class="bi bi-clipboard-data me-2"></i>Análises</span>
+                        <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
+                    </a>
+                    <div class="collapse" id="submenuAnalises">
+                        <div class="ps-3 ms-2 border-start border-secondary my-1">
+                            <a href="analises.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Bancada FIFO</a>
+                            <a href="calculos.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Cálculos</a>
+                            <a href="investigacao.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Investigação</a>
+                        </div>
+                    </div>
+
+                    <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
+                    <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="reagentes.html" class="nav-link active py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
+                    <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
+                    <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
+                
+                    <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
+                    <a href="relatorios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up me-2"></i>Relatórios</a>
+                    <a href="produtos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-tags me-2"></i>Produtos</a>
+                    <a href="ponto.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-clock-history me-2"></i>Ponto</a>
+                    <a href="usuarios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-people me-2"></i>Usuários</a>
+                  
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-check2-square me-2"></i>Inspeções de Fábrica</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-exclamation-triangle me-2"></i>Não Conformidades</a>
+                </div>
+            </div>
+
+            <a href="#submenuPD" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center mt-2">
+                <span><i class="bi bi-lightbulb"></i> <span class="menu-text fw-bold">P&D</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse" id="submenuPD">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-tools me-2"></i>Projetos</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-journal-text me-2"></i>Fórmulas</a>
+                </div>
+            </div>
+
         </div>
         <div class="sidebar-footer"><button onclick="window.location.href='login.html'" class="btn-logout"><i class="bi bi-box-arrow-left me-2"></i> <span>Sair</span></button></div>
     </nav>
 
     <div class="main-content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 class="fw-bold text-dark mb-0">Controle de Reagentes (FIFO)</h2>
-                <p class="text-muted small">Gestão de estoque químico, validade e rastreabilidade</p>
-            </div>
-            
-            <div class="d-flex gap-3">
-                <button class="btn btn-primary fw-bold px-4 shadow-sm text-nowrap" id="btnNovoReagente" onclick="abrirModalEntrada()">
-                    <i class="bi bi-box-arrow-in-down"></i> Cadastrar Entrada
-                </button>
-            </div>
-        </div>
+        <h2 class="fw-bold mb-4"><i class="bi bi-droplet-half text-primary"></i> Gestão de Reagentes</h2>
 
-        <div class="row mb-3 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
-            <div class="col-md-5">
-                <label class="form-label fw-bold text-muted small mb-1">Buscar Material</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
-                    <input type="text" id="buscaReagente" class="form-control" placeholder="Nome, Lote, CAS ou Código...">
+        <ul class="nav nav-tabs mb-4" id="reagentesTab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active fw-bold" id="estoque-tab" data-bs-toggle="tab" data-bs-target="#estoque-pane" type="button"><i class="bi bi-boxes"></i> Estoque</button>
+            </li>
+            <li class="nav-item" id="nav-uso-tab">
+                <button class="nav-link fw-bold" id="uso-tab" data-bs-toggle="tab" data-bs-target="#uso-pane" type="button" onclick="carregarHistoricoUso()"><i class="bi bi-clock-history"></i> Histórico de Uso</button>
+            </li>
+            <li class="nav-item" id="nav-consumo-tab">
+                <button class="nav-link fw-bold text-success" id="consumo-tab" data-bs-toggle="tab" data-bs-target="#consumo-pane" type="button" onclick="atualizarGraficoConsumo()"><i class="bi bi-bar-chart-steps"></i> Consumo por Mês</button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="estoque-pane">
+                <div class="d-flex justify-content-end mb-3">
+                    <button class="btn btn-primary shadow-sm fw-bold px-4" id="btnNovoReagente" onclick="abrirModalNovo()">
+                        <i class="bi bi-plus-lg"></i> Novo Reagente
+                    </button>
+                </div>
+
+                <div class="row mb-4 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-muted small mb-1">Buscar Reagente</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                            <input type="text" id="buscaReagente" class="form-control border-start-0" placeholder="Nome, Código ou Lote..." oninput="filtrarTabela()">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-muted small mb-1">Status do Estoque</label>
+                        <select id="filtroEstoque" class="form-select" onchange="filtrarTabela()">
+                            <option value="">Todos</option>
+                            <option value="BAIXO">Estoque Baixo</option>
+                            <option value="ZERADO">Zerado</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-muted small mb-1">Status da Validade</label>
+                        <select id="filtroValidade" class="form-select" onchange="filtrarTabela()">
+                            <option value="">Todos</option>
+                            <option value="PROXIMO">Próximo do Vencimento</option>
+                            <option value="VENCIDO">Vencidos</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-0" style="overflow-x: auto;">
+                        <table class="table table-hover align-middle mb-0" style="min-width: 900px;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Código</th>
+                                    <th>Reagente / Grau</th>
+                                    <th>Fabricante</th>
+                                    <th>Validade</th>
+                                    <th class="text-center border-start text-dark">Estoque Atual</th>
+                                    <th class="text-center text-info" title="Consumo acumulado neste mês">Consumo (Mês)</th>
+                                    <th class="text-center text-warning text-dark border-end" title="Consumo acumulado neste ano">Consumo (Ano)</th>
+                                    <th class="text-center pe-4 col-acoes">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaReagentes"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            
-            <div class="col-md-3">
-                <label class="form-label fw-bold text-muted small mb-1">Data de Validade</label>
-                <input type="date" id="filtroValidade" class="form-control">
+
+            <div class="tab-pane fade" id="uso-pane">
+                <div class="row mb-3 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold text-muted small mb-1">Buscar Registro</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                            <input type="text" id="buscaUso" class="form-control border-start-0" placeholder="Nome do reagente ou observações..." oninput="filtrarUso()">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-muted small mb-1">Mês do Uso</label>
+                        <input type="month" id="filtroMesUso" class="form-control" onchange="filtrarUso()">
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Data</th>
+                                <th>Reagente Consumido</th>
+                                <th>Qtd Retirada</th>
+                                <th>Motivo / Observação</th>
+                                <th>Registrado Por</th>
+                                <th class="text-end pe-4 col-acoes">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaHistoricoUso"></tbody>
+                    </table>
+                </div>
             </div>
 
-            <div class="col-md-4">
-                <label class="form-label fw-bold text-muted small mb-1">Alertas & Status</label>
-                <select id="filtroStatus" class="form-select">
-                    <option value="">Todos (Sem Filtro)</option>
-                    <option value="OK">🟢 Estoque Normal & Na Validade</option>
-                    <option value="BAIXO">🟠 Estoque Baixo / Faltando</option>
-                    <option value="VENCE_BREVE">🔴 Vence em Breve (< 30 dias)</option>
-                    <option value="VENCIDO">⚫ Vencido / Expirado</option>
-                </select>
-            </div>
-        </div>
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-0">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-4">Cód. Reagente</th>
-                            <th>Nome</th>
-                            <th>Fabricante / Grau</th>
-                            <th>Lote / CAS</th>
-                            <th>Validade (FIFO)</th>
-                            <th>Saldo Atual</th>
-                            <th>Status</th>
-                            <th class="text-end pe-4">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelaReagentes"></tbody>
-                </table>
+            <div class="tab-pane fade" id="consumo-pane">
+                <div class="row mb-3 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
+                    <div class="col-md-7">
+                        <label class="form-label fw-bold text-muted small mb-1">Selecionar Reagente Específico</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-funnel"></i></span>
+                            <select id="filtroConsumoMaterial" class="form-select border-start-0" onchange="atualizarGraficoConsumo()">
+                                <option value="">Visão Global (Todos os Reagentes somados)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-muted small mb-1">Ano Analisado</label>
+                        <select id="filtroConsumoAno" class="form-select" onchange="atualizarGraficoConsumo()">
+                            <option value="2026" selected>2026</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-success w-100 fw-bold" onclick="atualizarGraficoConsumo()"><i class="bi bi-arrow-clockwise"></i> Atualizar</button>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white fw-bold py-3 d-flex justify-content-between align-items-center">
+                        <span class="text-success"><i class="bi bi-bar-chart-fill"></i> Tendência de Consumo Mensal</span>
+                        <span class="badge bg-light text-dark border" id="totalConsumoAno">Total Ano: 0</span>
+                    </div>
+                    <div class="card-body">
+                        <div style="position: relative; height: 350px; width: 100%;">
+                            <canvas id="chartConsumo"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="modalEntrada" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header bg-dark text-white border-bottom-0">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-box-seam"></i> Nova Entrada de Material</h5>
+    <div class="modal fade" id="modalReagente" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold" id="modalTitle"><i class="bi bi-droplet-half"></i> Novo Reagente</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body bg-light p-4">
+                <div class="modal-body p-4">
                     <form id="formReagente">
+                        <input type="hidden" id="rea_id">
                         <div class="row g-3">
                             <div class="col-md-3">
-                                <label class="form-label small fw-bold text-muted">CÓD. REAGENTE</label>
-                                <input type="text" class="form-control bg-light text-primary fw-bold" placeholder="Automático" readonly>
+                                <label class="form-label small fw-bold text-muted">CÓDIGO INTERNO</label>
+                                <input type="text" id="rea_codigo" class="form-control" placeholder="Ex: REA-001">
+                            </div>
+                            <div class="col-md-9">
+                                <label class="form-label small fw-bold text-muted">NOME DO REAGENTE *</label>
+                                <input type="text" id="rea_nome" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">GRAU DE PUREZA / ESPECIFICAÇÃO</label>
+                                <input type="text" id="rea_grau" class="form-control" placeholder="Ex: P.A., ACS...">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold text-muted">NOME TÉCNICO DO REAGENTE</label>
-                                <input type="text" id="nome" class="form-control" required placeholder="Ex: Ácido Clorídrico">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-muted">GRAU / PUREZA</label>
-                                <input type="text" id="grau_pureza" class="form-control" placeholder="Ex: PA-ACS, 37%">
+                                <label class="form-label small fw-bold text-muted">FORNECEDOR / FABRICANTE</label>
+                                <input type="text" id="rea_fabricante" class="form-control">
                             </div>
 
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">FABRICANTE</label>
-                                <input type="text" id="fabricante" class="form-control" placeholder="Ex: Merck">
+                                <label class="form-label small fw-bold text-muted">LOTE *</label>
+                                <input type="text" id="rea_lote" class="form-control" required>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">LOTE FORNECEDOR</label>
-                                <input type="text" id="lote" class="form-control" required>
+                                <label class="form-label small fw-bold text-muted">DATA DE FABRICAÇÃO</label>
+                                <input type="date" id="rea_fabricacao" class="form-control">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">Nº CAS</label>
-                                <input type="text" id="cas" class="form-control" placeholder="Ex: 7647-01-0">
-                            </div>
-
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-muted">QTD. ENTRADA</label>
-                                <input type="number" id="quantidade" class="form-control fw-bold" step="0.01" required>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-muted">UNIDADE</label>
-                                <select id="unidade" class="form-select">
-                                    <option value="L">Litros (L)</option><option value="mL">Mililitros (mL)</option><option value="kg">Quilos (kg)</option>
-                                    <option value="g">Gramas (g)</option><option value="un">Unidade (un)</option><option value="cx">Caixa (cx)</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-danger">DATA VALIDADE</label>
-                                <input type="date" id="validade" class="form-control border-danger" required>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-muted">ESTOQUE MÍNIMO</label>
-                                <input type="number" id="estoque_minimo" class="form-control" step="0.01">
+                                <label class="form-label small fw-bold text-danger">DATA DE VALIDADE *</label>
+                                <input type="date" id="rea_validade" class="form-control border-danger fw-bold" required>
                             </div>
 
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">MÉTODO ANALÍTICO</label>
-                                <input type="text" id="metodo_analitico" class="form-control" placeholder="Ex: AOAC, NBR">
+                                <label class="form-label small fw-bold text-primary">QUANTIDADE INICIAL *</label>
+                                <input type="number" step="0.01" id="rea_quantidade" class="form-control border-primary fw-bold" required>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">FAIXA DE USO</label>
-                                <input type="text" id="faixa_uso" class="form-control" placeholder="Ex: Titulação, Micro">
+                                <label class="form-label small fw-bold text-warning text-dark">ESTOQUE MÍN. *</label>
+                                <input type="number" step="0.01" id="rea_estoque_minimo" class="form-control border-warning fw-bold text-dark" value="10" required>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold text-danger">PERICULOSIDADE (GHS)</label>
-                                <select id="periculosidade" class="form-select border-danger">
-                                    <option value="Nenhuma">Nenhuma / Sem Risco</option>
-                                    <option value="Inflamável">Inflamável</option>
-                                    <option value="Corrosivo">Corrosivo</option>
-                                    <option value="Tóxico">Tóxico / Nocivo</option>
-                                    <option value="Risco Biológico">Risco Biológico</option>
-                                    <option value="Oxidante">Oxidante</option>
+                                <label class="form-label small fw-bold text-muted">UNIDADE *</label>
+                                <select id="rea_unidade" class="form-select" required>
+                                    <option value="g">Gramas (g)</option>
+                                    <option value="Kg">Quilos (Kg)</option>
+                                    <option value="mL">Mililitros (mL)</option>
+                                    <option value="L">Litros (L)</option>
+                                    <option value="un">Unidade (un)</option>
                                 </select>
                             </div>
 
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">RESPONSÁVEL</label>
-                                <input type="text" id="responsavel" class="form-control" readonly>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">LOCAL ARMAZENAMENTO</label>
-                                <input type="text" id="local_armazenamento" class="form-control" placeholder="Armário Ácidos">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">OBSERVAÇÕES (OPERAÇÃO)</label>
-                                <input type="text" id="observacoes" class="form-control" placeholder="Manter sob refrigeração...">
+                            <div class="col-12 mt-3">
+                                <label class="form-label small fw-bold text-muted">CAS NUMBER / INFORMAÇÕES DE RISCO</label>
+                                <textarea id="rea_observacoes" class="form-control" rows="2" placeholder="Notas sobre armazenamento, FISPQ..."></textarea>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-end mt-4">
-                            <button type="submit" class="btn btn-primary fw-bold px-5 py-2">Salvar Entrada no Estoque</button>
+                        <div class="d-flex justify-content-end mt-4 pt-3 border-top">
+                            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm" id="btnSalvarReagente">Gravar Reagente</button>
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="modalEditar" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header bg-white border-bottom-0">
-                    <h5 class="modal-title fw-bold text-warning"><i class="bi bi-pencil-square"></i> Editar Reagente</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body bg-light p-4">
-                    <form id="formEditarReagente">
-                        <input type="hidden" id="edit_id">
-                        <div class="row g-3">
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-muted">CÓD. REAGENTE</label>
-                                <input type="text" id="edit_codigo" class="form-control bg-light" readonly>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold text-muted">NOME DO REAGENTE</label>
-                                <input type="text" id="edit_nome" class="form-control" required>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-muted">GRAU / PUREZA</label>
-                                <input type="text" id="edit_grau_pureza" class="form-control">
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">FABRICANTE</label>
-                                <input type="text" id="edit_fabricante" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">LOTE FORNECEDOR</label>
-                                <input type="text" id="edit_lote" class="form-control" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">Nº CAS</label>
-                                <input type="text" id="edit_cas" class="form-control">
-                            </div>
-
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-muted">SALDO ATUAL</label>
-                                <input type="number" id="edit_quantidade" class="form-control fw-bold" step="0.01" required>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-muted">UNIDADE</label>
-                                <select id="edit_unidade" class="form-select">
-                                    <option value="L">Litros (L)</option><option value="mL">Mililitros (mL)</option><option value="kg">Quilos (kg)</option>
-                                    <option value="g">Gramas (g)</option><option value="un">Unidade (un)</option><option value="cx">Caixa (cx)</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-danger">DATA VALIDADE</label>
-                                <input type="date" id="edit_validade" class="form-control border-danger" required>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-muted">ESTOQUE MÍNIMO</label>
-                                <input type="number" id="edit_estoque_minimo" class="form-control" step="0.01">
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">MÉTODO ANALÍTICO</label>
-                                <input type="text" id="edit_metodo_analitico" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">FAIXA DE USO</label>
-                                <input type="text" id="edit_faixa_uso" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-danger">PERICULOSIDADE (GHS)</label>
-                                <select id="edit_periculosidade" class="form-select border-danger">
-                                    <option value="Nenhuma">Nenhuma / Sem Risco</option>
-                                    <option value="Inflamável">Inflamável</option>
-                                    <option value="Corrosivo">Corrosivo</option>
-                                    <option value="Tóxico">Tóxico / Nocivo</option>
-                                    <option value="Risco Biológico">Risco Biológico</option>
-                                    <option value="Oxidante">Oxidante</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold text-muted">LOCAL ARMAZENAMENTO</label>
-                                <input type="text" id="edit_local_armazenamento" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold text-muted">OBSERVAÇÕES</label>
-                                <input type="text" id="edit_observacoes" class="form-control">
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-end mt-4">
-                            <button type="submit" class="btn btn-warning fw-bold px-5 py-2">Salvar Alterações</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="modalDetalhes" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-dark text-white border-bottom-0">
-                    <h5 class="modal-title fw-bold" id="viewTitle">Cód: ---</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body bg-light">
-                    <h5 class="text-primary fw-bold mb-1" id="viewNome">Nome do Reagente</h5>
-                    <p class="text-muted small mb-3" id="viewGrau">Grau: ---</p>
-                    
-                    <ul class="list-group list-group-flush shadow-sm rounded">
-                        <li class="list-group-item d-flex justify-content-between"><span>Fabricante:</span> <strong id="viewFabricante">---</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>Lote / CAS:</span> <span><strong id="viewLote">---</strong> / <strong id="viewCas">---</strong></span></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>Risco GHS:</span> <strong class="text-danger" id="viewGHS">---</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>Método / Uso:</span> <span><strong id="viewMetodo">---</strong> / <strong id="viewFaixa">---</strong></span></li>
-                        <li class="list-group-item d-flex justify-content-between mt-2 border-top"><span>Saldo em Estoque:</span> <strong class="text-primary fs-5" id="viewQtd">---</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>Data Validade:</span> <strong class="text-danger" id="viewValidade">---</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>Localização:</span> <strong id="viewLocal">---</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>Data de Entrada:</span> <strong id="viewEntrada">---</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>Último Uso:</span> <strong id="viewUltimoUso">---</strong></li>
-                        <li class="list-group-item d-flex justify-content-between"><span>Recebido por:</span> <strong id="viewResponsavel">---</strong></li>
-                        <li class="list-group-item text-muted bg-light"><small><i class="bi bi-journal-text"></i> Obs: <span id="viewObs">---</span></small></li>
-                    </ul>
                 </div>
             </div>
         </div>
@@ -320,264 +296,487 @@
     
     <script>
         const API = window.location.origin + "/api";
-        let modalEntrada, modalEditar, modalDetalhes;
-        let listaReagentesGlobais = []; 
+        let listaReagentes = [];
+        let listaHistoricoUso = [];
+        let modalObj;
+        let chartConsumoInstance = null;
+        let globalPerms = {};
 
-        // ==========================================
-        // 🛡️ TRAVA BASEADA NAS PERMISSÕES
-        // ==========================================
-        function aplicarTravaGlobal() {
+        // 🔥 FUNÇÃO DE BLINDAGEM DE DATAS (Resolve o problema do Gráfico)
+        function normalizarData(dataString) {
+            if (!dataString) return null;
+            // Se vier formato DD/MM/YYYY
+            if (dataString.includes('/')) {
+                const [data] = dataString.split(' ');
+                const [d, m, a] = data.split('/');
+                return { ano: a, mes: m, dia: d };
+            }
+            // Se vier formato ISO (YYYY-MM-DD...)
+            if (dataString.includes('-')) {
+                const [data] = dataString.split('T');
+                const [a, m, d] = data.split('-');
+                return { ano: a, mes: m, dia: d };
+            }
+            return null;
+        }
+
+        function aplicarTravaTela() {
             const userStr = localStorage.getItem("limsUser");
             if (!userStr) return;
-
             const user = JSON.parse(userStr);
             const perfilUser = String(user.perfil || "").toUpperCase().trim();
             const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
             
-            const podeEditar = isAdmin || (user.permissoes && user.permissoes.reagentes_edit === true);
+            globalPerms = user.permissoes || {};
+            
+            if (isAdmin) {
+                globalPerms.reag_reg = true;
+                globalPerms.reag_edit = true;
+                globalPerms.reag_baixa = true;
+                globalPerms.reag_del = true;
+            }
 
-            if (!podeEditar) {
-                const style = document.createElement('style');
-                style.innerHTML = `
-                    #btnNovoReagente { display: none !important; }
-                    button[onclick*="excluir"], button[onclick*="apagar"], button[onclick*="abrirModalEdicao"], button[onclick*="editar"], .btn-outline-warning, .btn-outline-danger { display: none !important; }
-                    form button[type="submit"] { display: none !important; }
-                    form input, form select, form textarea { pointer-events: none !important; background-color: #e9ecef !important; color: #6c757d !important; }
-                `;
-                document.head.appendChild(style);
+            if (!globalPerms.reag_baixa && !globalPerms.reag_edit) {
+                const navUso = document.getElementById("nav-uso-tab");
+                const navConsumo = document.getElementById("nav-consumo-tab");
+                if(navUso) navUso.style.display = 'none';
+                if(navConsumo) navConsumo.style.display = 'none';
+            }
+
+            if (!globalPerms.reag_reg) {
+                const btnNovo = document.getElementById("btnNovoReagente");
+                if (btnNovo) btnNovo.style.display = 'none';
             }
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            aplicarTravaGlobal(); // Ativa o Escudo
-
-            modalEntrada = new bootstrap.Modal(document.getElementById('modalEntrada'));
-            modalEditar = new bootstrap.Modal(document.getElementById('modalEditar'));
-            modalDetalhes = new bootstrap.Modal(document.getElementById('modalDetalhes'));
-            
-            // Adiciona ouvintes para o Filtro Mágico
-            document.getElementById("buscaReagente").addEventListener("input", aplicarFiltrosReagentes);
-            document.getElementById("filtroValidade").addEventListener("change", aplicarFiltrosReagentes);
-            document.getElementById("filtroStatus").addEventListener("change", aplicarFiltrosReagentes);
-
+            aplicarTravaTela();
+            modalObj = new bootstrap.Modal(document.getElementById('modalReagente'));
             carregarReagentes();
+            
+            if(globalPerms.reag_baixa || globalPerms.reag_edit) {
+                carregarHistoricoUso();
+            }
         });
 
-        // 🚀 FILTRO MÁGICO DE REAGENTES
-        function aplicarFiltrosReagentes() {
-            const termo = document.getElementById("buscaReagente").value.toLowerCase();
-            const dataEscolhida = document.getElementById("filtroValidade").value; // YYYY-MM-DD
-            const statusEscolhido = document.getElementById("filtroStatus").value;
-
-            const filtrados = listaReagentesGlobais.filter(r => {
-                const nome = String(r.nome || "").toLowerCase();
-                const codigo = String(r.codigo || "").toLowerCase();
-                const lote = String(r.lote || "").toLowerCase();
-                const cas = String(r.cas || "").toLowerCase();
-                const validadeFmt = String(r.validade_fmt || ""); // DD/MM/YYYY
-
-                // 1. Pesquisa por Texto
-                const matchTexto = nome.includes(termo) || codigo.includes(termo) || lote.includes(termo) || cas.includes(termo);
-
-                // 2. Pesquisa por Data
-                let matchData = true;
-                if (dataEscolhida) {
-                    const [ano, mes, dia] = dataEscolhida.split('-');
-                    const dataFormatadaBr = `${dia}/${mes}/${ano}`;
-                    matchData = validadeFmt.startsWith(dataFormatadaBr);
-                }
-
-                // 3. Pesquisa por Status de Risco/Estoque
-                let matchStatus = true;
-                if (statusEscolhido) {
-                    const hoje = new Date();
-                    const val = new Date(r.validade);
-                    const diffDias = Math.ceil((val - hoje) / (1000 * 60 * 60 * 24));
-                    const estoqueBaixo = parseFloat(r.quantidade) <= parseFloat(r.estoque_minimo || 0);
-
-                    if (statusEscolhido === 'VENCIDO') matchStatus = (diffDias < 0);
-                    else if (statusEscolhido === 'VENCE_BREVE') matchStatus = (diffDias >= 0 && diffDias < 30);
-                    else if (statusEscolhido === 'BAIXO') matchStatus = estoqueBaixo;
-                    else if (statusEscolhido === 'OK') matchStatus = (diffDias >= 30 && !estoqueBaixo);
-                }
-
-                return matchTexto && matchData && matchStatus;
-            });
-
-            renderizarTabela(filtrados);
-        }
-
+        // ==========================================
+        // LISTAR E FILTRAR ESTOQUE
+        // ==========================================
         async function carregarReagentes() {
             try {
                 const res = await fetch(`${API}/reagentes`);
-                listaReagentesGlobais = await res.json();
-                aplicarFiltrosReagentes(); // Envia para o filtro invés de montar direto
-            } catch(e) { console.error(e); }
+                listaReagentes = await res.json();
+                filtrarTabela();
+                preencherDropdownConsumo();
+            } catch (e) { console.error("Erro ao carregar reagentes:", e); }
+        }
+
+        function preencherDropdownConsumo() {
+            const sel = document.getElementById("filtroConsumoMaterial");
+            sel.innerHTML = '<option value="">Visão Global (Todos os Reagentes somados)</option>';
+            listaReagentes.forEach(m => {
+                sel.innerHTML += `<option value="${m.id}">${m.codigo ? m.codigo+' - ' : ''}${m.nome}</option>`;
+            });
+        }
+
+        function filtrarTabela() {
+            const termo = document.getElementById("buscaReagente").value.toLowerCase();
+            const filtroQtd = document.getElementById("filtroEstoque").value;
+            const filtroVal = document.getElementById("filtroValidade").value;
+
+            const agora = new Date();
+
+            const filtrados = listaReagentes.filter(r => {
+                const texto = `${r.codigo || ''} ${r.nome} ${r.fabricante || ''} ${r.lote || ''}`.toLowerCase();
+                const matchTexto = texto.includes(termo);
+                
+                const qtd = parseFloat(r.quantidade);
+                const minEstoque = parseFloat(r.estoque_minimo || 0);
+                let matchQtd = true;
+                if (filtroQtd === "BAIXO") matchQtd = qtd <= minEstoque && qtd > 0;
+                if (filtroQtd === "ZERADO") matchQtd = qtd <= 0;
+
+                let matchVal = true;
+                if(r.validade && filtroVal !== "") {
+                    const valDate = new Date(r.validade);
+                    const diasRestantes = Math.ceil((valDate - agora) / (1000 * 60 * 60 * 24));
+                    
+                    if (filtroVal === "PROXIMO") matchVal = diasRestantes > 0 && diasRestantes <= 30;
+                    if (filtroVal === "VENCIDO") matchVal = diasRestantes <= 0;
+                }
+
+                return matchTexto && matchQtd && matchVal;
+            });
+
+            renderizarTabela(filtrados);
         }
 
         function renderizarTabela(lista) {
             const tbody = document.getElementById("tabelaReagentes");
             tbody.innerHTML = "";
 
+            const thAcoes = document.querySelector(".col-acoes");
+            if (!globalPerms.reag_edit && !globalPerms.reag_baixa && !globalPerms.reag_del) {
+                if(thAcoes) thAcoes.style.display = 'none';
+            } else {
+                if(thAcoes) thAcoes.style.display = 'table-cell';
+            }
+
             if(lista.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='8' class='text-center py-5 text-muted'>Nenhum material encontrado com estes filtros.</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='9' class='text-center py-4 text-muted'>Nenhum reagente encontrado.</td></tr>";
                 return;
             }
 
-            lista.forEach(r => {
-                const hoje = new Date();
-                const val = new Date(r.validade);
-                const diffDias = Math.ceil((val - hoje) / (1000 * 60 * 60 * 24));
-                
-                let badgeValidade = "bg-success";
-                let statusLabel = r.status || "OK";
-                
-                if (diffDias < 0) { badgeValidade = "bg-dark"; statusLabel = "VENCIDO"; } 
-                else if (diffDias < 30) { badgeValidade = "bg-danger"; statusLabel = "VENCE EM BREVE"; } 
-                else if (diffDias < 90) { badgeValidade = "bg-warning text-dark"; }
+            const agora = new Date();
 
-                let linhaClass = "";
-                let avisoEstoque = "";
-                if (parseFloat(r.quantidade) <= parseFloat(r.estoque_minimo || 0)) {
-                    linhaClass = "table-warning";
-                    avisoEstoque = ' <i class="bi bi-exclamation-triangle-fill text-danger" title="Estoque Baixo"></i>';
+            lista.forEach(r => {
+                const qtd = parseFloat(r.quantidade);
+                const minEstoque = parseFloat(r.estoque_minimo || 0);
+                
+                let qtdClass = "text-success fw-bold";
+                if(qtd <= 0) qtdClass = "text-danger fw-bold";
+                else if(qtd <= minEstoque) qtdClass = "text-warning text-dark fw-bold";
+
+                let valClass = "text-dark";
+                let badgeValidade = "";
+                if(r.validade) {
+                    const valDate = new Date(r.validade);
+                    const diasRestantes = Math.ceil((valDate - agora) / (1000 * 60 * 60 * 24));
+                    
+                    if(diasRestantes <= 0) { valClass = "text-danger fw-bold"; badgeValidade = '<span class="badge bg-danger ms-1">Vencido</span>'; }
+                    else if(diasRestantes <= 30) { valClass = "text-warning text-dark fw-bold"; badgeValidade = '<span class="badge bg-warning text-dark ms-1">A Vencer</span>'; }
+                }
+
+                const rowClass = (qtd <= 0 || (r.validade && new Date(r.validade) < agora)) ? "table-danger" : "";
+
+                let botoesAcao = '';
+                if(globalPerms.reag_edit) {
+                    botoesAcao += `<button class="btn btn-sm btn-outline-primary shadow-sm" onclick="abrirEdicao(${r.id})" title="Editar"><i class="bi bi-pencil-square"></i></button>`;
+                }
+                if(globalPerms.reag_baixa) {
+                    botoesAcao += `<button class="btn btn-sm btn-outline-warning shadow-sm ms-2" onclick="descartarReagente(${r.id}, '${r.nome}', '${r.unidade}')" title="Registrar Baixa/Descarte"><i class="bi bi-box-arrow-down"></i></button>`;
+                }
+                if(globalPerms.reag_del) {
+                    botoesAcao += `<button class="btn btn-sm btn-light border text-danger shadow-sm ms-2" onclick="excluirReagente(${r.id})" title="Excluir do Banco"><i class="bi bi-trash"></i></button>`;
+                }
+
+                let tdAcoes = '';
+                if (botoesAcao !== '') {
+                    tdAcoes = `<td class="text-center pe-4 text-nowrap col-acoes">${botoesAcao}</td>`;
                 }
 
                 tbody.innerHTML += `
-                    <tr class="${linhaClass}">
+                    <tr class="${rowClass}">
                         <td class="ps-4 fw-bold text-primary">${r.codigo || '-'}</td>
-                        <td class="fw-bold">${r.nome}</td>
-                        <td>${r.fabricante || '-'}<br><small class="text-muted">${r.grau_pureza || ''}</small></td>
-                        <td><small>Lote:</small> ${r.lote}<br><small class="text-muted">CAS: ${r.cas || '-'}</small></td>
-                        <td><span class="badge ${badgeValidade}">${r.validade_fmt}</span></td>
-                        <td class="fw-bold fs-6">${r.quantidade} <small class="text-muted fw-normal">${r.unidade}</small>${avisoEstoque}</td>
-                        <td><span class="badge ${statusLabel === 'VENCIDO' ? 'bg-dark' : 'bg-secondary'}">${statusLabel}</span></td>
-                        <td class="text-end pe-4 text-nowrap">
-                            <button onclick="verDetalhes(${r.id})" class="btn btn-sm btn-outline-info border-0" title="Ver Detalhes"><i class="bi bi-eye"></i></button>
-                            <button onclick="abrirModalEdicao(${r.id})" class="btn btn-sm btn-outline-warning border-0" title="Editar"><i class="bi bi-pencil"></i></button>
-                            <button onclick="excluirReagente(${r.id})" class="btn btn-sm btn-outline-danger border-0" title="Apagar"><i class="bi bi-trash"></i></button>
-                        </td>
+                        <td class="fw-bold text-dark">${r.nome} <br><small class="fw-normal text-muted">${r.grau_pureza || ''}</small></td>
+                        <td>${r.fabricante || '-'}</td>
+                        <td class="${valClass}">${r.validade_fmt || '-'} ${badgeValidade}</td>
+                        <td class="text-center border-start ${qtdClass} fs-6" title="Estoque Mínimo: ${minEstoque}">${qtd} <small class="text-muted fw-normal">${r.unidade}</small></td>
+                        <td class="text-center text-info fw-bold">${r.consumo_mes || 0} <small class="text-muted fw-normal">${r.unidade}</small></td>
+                        <td class="text-center text-warning text-dark fw-bold border-end">${r.consumo_ano || 0} <small class="text-muted fw-normal">${r.unidade}</small></td>
+                        ${tdAcoes}
                     </tr>
                 `;
             });
         }
 
-        function abrirModalEntrada() {
+        // ==========================================
+        // CADASTRAR / EDITAR
+        // ==========================================
+        function abrirModalNovo() {
             document.getElementById("formReagente").reset();
-            const user = JSON.parse(localStorage.getItem("limsUser"));
-            if(user) document.getElementById("responsavel").value = user.nome || user.login;
-            modalEntrada.show();
+            document.getElementById("rea_id").value = "";
+            document.getElementById("modalTitle").innerHTML = '<i class="bi bi-droplet-half"></i> Novo Reagente';
+            modalObj.show();
+        }
+
+        function abrirEdicao(id) {
+            const rea = listaReagentes.find(r => r.id === id);
+            if (!rea) return;
+
+            document.getElementById("formReagente").reset();
+            document.getElementById("rea_id").value = rea.id;
+            document.getElementById("modalTitle").innerHTML = '<i class="bi bi-pencil-square"></i> Editar Reagente';
+
+            document.getElementById("rea_codigo").value = rea.codigo || "";
+            document.getElementById("rea_nome").value = rea.nome || "";
+            document.getElementById("rea_grau").value = rea.grau_pureza || "";
+            document.getElementById("rea_fabricante").value = rea.fabricante || "";
+            document.getElementById("rea_lote").value = rea.lote || "";
+            document.getElementById("rea_fabricacao").value = rea.data_fabricacao ? String(rea.data_fabricacao).split('T')[0] : "";
+            document.getElementById("rea_validade").value = rea.validade ? String(rea.validade).split('T')[0] : "";
+            document.getElementById("rea_quantidade").value = rea.quantidade;
+            document.getElementById("rea_estoque_minimo").value = rea.estoque_minimo || 0;
+            document.getElementById("rea_unidade").value = rea.unidade;
+            document.getElementById("rea_observacoes").value = rea.observacoes || "";
+
+            modalObj.show();
         }
 
         document.getElementById("formReagente").addEventListener("submit", async (e) => {
             e.preventDefault();
+            const btn = document.getElementById("btnSalvarReagente");
+            const btnTextoOriginal = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> A gravar...';
+            btn.disabled = true;
+
+            const idEdicao = document.getElementById("rea_id").value;
+
             const payload = {
-                nome: document.getElementById("nome").value,
-                grau_pureza: document.getElementById("grau_pureza").value,
-                fabricante: document.getElementById("fabricante").value,
-                lote: document.getElementById("lote").value,
-                cas: document.getElementById("cas").value,
-                quantidade: document.getElementById("quantidade").value,
-                unidade: document.getElementById("unidade").value,
-                validade: document.getElementById("validade").value,
-                estoque_minimo: document.getElementById("estoque_minimo").value || 0,
-                metodo_analitico: document.getElementById("metodo_analitico").value,
-                faixa_uso: document.getElementById("faixa_uso").value,
-                periculosidade: document.getElementById("periculosidade").value,
-                responsavel: document.getElementById("responsavel").value,
-                local_armazenamento: document.getElementById("local_armazenamento").value,
-                observacoes: document.getElementById("observacoes").value
+                codigo: document.getElementById("rea_codigo").value,
+                nome: document.getElementById("rea_nome").value,
+                grau_pureza: document.getElementById("rea_grau").value,
+                fabricante: document.getElementById("rea_fabricante").value,
+                lote: document.getElementById("rea_lote").value,
+                data_fabricacao: document.getElementById("rea_fabricacao").value,
+                validade: document.getElementById("rea_validade").value,
+                quantidade: document.getElementById("rea_quantidade").value,
+                estoque_minimo: document.getElementById("rea_estoque_minimo").value,
+                unidade: document.getElementById("rea_unidade").value,
+                observacoes: document.getElementById("rea_observacoes").value
             };
 
-            const res = await fetch(`${API}/reagentes`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-            if(res.ok) {
-                const data = await res.json();
-                alert(`Sucesso! Código Gerado: ${data.codigoGerado}`);
-                modalEntrada.hide();
-                carregarReagentes();
-            } else alert("Erro ao cadastrar.");
+            try {
+                let url = `${API}/reagentes`;
+                let method = 'POST';
+
+                if (idEdicao) {
+                    url = `${API}/reagentes/${idEdicao}`;
+                    method = 'PUT';
+                }
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if(res.ok) {
+                    modalObj.hide();
+                    carregarReagentes();
+                } else {
+                    alert("Erro ao gravar. Verifique os dados.");
+                }
+            } catch(err) {
+                console.error(err); alert("Erro de conexão.");
+            } finally {
+                btn.innerHTML = btnTextoOriginal; btn.disabled = false;
+            }
         });
 
-        function verDetalhes(id) {
-            const r = listaReagentesGlobais.find(item => item.id === id);
-            if(!r) return;
-
-            document.getElementById("viewTitle").innerText = r.codigo;
-            document.getElementById("viewNome").innerText = r.nome;
-            document.getElementById("viewGrau").innerText = `Grau/Pureza: ${r.grau_pureza || 'Não informado'}`;
-            document.getElementById("viewFabricante").innerText = r.fabricante || '-';
-            document.getElementById("viewLote").innerText = r.lote;
-            document.getElementById("viewCas").innerText = r.cas || '-';
-            document.getElementById("viewGHS").innerText = r.periculosidade || 'Sem risco';
-            document.getElementById("viewMetodo").innerText = r.metodo_analitico || '-';
-            document.getElementById("viewFaixa").innerText = r.faixa_uso || '-';
-            document.getElementById("viewQtd").innerText = `${r.quantidade} ${r.unidade}`;
-            document.getElementById("viewValidade").innerText = r.validade_fmt || '-';
-            document.getElementById("viewLocal").innerText = r.local_armazenamento || '-';
-            document.getElementById("viewEntrada").innerText = r.entrada_fmt || '-';
-            document.getElementById("viewUltimoUso").innerText = r.ultimo_uso_fmt || 'Nunca utilizado';
-            document.getElementById("viewResponsavel").innerText = r.responsavel || '-';
-            document.getElementById("viewObs").innerText = r.observacoes || 'Sem observações';
-
-            modalDetalhes.show();
-        }
-
-        function abrirModalEdicao(id) {
-            const r = listaReagentesGlobais.find(item => item.id === id);
-            if(!r) return;
-
-            document.getElementById("edit_id").value = r.id;
-            document.getElementById("edit_codigo").value = r.codigo;
-            document.getElementById("edit_nome").value = r.nome;
-            document.getElementById("edit_grau_pureza").value = r.grau_pureza || '';
-            document.getElementById("edit_fabricante").value = r.fabricante || '';
-            document.getElementById("edit_lote").value = r.lote || '';
-            document.getElementById("edit_cas").value = r.cas || '';
-            document.getElementById("edit_quantidade").value = r.quantidade;
-            document.getElementById("edit_unidade").value = r.unidade;
-            document.getElementById("edit_validade").value = r.validade_input;
-            document.getElementById("edit_estoque_minimo").value = r.estoque_minimo;
-            document.getElementById("edit_metodo_analitico").value = r.metodo_analitico || '';
-            document.getElementById("edit_faixa_uso").value = r.faixa_uso || '';
-            document.getElementById("edit_periculosidade").value = r.periculosidade || 'Nenhuma';
-            document.getElementById("edit_local_armazenamento").value = r.local_armazenamento || '';
-            document.getElementById("edit_observacoes").value = r.observacoes || '';
-
-            modalEditar.show();
-        }
-
-        document.getElementById("formEditarReagente").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const id = document.getElementById("edit_id").value;
-            const payload = {
-                nome: document.getElementById("edit_nome").value,
-                grau_pureza: document.getElementById("edit_grau_pureza").value,
-                fabricante: document.getElementById("edit_fabricante").value,
-                lote: document.getElementById("edit_lote").value,
-                cas: document.getElementById("edit_cas").value,
-                quantidade: document.getElementById("edit_quantidade").value,
-                unidade: document.getElementById("edit_unidade").value,
-                validade: document.getElementById("edit_validade").value,
-                estoque_minimo: document.getElementById("edit_estoque_minimo").value || 0,
-                metodo_analitico: document.getElementById("edit_metodo_analitico").value,
-                faixa_uso: document.getElementById("edit_faixa_uso").value,
-                periculosidade: document.getElementById("edit_periculosidade").value,
-                local_armazenamento: document.getElementById("edit_local_armazenamento").value,
-                observacoes: document.getElementById("edit_observacoes").value
-            };
-
-            const res = await fetch(`${API}/reagentes/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+        // ==========================================
+        // REGISTRAR DESCARTE
+        // ==========================================
+        async function descartarReagente(id, nome, unidade) {
+            const qtdStr = prompt(`Quantos "${unidade}" de ${nome} você deseja descartar/consumir do estoque?`);
+            if (!qtdStr) return; 
             
-            if(res.ok) {
-                modalEditar.hide();
-                carregarReagentes();
-            } else alert("Erro ao atualizar o reagente.");
-        });
+            const qtd = parseFloat(qtdStr.replace(',', '.'));
+            if (isNaN(qtd) || qtd <= 0) return alert("Quantidade inválida.");
 
+            const motivo = prompt("Qual o motivo da baixa? (Ex: Consumo na bancada, Vencido, Derramado)");
+
+            try {
+                const res = await fetch(`${API}/reagentes/descarte`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reagente_id: id, quantidade: qtd, motivo: motivo || "Consumo" })
+                });
+
+                if(res.ok) {
+                    alert("Estoque abatido com sucesso!");
+                    carregarReagentes(); 
+                    if(globalPerms.reag_baixa || globalPerms.reag_edit) {
+                        carregarHistoricoUso();
+                    }
+                } else {
+                    const err = await res.json();
+                    alert("Erro: " + (err.error || "Não foi possível abater o estoque."));
+                }
+            } catch(e) { console.error(e); alert("Erro de conexão com o servidor."); }
+        }
+
+        // ==========================================
+        // HISTÓRICO DE USO (RESOLVIDO)
+        // ==========================================
+        async function carregarHistoricoUso() {
+            try {
+                const res = await fetch(`${API}/reagentes/uso`); 
+                listaHistoricoUso = await res.json();
+                filtrarUso();
+                if(document.getElementById('consumo-pane').classList.contains('active')) {
+                    atualizarGraficoConsumo();
+                }
+            } catch(e) { console.error("Erro ao carregar histórico:", e); }
+        }
+
+        function filtrarUso() {
+            const termo = document.getElementById("buscaUso").value.toLowerCase();
+            const mesEscolhido = document.getElementById("filtroMesUso").value;
+
+            const filtrados = listaHistoricoUso.filter(u => {
+                // Blindagem de chaves (a API pode estar mandando "nome_reagente" em vez de "reagente_nome")
+                const nomeItem = u.reagente_nome || u.nome_reagente || u.nome || '';
+                const obs = u.motivo || u.observacao || '';
+                
+                const texto = `${nomeItem} ${obs}`.toLowerCase();
+                const matchTexto = texto.includes(termo);
+                
+                let matchData = true;
+                if(mesEscolhido) {
+                    const dataRaw = u.data_uso || u.data_descarte || u.data_registro || u.created_at || '';
+                    const nData = normalizarData(dataRaw);
+                    const [fAno, fMes] = mesEscolhido.split('-');
+                    
+                    if (nData) {
+                        matchData = (nData.ano === fAno && nData.mes === fMes);
+                    } else {
+                        matchData = false;
+                    }
+                }
+
+                return matchTexto && matchData;
+            });
+
+            renderizarTabelaUso(filtrados);
+        }
+
+        function renderizarTabelaUso(lista) {
+            const tbody = document.getElementById("tabelaHistoricoUso"); 
+            tbody.innerHTML = "";
+            
+            if(lista.length === 0) { 
+                tbody.innerHTML = "<tr><td colspan='6' class='text-center py-4 text-muted'>Nenhum registro encontrado para este filtro.</td></tr>"; 
+                return; 
+            }
+            
+            lista.forEach(u => {
+                // Extração Segura de Dados
+                const dataRaw = u.data_uso || u.data_descarte || u.data_registro || u.created_at || '';
+                const nData = normalizarData(dataRaw);
+                const dataFmt = nData ? `${nData.dia}/${nData.mes}/${nData.ano}` : '-';
+                
+                const codigo = u.reagente_codigo || u.codigo || '-';
+                const nome = u.reagente_nome || u.nome_reagente || u.nome || 'Reagente Desconhecido';
+                const qtd = u.quantidade || u.qtd || u.qtd_usada || 0;
+                const unid = u.unidade || 'un';
+                const obs = u.motivo || u.observacao || '-';
+                const responsavel = u.usuario_nome || u.responsavel || 'Sistema'; 
+                
+                const btnEstornar = globalPerms.reag_del ? `<button class="btn btn-sm btn-light border text-danger" onclick="excluirUsoReagente(${u.id})" title="Estornar e devolver ao estoque"><i class="bi bi-arrow-counterclockwise"></i> Estornar</button>` : '';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="ps-4 text-muted">${dataFmt}</td>
+                        <td class="fw-bold text-dark">${codigo} - ${nome}</td>
+                        <td class="text-danger fw-bold">-${qtd} <small class="text-muted fw-normal">${unid}</small></td>
+                        <td class="small text-muted">${obs}</td>
+                        <td class="small text-primary fw-bold"><i class="bi bi-person-circle"></i> ${responsavel}</td>
+                        <td class="text-end pe-4 col-acoes">${btnEstornar}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function excluirUsoReagente(id) {
+            if(!confirm("Atenção: Ao estornar este registro, a quantidade será DEVOLVIDA ao estoque principal. Continuar?")) return;
+            try {
+                const res = await fetch(`${API}/reagentes/uso/${id}`, { method: 'DELETE' });
+                if(res.ok) { 
+                    carregarReagentes(); 
+                    carregarHistoricoUso(); 
+                    alert("Estoque estornado com sucesso!");
+                } else {
+                    alert("Erro ao estornar registro.");
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        // ==========================================
+        // 🔥 GRÁFICO DE CONSUMO MENSAL (RESOLVIDO)
+        // ==========================================
+        function atualizarGraficoConsumo() {
+            const anoSelecionado = document.getElementById("filtroConsumoAno").value;
+            const materialId = document.getElementById("filtroConsumoMaterial").value;
+
+            const totaisMes = new Array(12).fill(0);
+            let unidadeGeral = "";
+
+            listaHistoricoUso.forEach(u => {
+                const dataRaw = u.data_uso || u.data_descarte || u.data_registro || u.created_at || '';
+                const nData = normalizarData(dataRaw);
+                
+                // Se conseguimos ler a data e ela pertence ao ano selecionado
+                if (nData && nData.ano === anoSelecionado) {
+                    const rId = String(u.reagente_id || u.id_reagente || u.item_id || u.id_item || '');
+                    
+                    if (materialId === "" || rId === materialId) {
+                        const mesIndex = parseInt(nData.mes) - 1; // 0 para Janeiro, 11 para Dezembro
+                        const qtd = parseFloat(u.quantidade || u.qtd || u.qtd_usada || 0);
+                        
+                        totaisMes[mesIndex] += qtd;
+                        unidadeGeral = u.unidade || unidadeGeral; 
+                    }
+                }
+            });
+
+            const somaAnual = totaisMes.reduce((a, b) => a + b, 0);
+            document.getElementById("totalConsumoAno").innerText = `Total ${anoSelecionado}: ${somaAnual.toFixed(2)} ${materialId ? unidadeGeral : 'unidades (várias)'}`;
+
+            const ctx = document.getElementById('chartConsumo').getContext('2d');
+            if (chartConsumoInstance) chartConsumoInstance.destroy();
+
+            chartConsumoInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                    datasets: [{
+                        label: materialId ? `Consumo (${unidadeGeral})` : 'Consumo Total Agregado',
+                        data: totaisMes,
+                        backgroundColor: '#198754', 
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { 
+                        y: { 
+                            beginAtZero: true,
+                            title: { display: true, text: 'Quantidade Consumida', font: { weight: 'bold' } }
+                        } 
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toFixed(2);
+                                        if (materialId) label += ' ' + unidadeGeral;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ==========================================
+        // EXCLUIR REAGENTE DO BANCO
+        // ==========================================
         async function excluirReagente(id) {
-            if(!confirm("Tem certeza que deseja apagar este item do estoque?")) return;
-            await fetch(`${API}/reagentes/${id}`, { method: "DELETE" });
-            carregarReagentes();
+            if(!confirm("Tem certeza que deseja EXCLUIR permanentemente este reagente do banco?")) return;
+            
+            try {
+                const res = await fetch(`${API}/reagentes/${id}`, { method: 'DELETE' });
+                if(res.ok) carregarReagentes();
+                else alert("Erro ao excluir. O reagente pode estar em uso no histórico.");
+            } catch(e) { console.error(e); }
         }
     </script>
 </body>

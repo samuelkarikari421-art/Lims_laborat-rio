@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Controle de Ponto - LIMS Kari Kari</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        .relogio-digital {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 4rem;
+            font-weight: bold;
+            color: #b22222;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            background: #fff;
+            padding: 10px 40px;
+            border-radius: 15px;
+            border: 2px solid #f4f6f9;
+            display: inline-block;
+        }
+        .data-atual {
+            font-size: 1.2rem;
+            color: #6c757d;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .btn-ponto {
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        .btn-ponto:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .nav-tabs .nav-link { font-weight: bold; color: #6c757d; border-radius: 8px 8px 0 0; }
+        .nav-tabs .nav-link.active { color: #0d6efd; border-color: #dee2e6 #dee2e6 #fff; background-color: #fff; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <button id="btnToggle" class="btn-toggle-sidebar"><i class="bi bi-list"></i></button>
+        
+        <div class="sidebar-header">
+            <img src="assets/img/logo.png" alt="Logo Kari Kari" class="sidebar-logo">
+            <div class="brand-subtitle">Lab KariKari LIMS</div>
+        </div>
+
+        <div class="sidebar-menu">
+            <a href="#submenuLab" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-flask"></i> <span class="menu-text fw-bold">Laboratório</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse show" id="submenuLab">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <div class="sidebar-label mt-2 mb-1" style="font-size: 0.7rem;">Controle de Qualidade</div>
+                    <a href="dashboard.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                    <a href="amostras.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box-seam me-2"></i>Amostras</a>
+                    
+                    <a href="#submenuAnalises" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center py-1" style="font-size: 0.85rem;">
+                        <span><i class="bi bi-clipboard-data me-2"></i>Análises</span>
+                        <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
+                    </a>
+                    <div class="collapse" id="submenuAnalises">
+                        <div class="ps-3 ms-2 border-start border-secondary my-1">
+                            <a href="analises.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Bancada FIFO</a>
+                            <a href="calculos.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Cálculos</a>
+                            <a href="investigacao.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Investigação</a>
+                        </div>
+                    </div>
+
+                    <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
+                    <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
+                    <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
+                    <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
+                
+                    <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
+                    <a href="relatorios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up me-2"></i>Relatórios</a>
+                    <a href="produtos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-tags me-2"></i>Produtos</a>
+                    <a href="ponto.html" class="nav-link active py-1" style="font-size: 0.85rem;"><i class="bi bi-clock-history me-2"></i>Ponto</a>
+                    <a href="usuarios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-people me-2"></i>Usuários</a>
+                  
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-check2-square me-2"></i>Inspeções de Fábrica</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-exclamation-triangle me-2"></i>Não Conformidades</a>
+                </div>
+            </div>
+
+            <a href="#submenuPD" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center mt-2">
+                <span><i class="bi bi-lightbulb"></i> <span class="menu-text fw-bold">P&D</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse" id="submenuPD">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-tools me-2"></i>Projetos</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-journal-text me-2"></i>Fórmulas</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="sidebar-footer"><button onclick="window.location.href='login.html'" class="btn-logout"><i class="bi bi-box-arrow-left me-2"></i> <span>Sair</span></button></div>
+    </nav>
+
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-dark mb-0">Controle de Ponto</h2>
+                <p class="text-muted small">Gestão de horários de entrada e saída do laboratório</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button id="btnGerarFolha" class="btn btn-dark fw-bold shadow-sm" onclick="abrirModalRelatorio()" style="display:none;">
+                    <i class="bi bi-file-earmark-pdf"></i> Conferir e Assinar Folha
+                </button>
+                <button id="btnNovoPonto" class="btn btn-primary px-4 fw-bold shadow-sm" onclick="abrirModalPonto()" style="display:none;">
+                    <i class="bi bi-plus-lg"></i> Registro Manual
+                </button>
+            </div>
+        </div>
+
+        <div id="painelPontoRapido" class="card shadow-sm border-primary mb-4" style="display: none; background: linear-gradient(145deg, #ffffff, #f0f8ff);">
+            <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="fw-bold text-primary mb-1"><i class="bi bi-person-badge"></i> Meu Ponto Hoje</h5>
+                    <p class="text-muted small mb-0" id="infoPontoHoje">Clique no botão para registrar o seu horário do dia.</p>
+                </div>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-success btn-lg fw-bold shadow" onclick="baterEntradaRapida()" id="btnBaterEntrada">
+                        <i class="bi bi-box-arrow-in-right fs-4"></i> Bater Entrada
+                    </button>
+                    <button class="btn btn-danger btn-lg fw-bold shadow" onclick="baterSaidaRapida()" id="btnBaterSaida">
+                        <i class="bi bi-box-arrow-right fs-4"></i> Bater Saída
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4" id="painelRelogio" style="display: none;">
+            <div class="col-12">
+                <div class="card shadow-sm border-0 bg-light text-center py-5">
+                    <div class="data-atual mb-2" id="dataAtual">Carregando...</div>
+                    <div class="relogio-digital shadow-sm mb-4" id="relogio">00:00:00</div>
+                    
+                    <div class="d-flex justify-content-center gap-3 flex-wrap px-4">
+                        <button class="btn btn-success btn-ponto text-white" onclick="baterPonto('ENTRADA')">
+                            <i class="bi bi-box-arrow-in-right display-6 d-block mb-1"></i> Entrada
+                        </button>
+                        <button class="btn btn-warning btn-ponto text-dark" onclick="baterPonto('SAÍDA ALMOÇO')">
+                            <i class="bi bi-cup-hot display-6 d-block mb-1"></i> Saída Almoço
+                        </button>
+                        <button class="btn btn-info btn-ponto text-dark" onclick="baterPonto('RETORNO ALMOÇO')">
+                            <i class="bi bi-arrow-return-left display-6 d-block mb-1"></i> Volta Almoço
+                        </button>
+                        <button class="btn btn-danger btn-ponto text-white" onclick="baterPonto('SAÍDA')">
+                            <i class="bi bi-box-arrow-right display-6 d-block mb-1"></i> Saída
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs mb-4" id="pontoTabs" role="tablist">
+            <li class="nav-item" role="presentation" id="nav-diarios">
+                <button class="nav-link active" id="diarios-tab" data-bs-toggle="tab" data-bs-target="#tab-diarios" type="button" role="tab">
+                    <i class="bi bi-list-task"></i> Registros Diários
+                </button>
+            </li>
+            <li class="nav-item" role="presentation" id="nav-assinados">
+                <button class="nav-link text-success" id="assinados-tab" data-bs-toggle="tab" data-bs-target="#tab-assinados" type="button" role="tab" onclick="carregarFolhasAssinadas()">
+                    <i class="bi bi-file-earmark-check"></i> Folhas Assinadas (PDFs)
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="pontoTabContent">
+            
+            <div class="tab-pane fade show active" id="tab-diarios" role="tabpanel">
+                <div class="row mb-3 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
+                    <div class="col-md-5">
+                        <label class="form-label fw-bold text-muted small mb-1">Filtrar por Colaborador</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-person-badge"></i></span>
+                            <select id="filtroUsuario" class="form-select border-start-0 fw-bold text-primary" onchange="filtrarPontos()">
+                                <option value="">Todos os Colaboradores</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-muted small mb-1">Mês/Ano</label>
+                        <input type="month" id="filtroMesAno" class="form-control" onchange="filtrarPontos()">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-muted small mb-1">Total de Horas no Filtro</label>
+                        <div class="form-control bg-light text-primary fw-bold text-center" id="lblTotalHorasFiltro">0h 0m</div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-0">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4 py-3">Nome / Perfil</th>
+                                    <th>Data</th>
+                                    <th class="text-success">Entrada</th>
+                                    <th class="text-danger">Saída</th>
+                                    <th class="text-primary">Horas Trab.</th>
+                                    <th>Observações</th>
+                                    <th class="text-end pe-4 col-acoes">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaPonto"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-assinados" role="tabpanel">
+                <div class="card shadow-sm border-0 border-top border-success border-3">
+                    <div class="card-header bg-white fw-bold py-3 text-success">
+                        <i class="bi bi-archive"></i> Arquivo de Relatórios Oficiais
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover align-middle mb-0 text-center">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-start ps-4">Colaborador</th>
+                                    <th>Mês de Ref.</th>
+                                    <th>Data da Assinatura</th>
+                                    <th>Assinado por</th>
+                                    <th class="text-end pe-4 col-acoes">Ações do PDF</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaFolhasAssinadas">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalPonto" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-dark text-white border-bottom-0">
+                    <h5 class="modal-title fw-bold" id="modalTitle"><i class="bi bi-clock"></i> Registrar Ponto Manual</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <form id="formPonto">
+                        <input type="hidden" id="pontoId">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">USUÁRIO / COLABORADOR *</label>
+                            <select id="pontoUsuarioId" class="form-select fw-bold text-primary" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">DATA *</label>
+                            <input type="date" id="pontoData" class="form-control" required>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold text-success">HORA DE ENTRADA *</label>
+                                <input type="time" id="pontoEntrada" class="form-control border-success" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold text-danger">HORA DE SAÍDA</label>
+                                <input type="time" id="pontoSaida" class="form-control border-danger">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted">OBSERVAÇÕES (Opcional)</label>
+                            <input type="text" id="pontoObservacoes" class="form-control" placeholder="Ex: Esqueceu de bater, atestado...">
+                        </div>
+                        <div class="d-flex justify-content-end border-top pt-3">
+                            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary px-4 fw-bold">Salvar Horário</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalRelatorio" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-dark text-white border-bottom-0">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-file-earmark-check"></i> Análise e Assinatura de Ponto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    
+                    <div id="areaSelecaoRelatorio">
+                        <div class="alert alert-primary small border-primary">
+                            <i class="bi bi-info-circle-fill"></i> Selecione o colaborador e o mês para visualizar a folha antes de assinar.
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-7">
+                                <label class="form-label small fw-bold text-muted">SELECIONE O COLABORADOR</label>
+                                <select id="relatorioUsuarioId" class="form-select fw-bold border-primary"></select>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label small fw-bold text-muted">SELECIONE O MÊS</label>
+                                <input type="month" id="relatorioMesAno" class="form-control border-primary">
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary w-100 fw-bold py-2" onclick="gerarPreviewFolha()">Visualizar Folha</button>
+                    </div>
+
+                    <div id="areaPreviewRelatorio" style="display: none;">
+                        <h6 class="fw-bold text-center border-bottom pb-2 mb-3 text-dark">
+                            Prévia da Folha: <span id="prevNome" class="text-primary"></span> (<span id="prevMes"></span>)
+                        </h6>
+                        
+                        <div class="border rounded p-0 bg-white mb-3" style="max-height: 300px; overflow-y: auto;">
+                            <table class="table table-sm table-striped table-hover text-center mb-0" style="font-size: 0.85rem;">
+                                <thead class="table-dark sticky-top">
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Entrada</th>
+                                        <th>Saída</th>
+                                        <th>Horas Calc.</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyPreview">
+                                    </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-flex justify-content-end mb-4">
+                            <div class="bg-white border border-success rounded p-2 px-4 shadow-sm">
+                                <span class="text-muted small fw-bold">Total do Mês:</span>
+                                <span class="fs-5 fw-bold text-success ms-2" id="prevTotalHoras">0h 0m</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between border-top pt-3">
+                            <button class="btn btn-outline-secondary px-4 fw-bold" onclick="voltarSelecaoRelatorio()"><i class="bi bi-arrow-left"></i> Voltar</button>
+                            
+                            <button class="btn btn-success px-4 fw-bold shadow" id="btnAssinarSalvar" onclick="assinarESalvarNoSistema()">
+                                <i class="bi bi-floppy"></i> Assinar e Guardar no Sistema
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/sidebar.js"></script>
+
+    <script>
+        const API = window.location.origin + "/api";
+        let modalPonto;
+        let modalRelatorio;
+        let listaGlobalPontos = [];
+        let listaUsuarios = [];
+
+        // ==========================================
+        // 🛡️ REGRAS DE SEGURANÇA E PERMISSÕES
+        // ==========================================
+        let usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado') || localStorage.getItem('limsUser'));
+        if (!usuarioLogado) {
+            window.location.href = 'login.html';
+        } else {
+            const perfilUser = String(usuarioLogado.perfil || "").toUpperCase().trim();
+            const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
+
+            const podeVerPonto = isAdmin || (usuarioLogado.permissoes && usuarioLogado.permissoes.ponto_view === true);
+            const podeEditarPonto = isAdmin || (usuarioLogado.permissoes && usuarioLogado.permissoes.ponto_edit === true);
+            const podeAssinarPonto = isAdmin || (usuarioLogado.permissoes && usuarioLogado.permissoes.ponto_sign === true);
+            const precisaBaterPonto = perfilUser === 'APRENDIZ' || (usuarioLogado.permissoes && usuarioLogado.permissoes.registra_ponto === true);
+
+            if (!podeVerPonto && !precisaBaterPonto) {
+                alert("Acesso Negado: Sem permissão para ver esta tela.");
+                window.location.href = 'dashboard.html';
+            }
+
+            function aplicarTravaAcoes() {
+                if (podeEditarPonto) document.getElementById('btnNovoPonto').style.display = 'inline-block';
+                else {
+                    const style = document.createElement('style');
+                    style.innerHTML = `.col-acoes { display: none !important; } button[onclick*="excluirPonto"], button[onclick*="abrirEdicaoPonto"], button[onclick*="excluirFolhaAssinada"] { display: none !important; }`;
+                    document.head.appendChild(style);
+                }
+
+                if (podeAssinarPonto) document.getElementById('btnGerarFolha').style.display = 'inline-block';
+                if (precisaBaterPonto) {
+                    document.getElementById('painelPontoRapido').style.display = 'block';
+                    document.getElementById('painelRelogio').style.display = 'flex';
+                }
+
+                // Oculta abas de histórico de RH de quem não é do RH e não tem acesso de view
+                if (!podeVerPonto && !podeEditarPonto && !podeAssinarPonto) {
+                    document.getElementById("nav-diarios").style.display = 'none';
+                    document.getElementById("nav-assinados").style.display = 'none';
+                    document.getElementById("tab-diarios").classList.remove('show', 'active');
+                }
+            }
+
+            function getTodayDataISO() {
+                const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+                return new Date(Date.now() - tzOffset).toISOString().split('T')[0];
+            }
+
+            function getCurrentTime() {
+                const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+                return new Date(Date.now() - tzOffset).toISOString().split('T')[1].substring(0, 5);
+            }
+
+            function iniciarRelogio() {
+                const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+                const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+                setInterval(() => {
+                    const agora = new Date();
+                    const h = String(agora.getHours()).padStart(2, '0');
+                    const m = String(agora.getMinutes()).padStart(2, '0');
+                    const s = String(agora.getSeconds()).padStart(2, '0');
+                    const elRel = document.getElementById("relogio");
+                    if(elRel) elRel.innerText = `${h}:${m}:${s}`;
+
+                    const diaSemana = diasSemana[agora.getDay()];
+                    const dia = String(agora.getDate()).padStart(2, '0');
+                    const mes = meses[agora.getMonth()];
+                    const ano = agora.getFullYear();
+                    const elData = document.getElementById("dataAtual");
+                    if(elData) elData.innerText = `${diaSemana}, ${dia} de ${mes} de ${ano}`;
+                }, 1000);
+            }
+
+            async function baterPonto(tipo) {
+                const dataFmt = getTodayDataISO();
+                const horaFmt = getCurrentTime();
+
+                if(confirm(`Confirmar registo de ${tipo} às ${horaFmt}?`)) {
+                    const payload = { 
+                        usuario_id: usuarioLogado.id, 
+                        data_registro: dataFmt, 
+                        hora_entrada: tipo === 'ENTRADA' ? horaFmt : null, 
+                        hora_saida: tipo === 'SAÍDA' ? horaFmt : null, 
+                        observacoes: `Batida: ${tipo}`, 
+                        tipo_registro: "Automático (Relógio)" 
+                    };
+                    
+                    try {
+                        const res = await fetch(`${API}/ponto`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                        if(res.ok) {
+                            carregarPontos();
+                            alert(`✅ Ponto de ${tipo} registado com sucesso às ${horaFmt}!`);
+                        } else {
+                            alert("Erro ao registrar o ponto no servidor.");
+                        }
+                    } catch(e) { console.error(e); }
+                }
+            }
+            window.baterPonto = baterPonto;
+
+            function atualizarBotoesRapidos() {
+                if (!precisaBaterPonto) return;
+                const hoje = getTodayDataISO();
+                const pontoDeHoje = listaGlobalPontos.find(p => p.usuario_id === usuarioLogado.id && p.data_registro_raw === hoje);
+                const btnEntrada = document.getElementById("btnBaterEntrada");
+                const btnSaida = document.getElementById("btnBaterSaida");
+                const infoText = document.getElementById("infoPontoHoje");
+
+                if(!btnEntrada || !btnSaida) return;
+
+                if (!pontoDeHoje) {
+                    btnEntrada.disabled = false; btnEntrada.innerHTML = `<i class="bi bi-box-arrow-in-right fs-4"></i> Bater Entrada`;
+                    btnSaida.disabled = true; btnSaida.innerHTML = `<i class="bi bi-box-arrow-right fs-4"></i> Bater Saída`;
+                    infoText.innerHTML = "Seu turno ainda não foi iniciado hoje.";
+                } else if (pontoDeHoje && !pontoDeHoje.hora_saida) {
+                    btnEntrada.disabled = true; btnEntrada.innerHTML = `<i class="bi bi-check-circle fs-4"></i> Entrada: ${pontoDeHoje.hora_entrada}`;
+                    btnSaida.disabled = false; btnSaida.innerHTML = `<i class="bi bi-box-arrow-right fs-4"></i> Bater Saída`;
+                    infoText.innerHTML = "Turno em andamento. Não se esqueça de bater a saída!";
+                } else if (pontoDeHoje && pontoDeHoje.hora_saida) {
+                    btnEntrada.disabled = true; btnEntrada.innerHTML = `<i class="bi bi-check-circle fs-4"></i> Entrada: ${pontoDeHoje.hora_entrada}`;
+                    btnSaida.disabled = true; btnSaida.innerHTML = `<i class="bi bi-check-circle fs-4"></i> Saída: ${pontoDeHoje.hora_saida}`;
+                    infoText.innerHTML = "Turno encerrado. Bom descanso!";
+                }
+            }
+
+            async function baterEntradaRapida() {
+                if(!confirm("Deseja registrar a sua ENTRADA agora?")) return;
+                const payload = { usuario_id: usuarioLogado.id, data_registro: getTodayDataISO(), hora_entrada: getCurrentTime(), hora_saida: null, observacoes: "Registro via Painel", tipo_registro: "Automático (Colaborador)" };
+                try {
+                    const res = await fetch(`${API}/ponto`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if(res.ok) carregarPontos(); else alert("Erro ao registrar entrada.");
+                } catch(e) { console.error(e); }
+            }
+            window.baterEntradaRapida = baterEntradaRapida;
+
+            async function baterSaidaRapida() {
+                if(!confirm("Deseja encerrar o turno e registrar a sua SAÍDA agora?")) return;
+                const hoje = getTodayDataISO();
+                const pontoDeHoje = listaGlobalPontos.find(p => p.usuario_id === usuarioLogado.id && p.data_registro_raw === hoje);
+                if (!pontoDeHoje) return alert("Erro: Entrada não encontrada.");
+                const payload = { usuario_id: usuarioLogado.id, data_registro: hoje, hora_entrada: pontoDeHoje.hora_entrada, hora_saida: getCurrentTime(), observacoes: pontoDeHoje.observacoes, tipo_registro: "Automático (Colaborador)" };
+                try {
+                    const res = await fetch(`${API}/ponto/${pontoDeHoje.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if(res.ok) carregarPontos(); else alert("Erro ao registrar saída.");
+                } catch(e) { console.error(e); }
+            }
+            window.baterSaidaRapida = baterSaidaRapida;
+
+            document.addEventListener("DOMContentLoaded", () => {
+                aplicarTravaAcoes();
+                if(precisaBaterPonto) iniciarRelogio();
+                
+                const elModalPonto = document.getElementById('modalPonto');
+                if(elModalPonto) modalPonto = new bootstrap.Modal(elModalPonto);
+                
+                const elModalRelatorio = document.getElementById('modalRelatorio');
+                if(elModalRelatorio) modalRelatorio = new bootstrap.Modal(elModalRelatorio);
+                
+                const hoje = new Date();
+                const mesAtual = hoje.getFullYear() + "-" + String(hoje.getMonth() + 1).padStart(2, '0');
+                document.getElementById("filtroMesAno").value = mesAtual;
+                document.getElementById("relatorioMesAno").value = mesAtual;
+
+                carregarUsuariosDropdown();
+                carregarPontos();
+            });
+
+            async function carregarUsuariosDropdown() {
+                try {
+                    const res = await fetch(`${API}/usuarios`, { headers: { "Authorization": `Bearer ${localStorage.getItem("limsToken")}` }});
+                    if(res.ok) {
+                        const todosUsers = await res.json();
+                        listaUsuarios = todosUsers.filter(u => u.perfil === 'APRENDIZ' || (u.permissoes && u.permissoes.registra_ponto === true));
+
+                        const selForm = document.getElementById("pontoUsuarioId");
+                        const selRel = document.getElementById("relatorioUsuarioId");
+                        const selFiltro = document.getElementById("filtroUsuario"); 
+                        
+                        selForm.innerHTML = "<option value='' disabled selected>Selecione a pessoa...</option>";
+                        selRel.innerHTML = "<option value='' disabled selected>Selecione a pessoa...</option>";
+                        selFiltro.innerHTML = "<option value=''>Todos os Colaboradores</option>";
+
+                        listaUsuarios.forEach(u => {
+                            let marca = u.perfil === 'APRENDIZ' ? '🎓 ' : '🔬 ';
+                            const opt = `<option value="${u.id}">${marca}${u.nome}</option>`;
+                            selForm.innerHTML += opt; selRel.innerHTML += opt; selFiltro.innerHTML += opt;
+                        });
+
+                        if (!podeVerPonto) { selFiltro.value = usuarioLogado.id; selFiltro.disabled = true; }
+                    }
+                } catch(e) { console.error(e); }
+            }
+
+            async function carregarPontos() {
+                try {
+                    const res = await fetch(`${API}/ponto`);
+                    listaGlobalPontos = await res.json();
+                    filtrarPontos();
+                    atualizarBotoesRapidos(); 
+                } catch(e) { console.error(e); }
+            }
+
+            function calcularDiferencaHoras(entrada, saida) {
+                if(!entrada || !saida) return { text: "Em andamento", mins: 0 };
+                const [hE, mE] = entrada.split(':').map(Number);
+                const [hS, mS] = saida.split(':').map(Number);
+                let diff = (hS * 60 + mS) - (hE * 60 + mE);
+                if(diff < 0) diff += 24 * 60;
+                const hDiff = Math.floor(diff / 60);
+                return { text: `${hDiff}h ${String(diff % 60).padStart(2, '0')}m`, mins: diff };
+            }
+
+            function filtrarPontos() {
+                const usuarioSelecionado = document.getElementById("filtroUsuario").value;
+                const mesAno = document.getElementById("filtroMesAno").value; 
+                let totalMinutosGeral = 0;
+
+                const filtrados = listaGlobalPontos.filter(p => {
+                    if (!podeVerPonto && p.usuario_id !== usuarioLogado.id) return false;
+                    const matchUsuario = usuarioSelecionado === "" || p.usuario_id.toString() === usuarioSelecionado;
+                    let matchData = mesAno ? p.data_registro_raw.startsWith(mesAno) : true;
+                    if(matchUsuario && matchData) totalMinutosGeral += calcularDiferencaHoras(p.hora_entrada, p.hora_saida).mins;
+                    return matchUsuario && matchData;
+                });
+
+                document.getElementById("lblTotalHorasFiltro").innerText = `${Math.floor(totalMinutosGeral / 60)}h ${String(totalMinutosGeral % 60).padStart(2, '0')}m`;
+                renderizarTabela(filtrados);
+            }
+            window.filtrarPontos = filtrarPontos;
+
+            function renderizarTabela(lista) {
+                const tbody = document.getElementById("tabelaPonto");
+                tbody.innerHTML = "";
+                if(lista.length === 0) return tbody.innerHTML = "<tr><td colspan='7' class='text-center py-4 text-muted'>Nenhum registro de ponto encontrado para este filtro.</td></tr>";
+
+                lista.forEach(p => {
+                    const badgePerfil = p.perfil === 'APRENDIZ' ? 'bg-warning text-dark' : 'bg-secondary';
+                    const calcH = calcularDiferencaHoras(p.hora_entrada, p.hora_saida);
+                    let corHora = p.hora_saida ? 'fw-bold text-primary' : 'text-muted fst-italic';
+                    const pEncoded = encodeURIComponent(JSON.stringify(p));
+
+                    let botoesAcao = '';
+                    if(podeEditarPonto) {
+                        botoesAcao = `<button class="btn btn-sm btn-outline-primary shadow-sm me-1" onclick="abrirEdicaoPonto('${pEncoded}')"><i class="bi bi-pencil"></i></button>
+                                      <button class="btn btn-sm btn-outline-danger shadow-sm border-0" onclick="excluirPonto(${p.id})"><i class="bi bi-trash"></i></button>`;
+                    }
+
+                    let badgeTipo = p.tipo_registro && p.tipo_registro.includes('Automático') 
+                        ? '<span class="badge bg-light text-success border border-success" style="font-size:0.65rem;"><i class="bi bi-robot"></i> Automático</span>'
+                        : '<span class="badge bg-light text-warning text-dark border border-warning" style="font-size:0.65rem;"><i class="bi bi-person-gear"></i> Manual</span>';
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="ps-4 fw-bold">${p.usuario_nome} <br><span class="badge ${badgePerfil} mt-1" style="font-size:0.6rem;">${p.perfil}</span></td>
+                            <td class="fw-bold">${p.data_registro_fmt}<br><div class="mt-1">${badgeTipo}</div></td>
+                            <td class="text-success fw-bold">${p.hora_entrada}</td>
+                            <td class="text-danger fw-bold">${p.hora_saida || '--:--'}</td>
+                            <td class="${corHora}">${calcH.text}</td>
+                            <td class="small text-muted">${p.observacoes || '-'}</td>
+                            <td class="text-end pe-4 col-acoes text-nowrap">${botoesAcao}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            window.abrirModalPonto = function() {
+                document.getElementById("formPonto").reset();
+                document.getElementById("pontoId").value = "";
+                document.getElementById("modalTitle").innerHTML = '<i class="bi bi-clock"></i> Registrar Ponto Manual';
+                document.getElementById("pontoData").value = getTodayDataISO();
+                document.getElementById("pontoEntrada").value = getCurrentTime();
+                modalPonto.show();
+            }
+
+            window.abrirEdicaoPonto = function(pEncoded) {
+                const p = JSON.parse(decodeURIComponent(pEncoded));
+                document.getElementById("pontoId").value = p.id;
+                document.getElementById("pontoUsuarioId").value = p.usuario_id;
+                document.getElementById("pontoData").value = p.data_registro_raw;
+                document.getElementById("pontoEntrada").value = p.hora_entrada;
+                document.getElementById("pontoSaida").value = p.hora_saida || "";
+                document.getElementById("pontoObservacoes").value = p.observacoes || "";
+                document.getElementById("modalTitle").innerHTML = '<i class="bi bi-pencil-square"></i> Editar Ponto';
+                modalPonto.show();
+            }
+
+            document.getElementById("formPonto").addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const id = document.getElementById("pontoId").value;
+                const payload = { usuario_id: document.getElementById("pontoUsuarioId").value, data_registro: document.getElementById("pontoData").value, hora_entrada: document.getElementById("pontoEntrada").value, hora_saida: document.getElementById("pontoSaida").value || null, observacoes: document.getElementById("pontoObservacoes").value, tipo_registro: "Manual (Responsável)" };
+                const url = id ? `${API}/ponto/${id}` : `${API}/ponto`;
+                const method = id ? 'PUT' : 'POST';
+
+                try {
+                    const res = await fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if(res.ok) { modalPonto.hide(); carregarPontos(); } else { alert("Erro ao gravar ponto."); }
+                } catch(err) { console.error(err); }
+            });
+
+            window.excluirPonto = async function(id) {
+                if(!confirm("Tem certeza que deseja excluir este registro de ponto?")) return;
+                await fetch(`${API}/ponto/${id}`, { method: 'DELETE' });
+                carregarPontos();
+            }
+
+            // ==========================================
+            // 🔥 LÓGICA DE ASSINAR E SALVAR (NOVO FLUXO)
+            // ==========================================
+            window.abrirModalRelatorio = function() {
+                document.getElementById("areaSelecaoRelatorio").style.display = "block";
+                document.getElementById("areaPreviewRelatorio").style.display = "none";
+                modalRelatorio.show();
+            }
+
+            window.voltarSelecaoRelatorio = function() {
+                document.getElementById("areaSelecaoRelatorio").style.display = "block";
+                document.getElementById("areaPreviewRelatorio").style.display = "none";
+            }
+
+            window.gerarPreviewFolha = function() {
+                const uid = document.getElementById("relatorioUsuarioId").value;
+                const mesAno = document.getElementById("relatorioMesAno").value;
+
+                if(!uid || !mesAno) return alert("Por favor, selecione o colaborador e o mês para prosseguir.");
+
+                const usuarioDoc = listaUsuarios.find(u => u.id == uid);
+                document.getElementById("prevNome").innerText = usuarioDoc ? usuarioDoc.nome : 'Colaborador';
+                
+                const [ano, mes] = mesAno.split('-');
+                document.getElementById("prevMes").innerText = `${mes}/${ano}`;
+
+                let pontosDoMes = listaGlobalPontos.filter(p => p.usuario_id == uid && p.data_registro_raw.startsWith(mesAno));
+                pontosDoMes.sort((a, b) => a.data_registro_raw.localeCompare(b.data_registro_raw));
+
+                const tbody = document.getElementById("tbodyPreview");
+                tbody.innerHTML = "";
+                let totalMins = 0;
+
+                if (pontosDoMes.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='5' class='text-muted py-3'>Nenhum ponto registrado neste mês.</td></tr>";
+                } else {
+                    pontosDoMes.forEach(p => {
+                        const calc = calcularDiferencaHoras(p.hora_entrada, p.hora_saida);
+                        totalMins += calc.mins;
+                        let status = p.tipo_registro && p.tipo_registro.includes('Automático') ? 'Automático' : 'Manual';
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${p.data_registro_fmt}</td>
+                                <td class="text-success">${p.hora_entrada}</td>
+                                <td class="text-danger">${p.hora_saida || '--:--'}</td>
+                                <td class="fw-bold">${calc.text}</td>
+                                <td class="small text-muted">${status}</td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                document.getElementById("prevTotalHoras").innerText = `${Math.floor(totalMins / 60)}h ${String(totalMins % 60).padStart(2, '0')}m`;
+
+                document.getElementById("areaSelecaoRelatorio").style.display = "none";
+                document.getElementById("areaPreviewRelatorio").style.display = "block";
+            }
+
+            window.assinarESalvarNoSistema = async function() {
+                if(!confirm("Atenção: O sistema irá gerar um PDF oficial com a sua assinatura digital e irá guardá-lo no arquivo. Deseja prosseguir?")) return;
+
+                const uid = document.getElementById("relatorioUsuarioId").value;
+                const mesAno = document.getElementById("relatorioMesAno").value;
+                const responsavelId = usuarioLogado.id;
+
+                const btn = document.getElementById("btnAssinarSalvar");
+                const txtOriginal = btn.innerHTML;
+                btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> A processar PDF...`;
+                btn.disabled = true;
+
+                try {
+                    const res = await fetch(`${API}/ponto/relatorio/salvar`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ usuario_id: uid, mesano: mesAno, responsavel_id: responsavelId })
+                    });
+
+                    if(res.ok) {
+                        alert("✅ Folha assinada e arquivada com sucesso no sistema!");
+                        modalRelatorio.hide();
+                        
+                        const triggerEl = document.querySelector('#assinados-tab');
+                        if (triggerEl) bootstrap.Tab.getOrCreateInstance(triggerEl).show();
+                        carregarFolhasAssinadas();
+                    } else {
+                        alert("Ocorreu um erro ao tentar salvar a folha.");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Erro de conexão com o servidor.");
+                } finally {
+                    btn.innerHTML = txtOriginal;
+                    btn.disabled = false;
+                }
+            }
+
+            // ==========================================
+            // 🔥 LÓGICA DA NOVA ABA (FOLHAS ASSINADAS)
+            // ==========================================
+            window.carregarFolhasAssinadas = async function() {
+                try {
+                    const res = await fetch(`${API}/ponto/folhas-assinadas`);
+                    const folhas = await res.json();
+                    
+                    const tbody = document.getElementById("tabelaFolhasAssinadas");
+                    if(!tbody) return;
+                    tbody.innerHTML = "";
+
+                    if(folhas.length === 0) {
+                        tbody.innerHTML = "<tr><td colspan='5' class='text-muted py-5'><i class='bi bi-inbox fs-3 d-block mb-2'></i>Nenhum relatório assinado encontrado.</td></tr>";
+                        return;
+                    }
+
+                    const folhasVisiveis = podeVerPonto ? folhas : folhas.filter(f => f.usuario_id === usuarioLogado.id);
+
+                    folhasVisiveis.forEach(f => {
+                        const badgePerfil = f.perfil === 'APRENDIZ' ? 'bg-warning text-dark' : 'bg-secondary';
+                        const mesFormatado = f.mesano.split('-').reverse().join('/');
+                        const pdfName = `Folha_${f.colaborador_nome.replace(/\s+/g, '_')}_${mesFormatado}.pdf`;
+
+                        const btnExcluir = podeEditarPonto 
+                            ? `<button class="btn btn-sm btn-outline-danger border-0 ms-1" onclick="excluirFolhaAssinada(${f.id})" title="Excluir do Arquivo"><i class="bi bi-trash"></i></button>` 
+                            : '';
+
+                        tbody.innerHTML += `
+                            <tr>
+                                <td class="text-start ps-4 fw-bold text-dark">
+                                    ${f.colaborador_nome} <span class="badge ${badgePerfil} ms-1" style="font-size:0.6rem;">${f.perfil}</span>
+                                </td>
+                                <td class="fw-bold text-primary">${mesFormatado}</td>
+                                <td class="small text-muted">${f.data_geracao_fmt}</td>
+                                <td class="small"><i class="bi bi-shield-check text-success"></i> ${f.responsavel_nome || 'Sistema'}</td>
+                                <td class="text-end pe-4 col-acoes text-nowrap">
+                                    <a href="${f.arquivo_base64}" download="${pdfName}" class="btn btn-sm btn-primary shadow-sm" title="Baixar PDF Oficial">
+                                        <i class="bi bi-file-earmark-pdf"></i> Baixar PDF
+                                    </a>
+                                    ${btnExcluir}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                } catch (err) {
+                    console.error("Erro ao buscar folhas:", err);
+                }
+            }
+
+            window.excluirFolhaAssinada = async function(id) {
+                if(!confirm("Atenção: Tem a certeza que deseja excluir esta folha oficial do arquivo digital?")) return;
+                try {
+                    await fetch(`${API}/ponto/folhas-assinadas/${id}`, { method: 'DELETE' });
+                    carregarFolhasAssinadas();
+                } catch (err) { console.error(err); }
+            }
+        } // Fim do bloco if (usuarioLogado)
+    </script>
+</body>
+</html>
