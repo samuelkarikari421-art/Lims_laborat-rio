@@ -16,12 +16,10 @@
         .nav-tabs .nav-link { font-weight: bold; color: #6c757d; border-radius: 8px 8px 0 0; }
         .nav-tabs .nav-link.active { color: #0d6efd; border-color: #dee2e6 #dee2e6 #fff; background-color: #fff; }
         
-        /* Barra de rolagem customizada para o painel de permissões */
         .painel-permissoes { max-height: 45vh; overflow-y: auto; overflow-x: hidden; padding-right: 5px; }
         .painel-permissoes::-webkit-scrollbar { width: 6px; }
         .painel-permissoes::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
         
-        /* Estilos do Status Online */
         .status-dot { height: 10px; width: 10px; background-color: #bbb; border-radius: 50%; display: inline-block; margin-right: 5px; }
         .status-dot.online { background-color: #198754; box-shadow: 0 0 5px #198754; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
@@ -58,9 +56,12 @@
                     </div>
                     <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
                     <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="monitoramento_tpm.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-fire text-warning me-2"></i>Controle TPM</a>
+                    <a href="monitoramento_clima.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-thermometer-sun text-danger me-2"></i>Clima (Temp/Umid)</a>
                     <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
                     <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
                     <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="laudos_ete.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-water text-info me-2"></i>Laudos ETE</a>
                     <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
                     <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
                     <a href="relatorios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up me-2"></i>Relatórios</a>
@@ -239,6 +240,12 @@
                                         <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_coa_down"><label class="form-check-label" for="perm_coa_down">Baixar Anexo</label></div>
                                         <div class="form-check form-switch border-bottom pb-2 mb-2"><input class="form-check-input border-danger" type="checkbox" id="perm_coa_del"><label class="form-check-label text-danger" for="perm_coa_del">Excluir CoA</label></div>
 
+                                        <span class="perm-title text-info text-dark mt-3"><i class="bi bi-water"></i> 6.1 Laudos ETE</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_ete_view"><label class="form-check-label" for="perm_ete_view">Ver Laudos ETE</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_ete_reg"><label class="form-check-label" for="perm_ete_reg">Registrar Novo</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_ete_edit"><label class="form-check-label" for="perm_ete_edit">Editar Laudo</label></div>
+                                        <div class="form-check form-switch border-bottom pb-2 mb-2"><input class="form-check-input border-danger" type="checkbox" id="perm_ete_del"><label class="form-check-label text-danger" for="perm_ete_del">Excluir Laudo</label></div>
+
                                         <span class="perm-title text-info text-dark mt-3"><i class="bi bi-tags"></i> 7. Produtos</span>
                                         <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_prod_view"><label class="form-check-label" for="perm_prod_view">Visualizar Catálogo</label></div>
                                         <div class="form-check form-switch"><input class="form-check-input border-info" type="checkbox" id="perm_prod_reg"><label class="form-check-label" for="perm_prod_reg">Cadastrar Produto</label></div>
@@ -287,7 +294,16 @@
                                         <div class="form-check form-switch"><input class="form-check-input border-danger" type="checkbox" id="perm_dashboard_view"><label class="form-check-label" for="perm_dashboard_view">Ver Dashboards (Geral)</label></div>
                                         <div class="form-check form-switch"><input class="form-check-input border-warning" type="checkbox" id="perm_monitoramento_view"><label class="form-check-label text-warning text-dark" for="perm_monitoramento_view">Monitor. de Tendências</label></div>
                                         <div class="form-check form-switch"><input class="form-check-input border-danger" type="checkbox" id="perm_users_edit"><label class="form-check-label text-danger fw-bold" for="perm_users_edit">Gerir Usuários LIMS</label></div>
-                                        <div class="form-check form-switch mt-1"><input class="form-check-input border-dark" type="checkbox" id="perm_logs_view"><label class="form-check-label text-dark fw-bold" for="perm_logs_view"><i class="bi bi-journal-code"></i> Ver Logs e Auditoria</label></div>
+                                        <div class="form-check form-switch border-bottom pb-2 mb-2"><input class="form-check-input border-dark" type="checkbox" id="perm_logs_view"><label class="form-check-label text-dark fw-bold" for="perm_logs_view"><i class="bi bi-journal-code"></i> Ver Logs e Auditoria</label></div>
+
+                                        <span class="perm-title text-warning text-dark mt-3"><i class="bi bi-fire"></i> 14. Controle TPM</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-warning" type="checkbox" id="perm_tpm_view"><label class="form-check-label" for="perm_tpm_view">Ver Tela & Histórico</label></div>
+                                        <div class="form-check form-switch border-bottom pb-2 mb-2"><input class="form-check-input border-warning" type="checkbox" id="perm_tpm_register"><label class="form-check-label fw-bold" for="perm_tpm_register">Registrar Medição</label></div>
+
+                                        <span class="perm-title text-danger mt-3"><i class="bi bi-thermometer-sun"></i> 15. Clima (Temp/Umid)</span>
+                                        <div class="form-check form-switch"><input class="form-check-input border-danger" type="checkbox" id="perm_clima_view"><label class="form-check-label" for="perm_clima_view">Visualizar Histórico</label></div>
+                                        <div class="form-check form-switch"><input class="form-check-input border-danger" type="checkbox" id="perm_clima_register"><label class="form-check-label fw-bold" for="perm_clima_register">Registrar Leitura</label></div>
+
                                     </div>
                                 </div>
                                 
@@ -311,7 +327,7 @@
         const API_URL = window.location.origin + "/api/usuarios";
         let modalInstance;
         let deveRemoverAssinatura = false;
-        let updateInterval; // Variável para o loop de atualização do Status
+        let updateInterval;
 
         function getAuthHeaders() {
             const token = localStorage.getItem("limsToken");
@@ -319,86 +335,74 @@
             return { "Content-Type": "application/json", "Authorization": `Bearer ${token}` };
         }
 
-        // 🔥 O NOVO MOTOR DE PERMISSÕES GRANULARES 🔥
+        // 🔥 O NOVO MOTOR DE PERMISSÕES (ATUALIZADO COM ETE E CLIMA) 🔥
         const modelos = {
             'ADMIN': { 
                 amostras_view: true, amostras_create: true, amostras_edit: true, amostras_delete: true,
-                fifo_view: true, fifo_execute: true,
-                calc_start: true, calc_send: true,
-                inv_view: true, inv_start: true,
-                agua_view: true, agua_start: true,
-                reag_reg: true, reag_edit: true, reag_baixa: true, reag_del: true,
+                fifo_view: true, fifo_execute: true, calc_start: true, calc_send: true, inv_view: true, inv_start: true,
+                agua_view: true, agua_start: true, reag_reg: true, reag_edit: true, reag_baixa: true, reag_del: true,
                 sol_create: true, sol_edit: true, sol_baixa: true, sol_desc: true, sol_del: true,
-                coa_reg: true, coa_down: true, coa_del: true,
-                mat_reg: true, mat_uso: true, mat_edit: true, mat_del: true,
+                coa_reg: true, coa_down: true, coa_del: true, mat_reg: true, mat_uso: true, mat_edit: true, mat_del: true,
                 prod_view: true, prod_reg: true, prod_edit: true, prod_regras: true, prod_del: true,
-                laudos_view: true, laudos_download: true, laudos_issue: true, laudos_remove_sig: true, laudos_cancel: true, dashboard_view: true, monitoramento_view: true, users_edit: true, registra_ponto: false, ponto_view: true, ponto_edit: true, ponto_sign: true, logs_view: true 
+                laudos_view: true, laudos_download: true, laudos_issue: true, laudos_remove_sig: true, laudos_cancel: true, 
+                ete_view: true, ete_reg: true, ete_edit: true, ete_del: true,
+                dashboard_view: true, monitoramento_view: true, users_edit: true, registra_ponto: false, ponto_view: true, ponto_edit: true, ponto_sign: true, logs_view: true,
+                tpm_view: true, tpm_register: true, clima_view: true, clima_register: true 
             },
             'QUIMICO': { 
                 amostras_view: true, amostras_create: true, amostras_edit: true, amostras_delete: false,
-                fifo_view: true, fifo_execute: true,
-                calc_start: true, calc_send: true,
-                inv_view: true, inv_start: true,
-                agua_view: true, agua_start: true,
-                reag_reg: true, reag_edit: true, reag_baixa: true, reag_del: false,
+                fifo_view: true, fifo_execute: true, calc_start: true, calc_send: true, inv_view: true, inv_start: true,
+                agua_view: true, agua_start: true, reag_reg: true, reag_edit: true, reag_baixa: true, reag_del: false,
                 sol_create: true, sol_edit: true, sol_baixa: true, sol_desc: true, sol_del: false,
-                coa_reg: true, coa_down: true, coa_del: false,
-                mat_reg: true, mat_uso: true, mat_edit: true, mat_del: false,
+                coa_reg: true, coa_down: true, coa_del: false, mat_reg: true, mat_uso: true, mat_edit: true, mat_del: false,
                 prod_view: true, prod_reg: true, prod_edit: true, prod_regras: true, prod_del: false,
-                laudos_view: true, laudos_download: true, laudos_issue: true, laudos_remove_sig: true, laudos_cancel: false, dashboard_view: true, monitoramento_view: true, users_edit: false, registra_ponto: false, ponto_view: true, ponto_edit: true, ponto_sign: true, logs_view: false 
+                laudos_view: true, laudos_download: true, laudos_issue: true, laudos_remove_sig: true, laudos_cancel: false, 
+                ete_view: true, ete_reg: true, ete_edit: true, ete_del: false,
+                dashboard_view: true, monitoramento_view: true, users_edit: false, registra_ponto: false, ponto_view: true, ponto_edit: true, ponto_sign: true, logs_view: false,
+                tpm_view: true, tpm_register: true, clima_view: true, clima_register: true 
             },
             'ANALISTA': { 
                 amostras_view: true, amostras_create: true, amostras_edit: true, amostras_delete: false,
-                fifo_view: true, fifo_execute: true,
-                calc_start: true, calc_send: true,
-                inv_view: true, inv_start: true,
-                agua_view: true, agua_start: true,
-                reag_reg: false, reag_edit: false, reag_baixa: true, reag_del: false,
+                fifo_view: true, fifo_execute: true, calc_start: true, calc_send: true, inv_view: true, inv_start: true,
+                agua_view: true, agua_start: true, reag_reg: false, reag_edit: false, reag_baixa: true, reag_del: false,
                 sol_create: true, sol_edit: true, sol_baixa: true, sol_desc: true, sol_del: false,
-                coa_reg: true, coa_down: true, coa_del: false,
-                mat_reg: false, mat_uso: true, mat_edit: false, mat_del: false,
+                coa_reg: true, coa_down: true, coa_del: false, mat_reg: false, mat_uso: true, mat_edit: false, mat_del: false,
                 prod_view: true, prod_reg: false, prod_edit: false, prod_regras: false, prod_del: false,
-                laudos_view: true, laudos_download: false, laudos_issue: false, laudos_remove_sig: false, laudos_cancel: false, dashboard_view: true, monitoramento_view: false, users_edit: false, registra_ponto: true, ponto_view: false, ponto_edit: false, ponto_sign: false, logs_view: false 
+                laudos_view: true, laudos_download: false, laudos_issue: false, laudos_remove_sig: false, laudos_cancel: false, 
+                ete_view: true, ete_reg: true, ete_edit: false, ete_del: false,
+                dashboard_view: true, monitoramento_view: false, users_edit: false, registra_ponto: true, ponto_view: false, ponto_edit: false, ponto_sign: false, logs_view: false,
+                tpm_view: true, tpm_register: true, clima_view: true, clima_register: true 
             },
             'APRENDIZ': { 
                 amostras_view: true, amostras_create: false, amostras_edit: false, amostras_delete: false,
-                fifo_view: true, fifo_execute: false,
-                calc_start: true, calc_send: false,
-                inv_view: true, inv_start: false,
-                agua_view: true, agua_start: false,
-                reag_reg: false, reag_edit: false, reag_baixa: false, reag_del: false,
+                fifo_view: true, fifo_execute: false, calc_start: true, calc_send: false, inv_view: true, inv_start: false,
+                agua_view: true, agua_start: false, reag_reg: false, reag_edit: false, reag_baixa: false, reag_del: false,
                 sol_create: false, sol_edit: false, sol_baixa: false, sol_desc: false, sol_del: false,
-                coa_reg: false, coa_down: true, coa_del: false,
-                mat_reg: false, mat_uso: false, mat_edit: false, mat_del: false,
+                coa_reg: false, coa_down: true, coa_del: false, mat_reg: false, mat_uso: false, mat_edit: false, mat_del: false,
                 prod_view: true, prod_reg: false, prod_edit: false, prod_regras: false, prod_del: false,
-                laudos_view: true, laudos_download: false, laudos_issue: false, laudos_remove_sig: false, laudos_cancel: false, dashboard_view: true, monitoramento_view: false, users_edit: false, registra_ponto: true, ponto_view: false, ponto_edit: false, ponto_sign: false, logs_view: false 
+                laudos_view: true, laudos_download: false, laudos_issue: false, laudos_remove_sig: false, laudos_cancel: false, 
+                ete_view: true, ete_reg: false, ete_edit: false, ete_del: false,
+                dashboard_view: true, monitoramento_view: false, users_edit: false, registra_ponto: true, ponto_view: false, ponto_edit: false, ponto_sign: false, logs_view: false,
+                tpm_view: true, tpm_register: false, clima_view: true, clima_register: false 
             },
             'VISUALIZADOR': { 
                 amostras_view: true, amostras_create: false, amostras_edit: false, amostras_delete: false,
-                fifo_view: true, fifo_execute: false,
-                calc_start: false, calc_send: false,
-                inv_view: true, inv_start: false,
-                agua_view: true, agua_start: false,
-                reag_reg: false, reag_edit: false, reag_baixa: false, reag_del: false,
+                fifo_view: true, fifo_execute: false, calc_start: false, calc_send: false, inv_view: true, inv_start: false,
+                agua_view: true, agua_start: false, reag_reg: false, reag_edit: false, reag_baixa: false, reag_del: false,
                 sol_create: false, sol_edit: false, sol_baixa: false, sol_desc: false, sol_del: false,
-                coa_reg: false, coa_down: true, coa_del: false,
-                mat_reg: false, mat_uso: false, mat_edit: false, mat_del: false,
+                coa_reg: false, coa_down: true, coa_del: false, mat_reg: false, mat_uso: false, mat_edit: false, mat_del: false,
                 prod_view: true, prod_reg: false, prod_edit: false, prod_regras: false, prod_del: false,
-                laudos_view: true, laudos_download: true, laudos_issue: false, laudos_remove_sig: false, laudos_cancel: false, dashboard_view: true, monitoramento_view: false, users_edit: false, registra_ponto: false, ponto_view: false, ponto_edit: false, ponto_sign: false, logs_view: false 
+                laudos_view: true, laudos_download: true, laudos_issue: false, laudos_remove_sig: false, laudos_cancel: false, 
+                ete_view: true, ete_reg: false, ete_edit: false, ete_del: false,
+                dashboard_view: true, monitoramento_view: false, users_edit: false, registra_ponto: false, ponto_view: false, ponto_edit: false, ponto_sign: false, logs_view: false,
+                tpm_view: true, tpm_register: false, clima_view: true, clima_register: false 
             }
         };
 
-        const fileToBase64 = file => new Promise((resolve, reject) => {
-            const reader = new FileReader(); reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error);
-        });
-
-        // 🔥 FUNÇÃO VERIFICAR STATUS ONLINE
         function isUserOnline(ultimoAcesso) {
             if (!ultimoAcesso) return false;
             const dataAcesso = new Date(ultimoAcesso);
             const agora = new Date();
-            // Se a diferença for menor que 10 minutos (600000 ms), considera online
             return (agora - dataAcesso) < 600000;
         }
 
@@ -411,13 +415,10 @@
                 const tbody = document.getElementById("tabelaUsuarios");
                 tbody.innerHTML = "";
 
-                // Ordena a lista: Usuários Online Primeiro, depois por Ordem Alfabética
                 usuarios.sort((a, b) => {
                     const aOnline = isUserOnline(a.ultimo_acesso);
                     const bOnline = isUserOnline(b.ultimo_acesso);
-                    if (aOnline === bOnline) {
-                        return a.nome.localeCompare(b.nome);
-                    }
+                    if (aOnline === bOnline) return a.nome.localeCompare(b.nome);
                     return aOnline ? -1 : 1;
                 });
 
@@ -509,7 +510,13 @@
             const id = document.getElementById("userId").value;
             let assinaturaBase64 = null;
             const fileInput = document.getElementById('assinatura').files[0];
-            if (fileInput) assinaturaBase64 = await fileToBase64(fileInput);
+            
+            const fileToBase64Local = file => new Promise((resolve, reject) => {
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error);
+            });
+
+            if (fileInput) assinaturaBase64 = await fileToBase64Local(fileInput);
             
             const p = {};
             Object.keys(modelos['ADMIN']).forEach(key => { 
@@ -602,7 +609,6 @@
             await aplicarTravaGlobal(); 
             carregarUsuarios();
             
-            // 🔥 LOOP SILENCIOSO: Atualiza o status dos usuários a cada 30 segundos
             updateInterval = setInterval(() => {
                 if (document.getElementById('tab-gestao').classList.contains('active')) {
                     carregarUsuarios();
@@ -610,7 +616,6 @@
             }, 30000);
         });
 
-        // Limpa o loop se o usuário sair da página
         window.addEventListener('beforeunload', () => clearInterval(updateInterval));
     </script>
 </body>

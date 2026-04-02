@@ -17,7 +17,7 @@
         .dropdown-menu-custom { max-height: 400px; overflow-y: auto; overflow-x: hidden; padding: 10px 5px; width: 100%; border-radius: 8px; }
         .item-produto { padding: 8px 15px; border-radius: 5px; transition: background 0.2s; }
         .item-produto:hover { background-color: #f8f9fa; }
-        .chk-produto { cursor: pointer; flex-shrink: 0; }
+        .chk-produto, .chk-agua-ponto, .chk-agua-param { cursor: pointer; flex-shrink: 0; }
         
         .bg-dark-kpi { background-color: #212529; color: #fff; }
         .kpi-lead-time { font-size: 3.5rem; font-weight: 800; line-height: 1; margin: 10px 0; }
@@ -58,9 +58,12 @@
 
                     <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
                     <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="monitoramento_tpm.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-fire text-warning me-2"></i>Controle TPM</a>
+                    <a href="monitoramento_clima.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-thermometer-sun text-danger me-2"></i>Clima (Temp/Umid)</a>
                     <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
                     <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
                     <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="laudos_ete.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-water text-info me-2"></i>Laudos ETE</a>
                     <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
                 
                     <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
@@ -95,7 +98,7 @@
                 <h2 class="fw-bold text-dark mb-0">Painel Gerencial (Dashboard)</h2>
                 <small class="text-muted">Estatísticas em tempo real do laboratório</small>
             </div>
-            <button class="btn btn-outline-primary shadow-sm fw-bold" onclick="atualizarTudo(true)"><i class="bi bi-arrow-clockwise"></i> Atualizar Dados</button>
+            <button class="btn btn-outline-primary shadow-sm fw-bold" onclick="atualizarTudo(true)"><i class="bi bi-arrow-clockwise"></i> Atualizar Tudo</button>
         </div>
 
         <div class="row mb-4 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-center">
@@ -181,7 +184,7 @@
                         <span class="badge bg-dark border border-secondary text-light fw-normal" style="font-size: 0.65rem;"><i class="bi bi-globe"></i> Global</span>
                     </div>
                     <div class="kpi-lead-time" id="kpiTempo">0.0 h</div>
-                    <div class="small opacity-75 mt-auto">Tempo médio entre a entrada da amostra e a emissão do laudo (Turnaround Time).</div>
+                    <div class="small opacity-75 mt-auto">Tempo médio entre a entrada da amostra e a emissão do laudo.</div>
                 </div>
             </div>
             
@@ -224,12 +227,12 @@
             </div>
         </div>
 
-        <div class="row g-4 mb-5">
+        <div class="row g-4 mb-4">
             <div class="col-12">
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-header bg-white fw-bold py-3 d-flex justify-content-between align-items-center">
-                        <span class="text-dark fs-5"><i class="bi bi-boxes text-info me-2"></i> Consumo Global de Insumos</span>
-                        <button class="btn btn-sm btn-outline-info fw-bold" onclick="carregarDadosConsumoDashboard()"><i class="bi bi-arrow-clockwise"></i> Sincronizar Insumos</button>
+                        <span class="text-dark fs-5"><i class="bi bi-boxes text-warning me-2"></i> Consumo Global de Insumos</span>
+                        <button class="btn btn-sm btn-outline-warning text-dark fw-bold" onclick="carregarDadosConsumoDashboard()"><i class="bi bi-arrow-clockwise"></i> Sincronizar Insumos</button>
                     </div>
                     <div class="card-body bg-light p-4">
                         
@@ -309,76 +312,239 @@
             </div>
         </div>
 
+        <div class="row g-4 mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm border-0 border-top border-info border-3">
+                    <div class="card-header bg-white fw-bold py-3 d-flex justify-content-between align-items-center">
+                        <span class="text-info text-dark fs-5"><i class="bi bi-droplet-fill me-2"></i> Monitoramento de Água - Análise de Tendências</span>
+                        <button class="btn btn-sm btn-outline-info fw-bold text-dark" onclick="carregarDadosAguaDashboard()"><i class="bi bi-arrow-clockwise"></i> Sincronizar Água</button>
+                    </div>
+                    <div class="card-body bg-light p-4">
+                        
+                        <div class="row g-3 mb-2 p-3 bg-white rounded shadow-sm align-items-end">
+                            
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-geo-alt"></i> Pontos de Coleta</label>
+                                <div class="dropdown">
+                                    <button class="btn btn-light border border-secondary w-100 text-start d-flex justify-content-between align-items-center" type="button" id="btnDropAguaPonto" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                        <span id="txtAguaPonto" class="fw-bold text-secondary text-truncate" style="max-width: 85%;">Todos os Pontos</span>
+                                        <i class="bi bi-chevron-down text-muted"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-custom shadow border-0" aria-labelledby="btnDropAguaPonto">
+                                        <li class="px-3 pb-2 mb-2 border-bottom sticky-top bg-white">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <input class="form-check-input border-secondary m-0" type="checkbox" id="chkTodosAguaPonto" checked onchange="toggleTodosAguaPonto()">
+                                                <label class="form-check-label fw-bold text-dark mb-0" for="chkTodosAguaPonto" style="cursor: pointer;">Selecionar Todos</label>
+                                            </div>
+                                        </li>
+                                        <div id="listaFiltroAguaPontos"></div>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-activity"></i> Parâmetros</label>
+                                <div class="dropdown">
+                                    <button class="btn btn-light border border-info w-100 text-start d-flex justify-content-between align-items-center" type="button" id="btnDropAguaParam" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                        <span id="txtAguaParam" class="fw-bold text-info text-truncate" style="max-width: 85%;">Condutividade</span>
+                                        <i class="bi bi-chevron-down text-muted"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-custom shadow border-0" aria-labelledby="btnDropAguaParam">
+                                        <div id="listaFiltroAguaParams"></div>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-calendar-event"></i> Ano</label>
+                                <select id="dashAguaAno" class="form-select border-secondary" onchange="atualizarGraficoAgua()">
+                                    <option value="2026" selected>2026</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-calendar-month"></i> Detalhe</label>
+                                <select id="dashAguaMes" class="form-select border-secondary" onchange="atualizarGraficoAgua()">
+                                    <option value="" selected>📊 Visão Anual (Média dos Meses)</option>
+                                    <option value="01">Janeiro (Dias)</option>
+                                    <option value="02">Fevereiro (Dias)</option>
+                                    <option value="03">Março (Dias)</option>
+                                    <option value="04">Abril (Dias)</option>
+                                    <option value="05">Maio (Dias)</option>
+                                    <option value="06">Junho (Dias)</option>
+                                    <option value="07">Julho (Dias)</option>
+                                    <option value="08">Agosto (Dias)</option>
+                                    <option value="09">Setembro (Dias)</option>
+                                    <option value="10">Outubro (Dias)</option>
+                                    <option value="11">Novembro (Dias)</option>
+                                    <option value="12">Dezembro (Dias)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-2 px-2">
+                            <span id="txtInfoGraficoAgua" class="small fw-bold text-muted"><i class="bi bi-arrow-repeat"></i> Carregando dados do servidor...</span>
+                        </div>
+
+                        <div class="bg-white p-3 rounded border shadow-sm chart-container" style="height: 350px;">
+                            <canvas id="graficoAguaDashboard"></canvas>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-12">
+                <div class="card shadow-sm border-0 border-top border-warning border-3">
+                    <div class="card-header bg-white fw-bold py-3 text-dark d-flex justify-content-between align-items-center">
+                        <span class="text-warning text-dark fs-5"><i class="bi bi-fire text-warning me-2"></i> Tendência de Degradação de Óleo (% TPM)</span>
+                        <div>
+                            <button class="btn btn-sm btn-outline-warning text-dark fw-bold me-2" onclick="carregarDadosTPMDashboard()"><i class="bi bi-arrow-clockwise"></i> Sincronizar TPM</button>
+                            <a href="monitoramento_tpm.html" class="btn btn-sm btn-warning text-dark fw-bold"><i class="bi bi-box-arrow-up-right"></i> Ver Detalhes</a>
+                        </div>
+                    </div>
+                    <div class="card-body bg-light p-4">
+                        
+                        <div class="row g-3 mb-2 p-3 bg-white rounded shadow-sm align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-geo-alt"></i> Pontos de Fritura</label>
+                                <div class="dropdown">
+                                    <button class="btn btn-light border border-secondary w-100 text-start d-flex justify-content-between align-items-center" type="button" id="btnDropTpmPontoDash" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                        <span id="txtTpmPontoDash" class="fw-bold text-secondary text-truncate" style="max-width: 85%;">Todos os Pontos</span>
+                                        <i class="bi bi-chevron-down text-muted"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-custom shadow border-0 p-3 w-100" aria-labelledby="btnDropTpmPontoDash">
+                                        <li>
+                                            <div class="form-check mb-2 border-bottom pb-2">
+                                                <input class="form-check-input chk-tpm-ponto-dash border-secondary" type="checkbox" value="Fritadeira Grande" checked id="chkFritGDash" onchange="atualizarGraficoTPMDashboard()">
+                                                <label class="form-check-label fw-bold" for="chkFritGDash" style="color: #fb8c00; cursor: pointer;">Fritadeira Grande</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="form-check mb-2 border-bottom pb-2">
+                                                <input class="form-check-input chk-tpm-ponto-dash border-secondary" type="checkbox" value="Fritadeira Pequena" checked id="chkFritPDash" onchange="atualizarGraficoTPMDashboard()">
+                                                <label class="form-check-label fw-bold" for="chkFritPDash" style="color: #0d6efd; cursor: pointer;">Fritadeira Pequena</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="form-check mb-0">
+                                                <input class="form-check-input chk-tpm-ponto-dash border-secondary" type="checkbox" value="Bacon" checked id="chkFritBDash" onchange="atualizarGraficoTPMDashboard()">
+                                                <label class="form-check-label fw-bold" for="chkFritBDash" style="color: #dc3545; cursor: pointer;">Bacon</label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-calendar-event"></i> Ano</label>
+                                <select id="dashTpmAno" class="form-select border-secondary" onchange="atualizarGraficoTPMDashboard()">
+                                    <option value="2026" selected>2026</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-5">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-calendar-month"></i> Detalhe</label>
+                                <select id="dashTpmMes" class="form-select border-secondary" onchange="atualizarGraficoTPMDashboard()">
+                                    <option value="" selected>📊 Visão Anual (Média dos Meses)</option>
+                                    <option value="01">Janeiro (Dias)</option>
+                                    <option value="02">Fevereiro (Dias)</option>
+                                    <option value="03">Março (Dias)</option>
+                                    <option value="04">Abril (Dias)</option>
+                                    <option value="05">Maio (Dias)</option>
+                                    <option value="06">Junho (Dias)</option>
+                                    <option value="07">Julho (Dias)</option>
+                                    <option value="08">Agosto (Dias)</option>
+                                    <option value="09">Setembro (Dias)</option>
+                                    <option value="10">Outubro (Dias)</option>
+                                    <option value="11">Novembro (Dias)</option>
+                                    <option value="12">Dezembro (Dias)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-2 px-2">
+                            <span id="txtInfoGraficoTpmDash" class="small fw-bold text-muted"><i class="bi bi-arrow-repeat"></i> Carregando dados do servidor...</span>
+                        </div>
+
+                        <div class="bg-white p-3 rounded border shadow-sm">
+                            <div class="chart-container" style="height: 350px;">
+                                <canvas id="dashChartTPM"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/sidebar.js"></script>
     <script>
         const API = window.location.origin + "/api";
-        let chartProdutos = null;
-        let chartTendencia = null;
-        let chartVolumeInstance = null;
-        
-        // Variáveis Globais para o Novo Gráfico de Consumo
-        let dadosConsumoReagentes = [];
-        let dadosConsumoSolucoes = [];
-        let dadosConsumoMateriais = [];
+        let chartProdutos = null; let chartTendencia = null; let chartVolumeInstance = null;
+        let dadosConsumoReagentes = []; let dadosConsumoSolucoes = []; let dadosConsumoMateriais = [];
         let chartConsumoGlobal = null;
+        
+        let dadosAguaDashboard = [];
+        let chartAguaInstance = null;
+        
+        let dadosGlobaisTpmDash = []; // Dados globais de TPM para o dashboard
+        let chartTpmInstance = null; 
 
-        // ==========================================
-        // 🔥 LÓGICA DO DROPDOWN DE MÚLTIPLA ESCOLHA
-        // ==========================================
+        const dicParametrosAgua = {
+            ph: { nome: 'pH', cor: '#0dcaf0' },
+            condutividade: { nome: 'Cond. (µS/cm)', cor: '#6f42c1' },
+            tds: { nome: 'TDS (ppm)', cor: '#d63384' },
+            cloro: { nome: 'Cloro (mg/L)', cor: '#198754' },
+            dureza: { nome: 'Dureza (mg/L)', cor: '#ffc107' },
+            acidez: { nome: 'Acidez (mg/L)', cor: '#fd7e14' },
+            residuo_evaporacao: { nome: 'Resíduo (mg/L)', cor: '#6c757d' }
+        };
+
         async function carregarListaProdutos() {
             try {
                 const res = await fetch(`${API}/produtos`);
                 const produtos = await res.json();
                 const divLista = document.getElementById("listaFiltroProdutos");
                 divLista.innerHTML = "";
-                
                 produtos.forEach(p => {
                     const codigo = p.cod_produto ? `<span class="badge bg-secondary me-1 mb-1" style="font-size:0.65rem;">${p.cod_produto}</span>` : '';
-                    
                     divLista.innerHTML += `
                         <div class="item-produto d-flex align-items-start gap-2">
                             <input class="form-check-input chk-produto border-secondary mt-1 flex-shrink-0 m-0" type="checkbox" value="${p.id}" checked id="prod_${p.id}" onchange="verificarSelecao()">
-                            <label class="form-check-label w-100" for="prod_${p.id}" style="cursor:pointer; white-space: normal; word-break: break-word; line-height: 1.3;" title="${p.nome_produto}">
-                                ${codigo} ${p.nome_produto}
-                            </label>
-                        </div>
-                    `;
+                            <label class="form-check-label w-100" for="prod_${p.id}" style="cursor:pointer; white-space: normal; word-break: break-word; line-height: 1.3;" title="${p.nome_produto}">${codigo} ${p.nome_produto}</label>
+                        </div>`;
                 });
                 atualizarTextoBotao();
-            } catch (e) { console.error("Erro ao carregar catálogo:", e); }
+            } catch (e) {}
         }
 
         function filtrarDropdown() {
             const termo = document.getElementById("buscaFiltroProd").value.toLowerCase();
             document.querySelectorAll(".item-produto").forEach(item => {
                 const texto = item.innerText.toLowerCase();
-                if (texto.includes(termo)) {
-                    item.classList.remove('d-none');
-                    item.classList.add('d-flex');
-                } else {
-                    item.classList.remove('d-flex');
-                    item.classList.add('d-none');
-                }
+                item.classList.toggle('d-none', !texto.includes(termo));
+                item.classList.toggle('d-flex', texto.includes(termo));
             });
         }
 
         function toggleTodos() {
             const checked = document.getElementById("chkTodos").checked;
-            document.querySelectorAll(".chk-produto").forEach(chk => {
-                if (!chk.closest('.item-produto').classList.contains("d-none")) {
-                    chk.checked = checked;
-                }
-            });
+            document.querySelectorAll(".chk-produto").forEach(chk => { if (!chk.closest('.item-produto').classList.contains("d-none")) chk.checked = checked; });
             atualizarTextoBotao();
         }
 
         function verificarSelecao() {
             const totalVisivel = Array.from(document.querySelectorAll(".item-produto")).filter(i => !i.classList.contains("d-none")).length;
             const selecionados = document.querySelectorAll(".chk-produto:checked").length;
-            
             document.getElementById("chkTodos").checked = (totalVisivel > 0 && selecionados >= totalVisivel);
             atualizarTextoBotao();
         }
@@ -387,35 +553,24 @@
             const selecionados = document.querySelectorAll(".chk-produto:checked");
             const total = document.querySelectorAll(".chk-produto").length;
             const span = document.getElementById("txtProdutosSelecionados");
-            
-            if (selecionados.length === total || total === 0) {
-                span.innerText = "Todos os Produtos";
-            } else if (selecionados.length === 1) {
+            if (selecionados.length === total || total === 0) span.innerText = "Todos os Produtos";
+            else if (selecionados.length === 1) {
                 let texto = selecionados[0].nextElementSibling.innerText.trim();
                 if(texto.includes('\n')) texto = texto.split('\n')[1].trim(); 
                 span.innerText = texto; 
-            } else {
-                span.innerText = `${selecionados.length} produtos selecionados`;
-            }
+            } else span.innerText = `${selecionados.length} produtos selecionados`;
         }
 
-        // ==========================================
-        // 🔥 MOTOR 1: CARREGAR GRÁFICOS DO DASHBOARD E KPIS
-        // ==========================================
         async function carregarDashboard(forcarBotaoLimpo = false) {
             try {
                 let queryParams = "";
                 const selecionados = Array.from(document.querySelectorAll(".chk-produto:checked")).map(chk => chk.value);
                 const total = document.querySelectorAll(".chk-produto").length;
-                
-                if (selecionados.length > 0 && selecionados.length < total && !forcarBotaoLimpo) {
-                    queryParams = `?produtos=${selecionados.join(',')}`;
-                }
+                if (selecionados.length > 0 && selecionados.length < total && !forcarBotaoLimpo) queryParams = `?produtos=${selecionados.join(',')}`;
 
                 const res = await fetch(`${API}/dashboard/estatisticas${queryParams}`);
                 const data = await res.json();
 
-                // Atualizando os KPIs
                 document.getElementById("kpiAprovacao").innerText = `${data.kpis.aprovacao_geral || 0}%`;
                 document.getElementById("kpiAmostras").innerText = data.kpis.amostras_mes || 0;
                 document.getElementById("kpiLaudos").innerText = data.kpis.laudos_emitidos || 0;
@@ -424,249 +579,484 @@
                 document.getElementById("kpiReagentes").innerText = data.kpis.reagentes_alerta || 0;
                 document.getElementById("kpiMateriais").innerText = data.kpis.materiais_alerta || 0;
 
-                // Gráfico Desempenho por Produto
                 const ctxProd = document.getElementById('graficoProdutos').getContext('2d');
                 if (chartProdutos) chartProdutos.destroy();
-                
                 const labelsProd = data.desempenho_produtos.map(p => p.produto);
-                const aprovadasProd = data.desempenho_produtos.map(p => p.aprovadas);
-                const reprovadasProd = data.desempenho_produtos.map(p => p.reprovadas);
-
-                const larguraMinima = document.getElementById("containerGraficoProdutos").parentElement.clientWidth;
-                const larguraDesejada = Math.max(larguraMinima, labelsProd.length * 80);
-                document.getElementById("containerGraficoProdutos").style.width = larguraDesejada + "px";
+                document.getElementById("containerGraficoProdutos").style.width = Math.max(document.getElementById("containerGraficoProdutos").parentElement.clientWidth, labelsProd.length * 80) + "px";
 
                 chartProdutos = new Chart(ctxProd, {
                     type: 'bar',
                     data: {
                         labels: labelsProd,
                         datasets: [
-                            { label: 'Aprovadas', data: aprovadasProd, backgroundColor: 'rgba(25, 135, 84, 0.8)' },
-                            { label: 'Reprovadas', data: reprovadasProd, backgroundColor: 'rgba(220, 53, 69, 0.8)' }
+                            { label: 'Aprovadas', data: data.desempenho_produtos.map(p => p.aprovadas), backgroundColor: 'rgba(25, 135, 84, 0.8)' },
+                            { label: 'Reprovadas', data: data.desempenho_produtos.map(p => p.reprovadas), backgroundColor: 'rgba(220, 53, 69, 0.8)' }
                         ]
                     },
-                    options: { 
-                        responsive: true, 
-                        maintainAspectRatio: false, 
-                        scales: { 
-                            y: { beginAtZero: true },
-                            x: { ticks: { maxRotation: 45, minRotation: 45 } }
-                        } 
-                    }
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: { ticks: { maxRotation: 45, minRotation: 45 } } } }
                 });
 
-                // Gráfico Tendência
                 const ctxTend = document.getElementById('graficoTendencia').getContext('2d');
                 if (chartTendencia) chartTendencia.destroy();
-
-                const labelsTend = data.tendencia_mensal.map(t => t.mes_ano);
-                const totaisTend = data.tendencia_mensal.map(t => t.total);
-                const aprovadasTend = data.tendencia_mensal.map(t => t.aprovadas);
-
                 chartTendencia = new Chart(ctxTend, {
                     type: 'line',
                     data: {
-                        labels: labelsTend,
+                        labels: data.tendencia_mensal.map(t => t.mes_ano),
                         datasets: [
-                            { label: 'Total Analisado', data: totaisTend, borderColor: '#b22222', backgroundColor: 'rgba(178, 34, 34, 0.1)', fill: true, tension: 0.3 },
-                            { label: 'Aprovadas', data: aprovadasTend, borderColor: '#198754', borderDash: [5, 5], tension: 0.3 }
+                            { label: 'Total Analisado', data: data.tendencia_mensal.map(t => t.total), borderColor: '#b22222', backgroundColor: 'rgba(178, 34, 34, 0.1)', fill: true, tension: 0.3 },
+                            { label: 'Aprovadas', data: data.tendencia_mensal.map(t => t.aprovadas), borderColor: '#198754', borderDash: [5, 5], tension: 0.3 }
                         ]
                     },
                     options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
                 });
-
-            } catch (error) {
-                console.error("Erro ao carregar Dashboard:", error);
-            }
+            } catch (error) {}
         }
 
-        // ==========================================
-        // 🔥 MOTOR 2: CARREGAR A PERFORMANCE GERAL 
-        // ==========================================
         async function carregarPerformance() {
             try {
                 const res = await fetch(`${API}/relatorios/performance`);
                 const data = await res.json();
-
                 document.getElementById("kpiTempo").innerText = `${data.tempoMedioHoras} h`;
 
                 const ctx = document.getElementById('chartVolume').getContext('2d');
                 if (chartVolumeInstance) chartVolumeInstance.destroy();
-
                 chartVolumeInstance = new Chart(ctx, {
                     type: 'bar',
-                    data: {
-                        labels: data.volumeMensal.map(d => d.mes),
-                        datasets: [{
-                            label: 'Qtd Amostras',
-                            data: data.volumeMensal.map(d => d.qtd),
-                            backgroundColor: '#b22222', 
-                            borderRadius: 5,
-                            barPercentage: 0.5
-                        }]
-                    },
-                    options: { 
-                        responsive: true, 
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { position: 'top', align: 'end' }
-                        },
-                        scales: { y: { beginAtZero: true } }
-                    }
+                    data: { labels: data.volumeMensal.map(d => d.mes), datasets: [{ label: 'Qtd Amostras', data: data.volumeMensal.map(d => d.qtd), backgroundColor: '#b22222', borderRadius: 5, barPercentage: 0.5 }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', align: 'end' } }, scales: { y: { beginAtZero: true } } }
                 });
-            } catch(e) { 
-                console.error("Erro ao carregar a performance do laboratório:", e); 
-            }
+            } catch(e) {}
         }
 
-        // ==============================================================
-        // 🔥 NOVA LÓGICA: GRÁFICO DE CONSUMO GLOBAL (REAG + SOL + MAT)
-        // ==============================================================
-        function normalizarDataInsumos(dataString) {
+        function normalizarDataDash(dataString) {
             if (!dataString) return null;
-            if (dataString.includes('/')) {
-                const partes = dataString.split(' ')[0].split('/');
-                if(partes.length === 3) return { dia: partes[0], mes: partes[1], ano: partes[2] };
+            let str = String(dataString).trim();
+            if (str.includes('/')) {
+                let p = str.split(' ')[0].split('/');
+                if (p.length === 3) return { dia: p[0].padStart(2,'0'), mes: p[1].padStart(2,'0'), ano: p[2] };
             }
-            if (dataString.includes('-')) {
-                const partes = dataString.split('T')[0].split('-');
-                if(partes.length === 3) return { ano: partes[0], mes: partes[1], dia: partes[2] };
+            if (str.includes('-')) {
+                let p = str.split('T')[0].split(' ')[0].split('-');
+                if (p.length === 3) return { ano: p[0], mes: p[1].padStart(2,'0'), dia: p[2].substring(0,2).padStart(2,'0') };
             }
             return null;
         }
 
         function extrairQtdInsumos(obj) {
-            const val = parseFloat(obj.quantidade || obj.qtd_usada || obj.qtd || obj.quantidade_consumida || 0);
+            const val = parseFloat(obj.quantidade || obj.qtd_usada || obj.qtd || obj.quantidade_consumida || obj.resultado || 0);
             return isNaN(val) ? 0 : val;
         }
 
         async function carregarDadosConsumoDashboard() {
             try {
-                // Inicia as 3 requisições em paralelo para não travar a tela
+                const headersAuth = { "Authorization": `Bearer ${localStorage.getItem("limsToken")}` };
                 const requests = [
-                    fetch(`${API}/reagentes/uso`).catch(() => ({ ok: false })),
-                    fetch(`${API}/solucoes/uso/itens`).catch(() => ({ ok: false })),
-                    fetch(`${API}/materiais/uso`).catch(() => ({ ok: false }))
+                    fetch(`${API}/reagentes/uso`, { headers: headersAuth }).catch(() => ({ ok: false })),
+                    fetch(`${API}/solucoes/uso/itens`, { headers: headersAuth }).catch(() => ({ ok: false })),
+                    fetch(`${API}/materiais/uso`, { headers: headersAuth }).catch(() => ({ ok: false }))
                 ];
-
                 const [resR, resS, resM] = await Promise.all(requests);
-
                 if(resR.ok) dadosConsumoReagentes = await resR.json();
                 if(resS.ok) dadosConsumoSolucoes = await resS.json();
                 if(resM.ok) dadosConsumoMateriais = await resM.json();
-
-            } catch (error) {
-                console.error("Erro ao sincronizar insumos no Dashboard:", error);
-            } finally {
-                atualizarGraficoConsumoGlobal();
-            }
+            } catch (error) {} finally { atualizarGraficoConsumoGlobal(); }
         }
 
         function atualizarGraficoConsumoGlobal() {
             const ano = document.getElementById("filtroAnoDash").value;
             const mes = document.getElementById("filtroMesDash").value;
-
             const showReagentes = document.getElementById("chkDashReag").checked;
             const showSolucoes = document.getElementById("chkDashSol").checked;
             const showMateriais = document.getElementById("chkDashMat").checked;
 
-            let rotulosX = [];
-            let arrayR = [];
-            let arrayS = [];
-            let arrayM = [];
-
+            let rotulosX = []; let arrayR = []; let arrayS = []; let arrayM = [];
             let somaR = 0, somaS = 0, somaM = 0;
 
-            // Lógica Anual (12 Meses)
+            const processarArray = (dadosFonte, arrayDestino, flagMostrar, isMensal) => {
+                let somaLocal = 0;
+                if (!flagMostrar) return 0;
+                dadosFonte.forEach(item => {
+                    const d = normalizarDataDash(item.data_uso || item.data_descarte || item.data_registro || item.created_at);
+                    if (d && d.ano === ano && (isMensal ? d.mes === mes : true)) {
+                        const qtd = extrairQtdInsumos(item);
+                        const index = isMensal ? parseInt(d.dia, 10) - 1 : parseInt(d.mes, 10) - 1;
+                        arrayDestino[index] += qtd;
+                        somaLocal += qtd;
+                    }
+                });
+                return somaLocal;
+            };
+
             if (mes === "") {
                 rotulosX = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-                arrayR = new Array(12).fill(0);
-                arrayS = new Array(12).fill(0);
-                arrayM = new Array(12).fill(0);
-
-                const processarAnual = (dadosFonte, arrayDestino, flagMostrar) => {
-                    let somaLocal = 0;
-                    if (!flagMostrar) return 0;
-                    dadosFonte.forEach(item => {
-                        const d = normalizarDataInsumos(item.data_uso || item.data_descarte || item.data_registro || item.created_at);
-                        if (d && d.ano === ano) {
-                            const qtd = extrairQtdInsumos(item);
-                            const mesIndex = parseInt(d.mes) - 1;
-                            arrayDestino[mesIndex] += qtd;
-                            somaLocal += qtd;
-                        }
-                    });
-                    return somaLocal;
-                };
-
-                somaR = processarAnual(dadosConsumoReagentes, arrayR, showReagentes);
-                somaS = processarAnual(dadosConsumoSolucoes, arrayS, showSolucoes);
-                somaM = processarAnual(dadosConsumoMateriais, arrayM, showMateriais);
-
-            } 
-            // Lógica Mensal Específica (Dias do Mês)
-            else {
-                const diasNoMes = new Date(ano, parseInt(mes), 0).getDate(); 
+                arrayR = new Array(12).fill(0); arrayS = new Array(12).fill(0); arrayM = new Array(12).fill(0);
+                somaR = processarArray(dadosConsumoReagentes, arrayR, showReagentes, false);
+                somaS = processarArray(dadosConsumoSolucoes, arrayS, showSolucoes, false);
+                somaM = processarArray(dadosConsumoMateriais, arrayM, showMateriais, false);
+            } else {
+                const diasNoMes = new Date(ano, parseInt(mes, 10), 0).getDate(); 
                 for(let i=1; i<=diasNoMes; i++) rotulosX.push(i.toString().padStart(2, '0') + `/${mes}`);
-                
-                arrayR = new Array(diasNoMes).fill(0);
-                arrayS = new Array(diasNoMes).fill(0);
-                arrayM = new Array(diasNoMes).fill(0);
-
-                const processarMensal = (dadosFonte, arrayDestino, flagMostrar) => {
-                    let somaLocal = 0;
-                    if (!flagMostrar) return 0;
-                    dadosFonte.forEach(item => {
-                        const d = normalizarDataInsumos(item.data_uso || item.data_descarte || item.data_registro || item.created_at);
-                        if (d && d.ano === ano && d.mes === mes) {
-                            const qtd = extrairQtdInsumos(item);
-                            const diaIndex = parseInt(d.dia) - 1;
-                            arrayDestino[diaIndex] += qtd;
-                            somaLocal += qtd;
-                        }
-                    });
-                    return somaLocal;
-                };
-
-                somaR = processarMensal(dadosConsumoReagentes, arrayR, showReagentes);
-                somaS = processarMensal(dadosConsumoSolucoes, arrayS, showSolucoes);
-                somaM = processarMensal(dadosConsumoMateriais, arrayM, showMateriais);
+                arrayR = new Array(diasNoMes).fill(0); arrayS = new Array(diasNoMes).fill(0); arrayM = new Array(diasNoMes).fill(0);
+                somaR = processarArray(dadosConsumoReagentes, arrayR, showReagentes, true);
+                somaS = processarArray(dadosConsumoSolucoes, arrayS, showSolucoes, true);
+                somaM = processarArray(dadosConsumoMateriais, arrayM, showMateriais, true);
             }
 
-            // Atualiza os Totais
             document.getElementById("kpiTotReag").innerText = somaR.toFixed(2);
             document.getElementById("kpiTotSol").innerText = somaS.toFixed(2);
             document.getElementById("kpiTotMat").innerText = somaM.toFixed(2);
 
-            // Constroi Séries
             const datasetsAtivos = [];
-            if (showReagentes) datasetsAtivos.push({ label: 'Reagentes (un. brutas)', data: arrayR, backgroundColor: '#6c757d', borderRadius: 4 });
-            if (showSolucoes) datasetsAtivos.push({ label: 'Soluções (un. brutas)', data: arrayS, backgroundColor: '#0d6efd', borderRadius: 4 });
-            if (showMateriais) datasetsAtivos.push({ label: 'Materiais (un. brutas)', data: arrayM, backgroundColor: '#ffc107', borderRadius: 4 });
+            if (showReagentes) datasetsAtivos.push({ label: 'Reagentes (un)', data: arrayR, backgroundColor: '#6c757d', borderRadius: 4 });
+            if (showSolucoes) datasetsAtivos.push({ label: 'Soluções (un)', data: arrayS, backgroundColor: '#0d6efd', borderRadius: 4 });
+            if (showMateriais) datasetsAtivos.push({ label: 'Materiais (un)', data: arrayM, backgroundColor: '#ffc107', borderRadius: 4 });
 
             if (chartConsumoGlobal) chartConsumoGlobal.destroy();
+            chartConsumoGlobal = new Chart(document.getElementById('graficoConsumoGlobal').getContext('2d'), {
+                type: 'bar', data: { labels: rotulosX, datasets: datasetsAtivos },
+                options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, scales: { x: { stacked: false }, y: { beginAtZero: true } }, plugins: { legend: { position: 'top' } } }
+            });
+        }
 
-            const ctx = document.getElementById('graficoConsumoGlobal').getContext('2d');
-            chartConsumoGlobal = new Chart(ctx, {
-                type: 'bar',
-                data: { labels: rotulosX, datasets: datasetsAtivos },
+        // ==============================================================
+        // 🔥 MOTOR 4: MONITORAMENTO DE ÁGUA
+        // ==============================================================
+        function toggleTodosAguaPonto() {
+            const checked = document.getElementById("chkTodosAguaPonto").checked;
+            document.querySelectorAll(".chk-agua-ponto").forEach(chk => chk.checked = checked);
+            atualizarTextoAguaPonto(); atualizarGraficoAgua();
+        }
+
+        function verificarSelecaoAguaPonto() {
+            const total = document.querySelectorAll(".chk-agua-ponto").length;
+            const sel = document.querySelectorAll(".chk-agua-ponto:checked").length;
+            document.getElementById("chkTodosAguaPonto").checked = (sel === total && total > 0);
+            atualizarTextoAguaPonto(); atualizarGraficoAgua();
+        }
+
+        function atualizarTextoAguaPonto() {
+            const sel = document.querySelectorAll(".chk-agua-ponto:checked");
+            const total = document.querySelectorAll(".chk-agua-ponto").length;
+            const span = document.getElementById("txtAguaPonto");
+            if (sel.length === total || total === 0) span.innerText = "Todos os Pontos (Média)";
+            else if (sel.length === 1) span.innerText = sel[0].nextElementSibling.innerText;
+            else span.innerText = `${sel.length} pontos selecionados`;
+        }
+
+        function verificarSelecaoAguaParam() {
+            atualizarTextoAguaParam(); atualizarGraficoAgua();
+        }
+
+        function atualizarTextoAguaParam() {
+            const sel = document.querySelectorAll(".chk-agua-param:checked");
+            const span = document.getElementById("txtAguaParam");
+            if (sel.length === 0) span.innerText = "Nenhum Parâmetro";
+            else if (sel.length <= 2) span.innerText = Array.from(sel).map(c => c.nextElementSibling.innerText).join(', ');
+            else span.innerText = `${sel.length} parâmetros`;
+        }
+
+        async function carregarDadosAguaDashboard() {
+            const pontosOficiais = [
+                "Poço Artesiano Principal",
+                "Caixa D'água (Fábrica)",
+                "Torneira - Produção Linha 1",
+                "Torneira 1 - Laboratório",
+                "Torneira 2 - Laboratório",
+                "Deionizador de Água (Laboratório)"
+            ];
+            
+            const divPontos = document.getElementById("listaFiltroAguaPontos");
+            divPontos.innerHTML = "";
+            pontosOficiais.forEach((p, idx) => { 
+                divPontos.innerHTML += `
+                    <div class="item-produto d-flex align-items-start gap-2 px-3 py-1">
+                        <input class="form-check-input chk-agua-ponto border-secondary mt-1 flex-shrink-0 m-0" type="checkbox" value="${p}" checked id="ptAgua_${idx}" onchange="verificarSelecaoAguaPonto()">
+                        <label class="form-check-label w-100 text-dark" for="ptAgua_${idx}" style="cursor:pointer; font-size: 0.9rem;">${p}</label>
+                    </div>`; 
+            });
+
+            const divParams = document.getElementById("listaFiltroAguaParams");
+            divParams.innerHTML = "";
+            Object.keys(dicParametrosAgua).forEach(key => {
+                const info = dicParametrosAgua[key];
+                const isChecked = key === 'condutividade' ? 'checked' : ''; 
+                divParams.innerHTML += `
+                    <div class="item-produto d-flex align-items-start gap-2 px-3 py-1">
+                        <input class="form-check-input chk-agua-param border-secondary mt-1 flex-shrink-0 m-0" type="checkbox" value="${key}" ${isChecked} id="paramAgua_${key}" onchange="verificarSelecaoAguaParam()">
+                        <label class="form-check-label w-100 fw-bold" for="paramAgua_${key}" style="cursor:pointer; font-size: 0.9rem; color: ${info.cor};">${info.nome}</label>
+                    </div>`; 
+            });
+
+            atualizarTextoAguaPonto();
+            atualizarTextoAguaParam();
+
+            try {
+                const res = await fetch(`${API}/monitoramento/agua/historico`, {
+                    headers: { "Authorization": `Bearer ${localStorage.getItem("limsToken")}` }
+                });
+
+                if (res.ok) {
+                    const dataRaw = await res.json();
+                    
+                    if (Array.isArray(dataRaw)) {
+                        dadosAguaDashboard = dataRaw;
+                    } else if (dataRaw && Array.isArray(dataRaw.data)) {
+                        dadosAguaDashboard = dataRaw.data;
+                    } else if (dataRaw && Array.isArray(dataRaw.registros)) {
+                        dadosAguaDashboard = dataRaw.registros;
+                    } else {
+                        dadosAguaDashboard = [];
+                    }
+                    
+                    document.getElementById("txtInfoGraficoAgua").innerHTML = `<span class="text-success"><i class="bi bi-check-circle"></i> Leitura concluída.</span>`;
+                    
+                    const pontosBanco = dadosAguaDashboard.map(d => (d.ponto_coleta || d.ponto || "").trim()).filter(Boolean);
+                    const pontosExtras = [...new Set(pontosBanco)].filter(p => !pontosOficiais.includes(p));
+                    
+                    if (pontosExtras.length > 0) {
+                        pontosExtras.forEach((p, idx) => { 
+                            divPontos.innerHTML += `
+                            <div class="item-produto d-flex align-items-start gap-2 px-3 py-1 bg-light">
+                                <input class="form-check-input chk-agua-ponto border-secondary mt-1 flex-shrink-0 m-0" type="checkbox" value="${p}" checked id="ptExtra_${idx}" onchange="verificarSelecaoAguaPonto()">
+                                <label class="form-check-label w-100 text-muted fst-italic" for="ptExtra_${idx}" style="cursor:pointer; font-size: 0.85rem;">${p}</label>
+                            </div>`; 
+                        });
+                        atualizarTextoAguaPonto();
+                    }
+                } else {
+                    dadosAguaDashboard = [];
+                    document.getElementById("txtInfoGraficoAgua").innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-triangle"></i> Falha ao comunicar com o servidor.</span>`;
+                }
+            } catch (e) { 
+                dadosAguaDashboard = []; 
+                document.getElementById("txtInfoGraficoAgua").innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-triangle"></i> Erro interno de carregamento.</span>`;
+            }
+
+            atualizarGraficoAgua();
+        }
+
+        function atualizarGraficoAgua() {
+            const ano = document.getElementById("dashAguaAno").value;
+            const mes = document.getElementById("dashAguaMes").value;
+            
+            const pontosSelecionados = Array.from(document.querySelectorAll(".chk-agua-ponto:checked")).map(c => c.value.trim());
+            const paramsSelecionados = Array.from(document.querySelectorAll(".chk-agua-param:checked")).map(c => c.value);
+
+            let rotulosX = [];
+            let novosDatasets = [];
+
+            if (pontosSelecionados.length === 0 || paramsSelecionados.length === 0) {
+                document.getElementById("txtInfoGraficoAgua").innerHTML = `<span class="text-warning"><i class="bi bi-info-circle"></i> Selecione pontos e parâmetros para desenhar o gráfico.</span>`;
+                if (chartAguaInstance) chartAguaInstance.destroy();
+                return;
+            }
+
+            let dadosFiltrados = dadosAguaDashboard.filter(d => {
+                const nData = normalizarDataDash(d.data_coleta || d.data_registro || d.created_at || d.data_hora || d.data_fmt);
+                if(!nData) return false;
+                
+                const pColeta = (d.ponto_coleta || d.ponto || "").trim();
+                const matchAno = nData.ano === ano;
+                const matchPonto = pontosSelecionados.includes(pColeta);
+                
+                return matchAno && matchPonto;
+            });
+
+            if (dadosFiltrados.length === 0) {
+                document.getElementById("txtInfoGraficoAgua").innerHTML = `<i class="bi bi-info-circle text-muted"></i> Nenhum registro atende aos filtros selecionados.`;
+            } else {
+                document.getElementById("txtInfoGraficoAgua").innerHTML = `<i class="bi bi-bar-chart"></i> <strong>${dadosFiltrados.length}</strong> registro(s) encontrado(s) no banco de dados.`;
+            }
+
+            if (mes === "") { 
+                rotulosX = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']; 
+            } else {
+                const diasNoMes = new Date(ano, parseInt(mes, 10), 0).getDate(); 
+                for(let i=1; i<=diasNoMes; i++) rotulosX.push(i.toString().padStart(2, '0') + `/${mes}`);
+            }
+
+            paramsSelecionados.forEach(param => {
+                let somas = new Array(rotulosX.length).fill(0);
+                let contagens = new Array(rotulosX.length).fill(0);
+
+                dadosFiltrados.forEach(d => {
+                    const nData = normalizarDataDash(d.data_coleta || d.data_registro || d.created_at || d.data_hora || d.data_fmt);
+                    
+                    let valStr = String(d[param] || "").replace(',', '.');
+                    let val = parseFloat(valStr); 
+                    
+                    if (!isNaN(val) && ((mes === "" && nData.ano === ano) || (mes !== "" && nData.mes === mes))) {
+                        let idx = mes === "" ? parseInt(nData.mes, 10) - 1 : parseInt(nData.dia, 10) - 1;
+                        somas[idx] += val;
+                        contagens[idx]++;
+                    }
+                });
+
+                let dadosY = somas.map((s, i) => contagens[i] > 0 ? (s / contagens[i]).toFixed(2) : null);
+                let infoParam = dicParametrosAgua[param];
+
+                novosDatasets.push({
+                    label: `Média de ${infoParam.nome}`,
+                    data: dadosY,
+                    borderColor: infoParam.cor,
+                    backgroundColor: infoParam.cor + '33',
+                    borderWidth: 3,
+                    pointBackgroundColor: infoParam.cor,
+                    pointRadius: 6, 
+                    pointHoverRadius: 8,
+                    fill: false, 
+                    spanGaps: true 
+                });
+            });
+
+            if (chartAguaInstance) chartAguaInstance.destroy();
+            chartAguaInstance = new Chart(document.getElementById('graficoAguaDashboard').getContext('2d'), {
+                type: 'line', data: { labels: rotulosX, datasets: novosDatasets },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    interaction: { mode: 'index', intersect: false }, 
+                    scales: { 
+                        x: { grid: { display: false } }, 
+                        y: { beginAtZero: true, suggestedMax: 10 } 
+                    }, 
+                    plugins: { legend: { position: 'top' } } 
+                }
+            });
+        }
+
+        // ==============================================================
+        // 🔥 MOTOR 5: GRÁFICO TPM (COMPOSTOS POLARES) COM FILTROS
+        // ==============================================================
+        async function carregarDadosTPMDashboard() {
+            try {
+                document.getElementById("txtInfoGraficoTpmDash").innerHTML = `<span class="spinner-border spinner-border-sm text-info me-2"></span> Sincronizando dados...`;
+                const res = await fetch(`${API}/tpm/historico`);
+                if (res.ok) {
+                    const dadosCru = await res.json();
+                    dadosGlobaisTpmDash = dadosCru.reverse(); // Ordena do antigo para o novo
+                    document.getElementById("txtInfoGraficoTpmDash").innerHTML = `<span class="text-success"><i class="bi bi-check-circle"></i> Leitura concluída.</span>`;
+                } else {
+                    dadosGlobaisTpmDash = [];
+                    document.getElementById("txtInfoGraficoTpmDash").innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-triangle"></i> Falha ao buscar dados.</span>`;
+                }
+            } catch (e) {
+                dadosGlobaisTpmDash = [];
+                document.getElementById("txtInfoGraficoTpmDash").innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-triangle"></i> Erro de conexão.</span>`;
+            }
+            atualizarGraficoTPMDashboard();
+        }
+
+        function atualizarGraficoTPMDashboard() {
+            if (dadosGlobaisTpmDash.length === 0) return;
+
+            const anoFiltro = document.getElementById("dashTpmAno").value;
+            const mesFiltro = document.getElementById("dashTpmMes").value;
+
+            const chks = document.querySelectorAll(".chk-tpm-ponto-dash:checked");
+            const pontosSelecionados = Array.from(chks).map(c => c.value);
+
+            const txtLabel = document.getElementById("txtTpmPontoDash");
+            if (pontosSelecionados.length === 3) txtLabel.innerText = "Todos os Pontos";
+            else if (pontosSelecionados.length === 0) txtLabel.innerText = "Nenhum Ponto";
+            else txtLabel.innerText = pontosSelecionados.join(', ');
+
+            if (pontosSelecionados.length === 0) {
+                if (chartTpmInstance) chartTpmInstance.destroy();
+                document.getElementById("txtInfoGraficoTpmDash").innerHTML = `<span class="text-warning"><i class="bi bi-exclamation-triangle"></i> Selecione pelo menos um ponto.</span>`;
+                return;
+            }
+
+            let dadosFiltrados = dadosGlobaisTpmDash.filter(d => {
+                const [diaD, mesD, anoD] = d.data_fmt.split(' ')[0].split('/');
+                const matchAno = anoD === anoFiltro;
+                const matchMes = mesFiltro === "" ? true : mesD === mesFiltro;
+                const matchPonto = pontosSelecionados.includes(d.ponto);
+                return matchAno && matchMes && matchPonto;
+            });
+
+            document.getElementById("txtInfoGraficoTpmDash").innerHTML = `<span class="text-success"><i class="bi bi-bar-chart"></i> <strong>${dadosFiltrados.length}</strong> registro(s) encontrado(s).</span>`;
+
+            let rotulosX = [];
+            if (mesFiltro === "") {
+                rotulosX = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            } else {
+                const diasNoMes = new Date(anoFiltro, parseInt(mesFiltro, 10), 0).getDate();
+                for (let i = 1; i <= diasNoMes; i++) {
+                    rotulosX.push(i.toString().padStart(2, '0') + `/${mesFiltro}`);
+                }
+            }
+
+            const cores = {
+                "Fritadeira Grande": "#fb8c00",
+                "Fritadeira Pequena": "#0d6efd",
+                "Bacon": "#dc3545"
+            };
+
+            let novosDatasets = pontosSelecionados.map(pontoNome => {
+                let somas = new Array(rotulosX.length).fill(0);
+                let contagens = new Array(rotulosX.length).fill(0);
+
+                dadosFiltrados.forEach(d => {
+                    if (d.ponto === pontoNome) {
+                        const [diaD, mesD, anoD] = d.data_fmt.split(' ')[0].split('/');
+                        const val = parseFloat(d.valor);
+                        if (!isNaN(val)) {
+                            let idx = mesFiltro === "" ? parseInt(mesD, 10) - 1 : parseInt(diaD, 10) - 1;
+                            somas[idx] += val;
+                            contagens[idx]++;
+                        }
+                    }
+                });
+
+                let dadosY = somas.map((s, i) => contagens[i] > 0 ? parseFloat((s / contagens[i]).toFixed(2)) : null);
+
+                return {
+                    label: pontoNome,
+                    data: dadosY,
+                    borderColor: cores[pontoNome],
+                    backgroundColor: cores[pontoNome] + '33',
+                    tension: 0.3,
+                    fill: false,
+                    spanGaps: true,
+                    borderWidth: 3,
+                    pointBackgroundColor: cores[pontoNome],
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                };
+            });
+
+            novosDatasets.push({
+                label: 'Limite de Segurança (25%)',
+                data: new Array(rotulosX.length).fill(25.0),
+                borderColor: '#212529',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                pointRadius: 0,
+                fill: false,
+                tension: 0
+            });
+
+            if (chartTpmInstance) chartTpmInstance.destroy();
+            const ctx = document.getElementById('dashChartTPM').getContext('2d');
+
+            chartTpmInstance = new Chart(ctx, {
+                type: 'line',
+                data: { labels: rotulosX, datasets: novosDatasets },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false },
-                    scales: { 
-                        x: { stacked: false },
-                        y: { beginAtZero: true, title: { display: true, text: 'Quantidade Consumida', font: { weight: 'bold' } } } 
+                    scales: {
+                        y: { beginAtZero: true, max: 35, grid: { color: '#e9ecef' } },
+                        x: { grid: { display: false } }
                     },
                     plugins: {
                         legend: { position: 'top' },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) label = label.split(' ')[0] + ': ';
-                                    if (context.parsed.y !== null) label += context.parsed.y.toFixed(2);
-                                    return label;
+                                    return context.dataset.label + ': ' + (context.parsed.y !== null ? context.parsed.y.toFixed(1) + '%' : '-');
                                 }
                             }
                         }
@@ -676,17 +1066,19 @@
         }
 
         // ==========================================
-        // 🔥 INICIALIZAÇÃO GERAL
+        // INICIALIZAÇÃO GERAL
         // ==========================================
         function atualizarTudo(forcarLimpo = false) {
             carregarDashboard(forcarLimpo); 
-            carregarPerformance();          
+            carregarPerformance();
+            carregarDadosConsumoDashboard();
+            carregarDadosAguaDashboard();
+            carregarDadosTPMDashboard(); // Inicia o carregamento do TPM
         }
 
         document.addEventListener("DOMContentLoaded", async () => {
             await carregarListaProdutos(); 
             atualizarTudo(true);          
-            carregarDadosConsumoDashboard(); // Inicializa o novo gráfico
         });
     </script>
 </body>

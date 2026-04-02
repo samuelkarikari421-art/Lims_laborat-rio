@@ -62,7 +62,7 @@
         <div class="card-body text-center">
             
             <img src="assets/img/logo.png" alt="Logo Kari Kari" class="login-logo">
-            <div class="login-subtitle">Lab KariKari LIMS</div>
+            <div class="login-subtitle"> Kari-Kari Alimentos </div>
 
             <form id="formLogin" class="text-start">
                 <div class="mb-3">
@@ -115,13 +115,56 @@
                 localStorage.setItem("limsToken", data.token);
 
                 // 🔥 3. DADOS PARA O CONTROLE DE ACESSO (sidebar.js ler)
-                // Guardamos o perfil (ADMIN, ANALISTA, etc)
-                localStorage.setItem("perfil", data.user.perfil);
+                const perfil = String(data.user.perfil || "").toUpperCase().trim();
+                const p = data.user.permissoes || {};
                 
-                // Guardamos o JSON de permissões específicas
-                localStorage.setItem("permissoes", JSON.stringify(data.user.permissoes || {}));
+                localStorage.setItem("perfil", perfil);
+                localStorage.setItem("permissoes", JSON.stringify(p));
 
-                window.location.href = "dashboard.html";
+                // =======================================================
+                // 🔥 MOTOR DE ROTEAMENTO INTELIGENTE
+                // Avalia a permissão de cima para baixo e joga o usuário na 1ª tela útil
+                // =======================================================
+                let urlDestino = "";
+
+                if (perfil === 'ADMIN' || perfil === 'ADMINISTRADOR' || p.dashboard_view) {
+                    urlDestino = "dashboard.html";
+                } else if (p.amostras_view) {
+                    urlDestino = "amostras.html";
+                } else if (p.fifo_view) {
+                    urlDestino = "analises.html";
+                } else if (p.calc_start) {
+                    urlDestino = "calculos.html";
+                } else if (p.inv_view) {
+                    urlDestino = "investigacao.html";
+                } else if (p.laudos_view) {
+                    urlDestino = "laudos.html";
+                } else if (p.agua_view) {
+                    urlDestino = "monitoramento_agua.html";
+                } else if (p.reag_reg || p.reag_baixa || p.reag_edit) {
+                    urlDestino = "reagentes.html";
+                } else if (p.sol_create || p.sol_baixa || p.sol_edit) {
+                    urlDestino = "solucoes.html";
+                } else if (p.coa_reg || p.coa_down) {
+                    urlDestino = "coas.html";
+                } else if (p.mat_reg || p.mat_uso || p.mat_edit) {
+                    urlDestino = "materiais.html";
+                } else if (p.prod_view) {
+                    urlDestino = "produtos.html";
+                } else if (p.registra_ponto || p.ponto_view) {
+                    urlDestino = "ponto.html";
+                } else {
+                    // Se o usuário não tiver nada liberado, exibe erro e impede o login
+                    msg.innerText = "Sua conta não tem nenhuma permissão de tela atribuída. Contate o Administrador.";
+                    btn.disabled = false; 
+                    btn.innerText = "ENTRAR";
+                    localStorage.clear(); // Limpa o token para não deixar lixo
+                    return; // Interrompe o processo
+                }
+
+                // Redireciona para a URL calculada
+                window.location.href = urlDestino;
+
             } else {
                 msg.innerText = data.message;
                 btn.disabled = false; 

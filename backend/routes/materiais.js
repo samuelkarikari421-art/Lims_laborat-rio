@@ -47,32 +47,53 @@ router.get("/", async (req, res) => {
 // 2. Registrar Novo Material
 router.post("/", async (req, res) => {
     try {
-        const { nome, fabricante, lote, data_recebimento, data_validade, quantidade, unidade, observacoes, estoque_minimo, certificado_nome, certificado_base64, imagem_nome, imagem_base64 } = req.body;
+        // 🔥 NOVO: Recebendo a categoria_uso do frontend
+        const { nome, categoria_uso, fabricante, lote, data_recebimento, data_validade, quantidade, unidade, observacoes, estoque_minimo, certificado_nome, certificado_base64, imagem_nome, imagem_base64 } = req.body;
         
         const seqRes = await pool.query("SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM materiais");
         const nextId = seqRes.rows[0].next_id;
         const codigoGerado = `MAT-${nextId}`;
 
         await pool.query(
-            `INSERT INTO materiais (codigo, nome, fabricante, lote, data_recebimento, quantidade, unidade, observacoes, estoque_minimo, data_validade, certificado_nome, certificado_base64, imagem_nome, imagem_base64) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
-            [codigoGerado, nome, fabricante, lote, data_recebimento || null, quantidade, unidade, observacoes, estoque_minimo || 0, data_validade || null, certificado_nome || null, certificado_base64 || null, imagem_nome || null, imagem_base64 || null]
+            `INSERT INTO materiais (codigo, nome, categoria_uso, fabricante, lote, data_recebimento, quantidade, unidade, observacoes, estoque_minimo, data_validade, certificado_nome, certificado_base64, imagem_nome, imagem_base64) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
+            [
+                codigoGerado, 
+                nome, 
+                categoria_uso || 'CONSUMO', // Default de segurança
+                fabricante, 
+                lote, 
+                data_recebimento || null, 
+                quantidade, 
+                unidade, 
+                observacoes, 
+                estoque_minimo || 0, 
+                data_validade || null, 
+                certificado_nome || null, 
+                certificado_base64 || null, 
+                imagem_nome || null, 
+                imagem_base64 || null
+            ]
         );
         
         await registrarLog(req, "CRIOU MATERIAL", `Adicionou o material: ${codigoGerado} - ${nome}`);
         res.json({ success: true, message: "Material salvo com sucesso!", codigo: codigoGerado });
-    } catch (err) { res.status(500).json({ success: false, error: "Erro ao salvar material" }); }
+    } catch (err) { 
+        console.error("Erro ao salvar material:", err);
+        res.status(500).json({ success: false, error: "Erro ao salvar material" }); 
+    }
 });
 
 // 3. Atualizar/Editar Material
 router.put("/:id", async (req, res) => {
     try {
         const { id } = req.params;
-        const { nome, fabricante, lote, data_recebimento, data_validade, quantidade, unidade, observacoes, estoque_minimo, certificado_nome, certificado_base64, imagem_nome, imagem_base64, remover_certificado, remover_imagem } = req.body;
+        // 🔥 NOVO: Recebendo a categoria_uso do frontend
+        const { nome, categoria_uso, fabricante, lote, data_recebimento, data_validade, quantidade, unidade, observacoes, estoque_minimo, certificado_nome, certificado_base64, imagem_nome, imagem_base64, remover_certificado, remover_imagem } = req.body;
         
-        let query = `UPDATE materiais SET nome = $1, fabricante = $2, lote = $3, data_recebimento = $4, quantidade = $5, unidade = $6, observacoes = $7, estoque_minimo = $8, data_validade = $9`;
-        let values = [nome, fabricante, lote, data_recebimento || null, quantidade, unidade, observacoes, estoque_minimo || 0, data_validade || null];
-        let idx = 10;
+        let query = `UPDATE materiais SET nome = $1, categoria_uso = $2, fabricante = $3, lote = $4, data_recebimento = $5, quantidade = $6, unidade = $7, observacoes = $8, estoque_minimo = $9, data_validade = $10`;
+        let values = [nome, categoria_uso || 'CONSUMO', fabricante, lote, data_recebimento || null, quantidade, unidade, observacoes, estoque_minimo || 0, data_validade || null];
+        let idx = 11; // Ajustado porque agora temos 10 valores base
 
         if (remover_certificado) { query += `, certificado_nome = NULL, certificado_base64 = NULL`; }
         else if (certificado_base64) { query += `, certificado_nome = $${idx++}, certificado_base64 = $${idx++}`; values.push(certificado_nome, certificado_base64); }
@@ -87,7 +108,10 @@ router.put("/:id", async (req, res) => {
 
         await registrarLog(req, "EDITOU MATERIAL", `Alterou dados do material ID: ${id}`);
         res.json({ success: true, message: "Material atualizado com sucesso!" });
-    } catch (err) { res.status(500).json({ success: false, error: "Erro ao editar material" }); }
+    } catch (err) { 
+        console.error("Erro ao editar material:", err);
+        res.status(500).json({ success: false, error: "Erro ao editar material" }); 
+    }
 });
 
 // 4. Excluir Material (do Banco)

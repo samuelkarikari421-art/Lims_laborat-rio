@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Monitoramento de Clima - LIMS Kari Kari</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .card-ambiente { cursor: pointer; transition: all 0.2s; border-left: 4px solid transparent; }
+        .card-ambiente:hover { transform: translateX(5px); background-color: #f8f9fa; }
+        .card-ambiente.active { background-color: #e3f2fd; border-left-color: #0dcaf0 !important; }
+        .chart-container { height: 400px; width: 100%; position: relative; }
+        
+        .nav-tabs .nav-link { color: #495057; font-weight: 600; border: none; border-bottom: 3px solid transparent; padding: 10px 20px; }
+        .nav-tabs .nav-link:hover { border-color: transparent; background-color: #f8f9fa; }
+        .nav-tabs .nav-link.active { color: #0dcaf0; border-color: transparent transparent #0dcaf0; background-color: transparent; }
+        
+        .box-valor { background: #fff; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; text-align: center; }
+        .box-valor input { 
+            width: 100%; max-width: 120px; background: transparent; font-size: 1.5rem; 
+            font-weight: bold; text-align: center; border: none; border-bottom: 2px solid #ccc; 
+            border-radius: 0; padding: 0; margin-bottom: 5px; 
+        }
+        .box-valor input:focus { outline: none; box-shadow: none; border-color: #0dcaf0; }
+        
+        .box-valor input::-webkit-outer-spin-button,
+        .box-valor input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .box-valor input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <button id="btnToggle" class="btn-toggle-sidebar"><i class="bi bi-list"></i></button>
+        
+        <div class="sidebar-header">
+            <img src="assets/img/logo.png" alt="Logo Kari Kari" class="sidebar-logo">
+            <div class="brand-subtitle">Lab KariKari LIMS</div>
+        </div>
+
+        <div class="sidebar-menu">
+            <a href="#submenuLab" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-flask"></i> <span class="menu-text fw-bold">Laboratório</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse show" id="submenuLab">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <div class="sidebar-label mt-2 mb-1" style="font-size: 0.7rem;">Controle de Qualidade</div>
+                    <a href="dashboard.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                    <a href="amostras.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box-seam me-2"></i>Amostras</a>
+                    
+                    <a href="#submenuAnalises" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center py-1" style="font-size: 0.85rem;">
+                        <span><i class="bi bi-clipboard-data me-2"></i>Análises</span>
+                        <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
+                    </a>
+                    <div class="collapse" id="submenuAnalises">
+                        <div class="ps-3 ms-2 border-start border-secondary my-1">
+                            <a href="analises.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Bancada FIFO</a>
+                            <a href="calculos.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Cálculos</a>
+                            <a href="investigacao.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Investigação</a>
+                        </div>
+                    </div>
+
+                    <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
+                    <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="monitoramento_tpm.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-fire text-warning me-2"></i>Controle TPM</a>
+                    <a href="monitoramento_clima.html" class="nav-link active py-1" style="font-size: 0.85rem;"><i class="bi bi-thermometer-sun text-danger me-2"></i>Clima (Temp/Umid)</a>    
+                    <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
+                    <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
+                    <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="laudos_ete.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-water text-info me-2"></i>Laudos ETE</a>
+                    <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
+                
+                    <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
+                    <a href="relatorios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up me-2"></i>Relatórios</a>
+                    <a href="produtos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-tags me-2"></i>Produtos</a>
+                    <a href="ponto.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-clock-history me-2"></i>Ponto</a>
+                    <a href="usuarios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-people me-2"></i>Usuários</a>
+                  
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-check2-square me-2"></i>Inspeções de Fábrica</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-exclamation-triangle me-2"></i>Não Conformidades</a>
+                </div>
+            </div>
+
+            <a href="#submenuPD" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center mt-2">
+                <span><i class="bi bi-lightbulb"></i> <span class="menu-text fw-bold">P&D</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse" id="submenuPD">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-tools me-2"></i>Projetos</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-journal-text me-2"></i>Fórmulas</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="sidebar-footer"><button onclick="window.location.href='login.html'" class="btn-logout"><i class="bi bi-box-arrow-left me-2"></i> <span>Sair</span></button></div>
+    </nav>
+
+    <div class="main-content">
+        <div class="mb-4">
+            <h2 class="fw-bold"><i class="bi bi-thermometer-half text-danger"></i> Controle de Temperatura e Umidade</h2>
+            <p class="text-muted">Registro diário das condições ambientais e dos equipamentos de conservação.</p>
+        </div>
+
+        <ul class="nav nav-tabs mb-4" id="climaTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="registro-tab" data-bs-toggle="tab" data-bs-target="#nova-pane" type="button" role="tab">
+                    <i class="bi bi-pencil-square"></i> Registrar Leitura
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="historico-tab" data-bs-toggle="tab" data-bs-target="#historico-pane" type="button" role="tab" onclick="carregarHistoricoClima()">
+                    <i class="bi bi-clock-history"></i> Histórico
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="grafico-tab" data-bs-toggle="tab" data-bs-target="#grafico-pane" type="button" role="tab" onclick="inicializarGraficoClima()">
+                    <i class="bi bi-graph-up text-info"></i> Gráficos
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="nova-pane" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card shadow-sm border-0 mb-3">
+                            <div class="card-header bg-dark text-white fw-bold">Ambientes Controlados</div>
+                            <div class="list-group list-group-flush p-2">
+                                <div class="card card-ambiente mb-2 border-info border-start" onclick="selecionarAmbiente('Laboratório CQ', this)"><div class="card-body p-3 fw-bold">Laboratório CQ</div></div>
+                                <div class="card card-ambiente mb-2 border-info border-start" onclick="selecionarAmbiente('Estufa / Estabilidade', this)"><div class="card-body p-3 fw-bold">Estufa / Estabilidade</div></div>
+                                <div class="card card-ambiente mb-2 border-warning border-start" onclick="selecionarAmbiente('Almoxarifado Reagentes', this)"><div class="card-body p-3 fw-bold text-dark">Almoxarifado Reagentes</div></div>
+                                <div class="card card-ambiente mb-2 border-danger border-start" onclick="selecionarAmbiente('Produção', this)"><div class="card-body p-3 fw-bold text-dark">Área de Produção</div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-9">
+                        <div id="painelRegistro" class="card shadow-sm border-0" style="display: none;">
+                            <div class="card-header bg-white border-bottom border-info border-3 fw-bold py-3 d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-clipboard2-data"></i> Formulário de Registro</span>
+                                <span id="badgeAmbiente" class="badge bg-info text-dark fs-6 px-3 py-2 shadow-sm">Ambiente</span>
+                            </div>
+                            <div class="card-body p-4">
+                                <input type="hidden" id="climaIdEdit" value="">
+
+                                <div class="row g-3 mb-4 bg-light p-3 rounded border align-items-end">
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-bold text-muted">Data da Leitura</label>
+                                        <input type="date" id="dataClima" class="form-control border-dark fw-bold">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-bold text-muted">Hora</label>
+                                        <input type="time" id="horaClima" class="form-control border-dark fw-bold">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-primary"><i class="bi bi-upc-scan"></i> Equipamento / Termo-Higrômetro</label>
+                                        <select id="equipamentoClima" class="form-select border-primary fw-bold text-dark">
+                                            <option value="">Selecione o equipamento utilizado...</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <h6 class="fw-bold text-danger mb-3 border-bottom pb-2"><i class="bi bi-thermometer-half"></i> TEMPERATURA (°C)</h6>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-4">
+                                        <div class="box-valor border-danger shadow-sm" style="background-color: #fff5f5;">
+                                            <small class="d-block text-danger fw-bold mb-2">T. ATUAL</small>
+                                            <input type="number" step="0.1" id="tempAtual" placeholder="0.0">
+                                            <span class="fw-bold text-muted">°C</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="box-valor">
+                                            <small class="d-block text-muted fw-bold mb-2">T. MÍNIMA (24h)</small>
+                                            <input type="number" step="0.1" id="tempMin" placeholder="0.0">
+                                            <span class="fw-bold text-muted">°C</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="box-valor">
+                                            <small class="d-block text-muted fw-bold mb-2">T. MÁXIMA (24h)</small>
+                                            <input type="number" step="0.1" id="tempMax" placeholder="0.0">
+                                            <span class="fw-bold text-muted">°C</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h6 class="fw-bold text-primary mb-3 border-bottom pb-2"><i class="bi bi-droplet-fill"></i> UMIDADE RELATIVA (%)</h6>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-4">
+                                        <div class="box-valor border-primary shadow-sm" style="background-color: #f0f8ff;">
+                                            <small class="d-block text-primary fw-bold mb-2">U. ATUAL</small>
+                                            <input type="number" step="0.1" id="umidAtual" placeholder="0.0">
+                                            <span class="fw-bold text-muted">%</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="box-valor">
+                                            <small class="d-block text-muted fw-bold mb-2">U. MÍNIMA (24h)</small>
+                                            <input type="number" step="0.1" id="umidMin" placeholder="0.0">
+                                            <span class="fw-bold text-muted">%</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="box-valor">
+                                            <small class="d-block text-muted fw-bold mb-2">U. MÁXIMA (24h)</small>
+                                            <input type="number" step="0.1" id="umidMax" placeholder="0.0">
+                                            <span class="fw-bold text-muted">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-muted">Responsável / Analista</label>
+                                        <input type="text" id="respClima" class="form-control border-dark bg-white fw-bold text-secondary" readonly>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-muted">Observações</label>
+                                        <textarea id="obsClima" class="form-control border-dark bg-light" rows="1" placeholder="Ex: Ar condicionado desligado na hora da leitura..."></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="text-end border-top pt-3 mt-3 d-flex justify-content-end gap-2">
+                                    <button id="btnCancelarEdit" class="btn btn-outline-secondary fw-bold px-4 shadow-sm" style="display: none;" onclick="cancelarEdicao()">Cancelar Edição</button>
+                                    <button id="btnSalvarClima" class="btn btn-info fw-bold px-5 shadow-sm text-dark" onclick="salvarClima()">
+                                        <i class="bi bi-check-circle me-1"></i> Registrar Leitura
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="placeholderRegistro" class="text-center py-5 bg-white rounded shadow-sm border mt-3">
+                            <i class="bi bi-thermometer-sun display-1 text-light"></i>
+                            <p class="mt-3 text-muted">Selecione um Ambiente ao lado para iniciar o registro de Clima.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="historico-pane" role="tabpanel">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white fw-bold py-3 text-success d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-archive"></i> Histórico de Registros</span>
+                        <button class="btn btn-sm btn-outline-success" onclick="carregarHistoricoClima()"><i class="bi bi-arrow-clockwise"></i> Atualizar</button>
+                    </div>
+                    <div class="card-body p-0" style="overflow-x: auto;">
+                        <table class="table table-hover align-middle text-center mb-0" style="font-size: 0.85rem;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3 text-start">Data / Hora</th>
+                                    <th class="text-start">Ambiente</th>
+                                    <th>Equipamento</th>
+                                    <th class="text-danger border-start">T. Atual</th>
+                                    <th class="text-danger">T. Mín/Máx</th>
+                                    <th class="text-primary border-start">U. Atual</th>
+                                    <th class="text-primary border-end">U. Mín/Máx</th>
+                                    <th>Responsável</th>
+                                    <th class="text-end pe-3">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaHistoricoClima">
+                                <tr><td colspan="9" class="text-muted py-4">Carregando histórico...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="grafico-pane" role="tabpanel">
+                <div class="card shadow-sm border-0 border-top border-info border-3">
+                    <div class="card-header bg-white fw-bold py-3 d-flex justify-content-between align-items-center">
+                        <span class="text-info text-dark fs-5"><i class="bi bi-graph-up"></i> Análise Gráfica Climática</span>
+                    </div>
+                    <div class="card-body bg-light p-4">
+                        <div class="row g-3 mb-4 p-3 bg-white rounded shadow-sm border align-items-end">
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-geo-alt"></i> Ambiente</label>
+                                <select id="filtroAmbienteGrafico" class="form-select border-secondary fw-bold" onchange="atualizarGraficoClima()">
+                                    <option value="Laboratório CQ">Laboratório CQ</option>
+                                    <option value="Estufa / Estabilidade">Estufa / Estabilidade</option>
+                                    <option value="Almoxarifado Reagentes">Almoxarifado Reagentes</option>
+                                    <option value="Produção">Área de Produção</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-activity"></i> Exibir Parâmetro</label>
+                                <select id="filtroTipoGrafico" class="form-select border-secondary fw-bold" onchange="atualizarGraficoClima()">
+                                    <option value="TEMP">Temperatura (°C)</option>
+                                    <option value="UMID">Umidade Relativa (%)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-calendar-event"></i> Ano</label>
+                                <select id="filtroAnoClima" class="form-select border-secondary" onchange="atualizarGraficoClima()">
+                                    <option value="2026" selected>2026</option>
+                                    <option value="2025">2025</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-calendar-month"></i> Mês</label>
+                                <select id="filtroMesClima" class="form-select border-secondary" onchange="atualizarGraficoClima()">
+                                    <option value="" selected>📊 Visão Anual (Média dos Meses)</option>
+                                    <option value="01">Janeiro</option><option value="02">Fevereiro</option><option value="03">Março</option>
+                                    <option value="04">Abril</option><option value="05">Maio</option><option value="06">Junho</option>
+                                    <option value="07">Julho</option><option value="08">Agosto</option><option value="09">Setembro</option>
+                                    <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-3 rounded border shadow-sm">
+                            <div class="chart-container" style="height: 400px;">
+                                <canvas id="graficoClima"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalDetalhesClima" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-info text-dark border-0">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-card-text"></i> Detalhes da Leitura</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light" id="corpoModalDetalhes">
+                    </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/sidebar.js"></script>
+
+    <script>
+        const API = window.location.origin + "/api";
+        let ambienteSelecionado = "";
+        let dadosGlobaisClima = [];
+        let chartClima = null;
+        let globalPerms = {};
+        let modalDetalhes = null;
+
+        // ==========================================
+        // 🔒 CONTROLE DE ACESSO E PERMISSÕES
+        // ==========================================
+        function aplicarTravaTela() {
+            const userStr = localStorage.getItem("limsUser");
+            if (!userStr) return window.location.href = 'login.html';
+            
+            const user = JSON.parse(userStr);
+            const perfilUser = String(user.perfil || "").toUpperCase().trim();
+            const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
+            
+            globalPerms = user.permissoes || {};
+            if (isAdmin) { globalPerms.clima_view = true; globalPerms.clima_register = true; }
+
+            if (!globalPerms.clima_view) {
+                alert("⚠️ Acesso Negado."); window.location.href = 'dashboard.html'; return;
+            }
+
+            if (!globalPerms.clima_register) {
+                const styleReg = document.createElement('style');
+                styleReg.innerHTML = `#registro-tab { display: none !important; } #nova-pane { display: none !important; }`;
+                document.head.appendChild(styleReg);
+
+                const tabRegistro = document.getElementById('registro-tab');
+                const paneRegistro = document.getElementById('nova-pane');
+                const tabHistorico = document.getElementById('historico-tab');
+                const paneHistorico = document.getElementById('historico-pane');
+
+                if(tabRegistro) tabRegistro.classList.remove('active');
+                if(paneRegistro) paneRegistro.classList.remove('show', 'active');
+                if(tabHistorico) { tabHistorico.classList.add('active'); tabHistorico.setAttribute('aria-selected', 'true'); }
+                if(paneHistorico) paneHistorico.classList.add('show', 'active');
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            aplicarTravaTela();
+            modalDetalhes = new bootstrap.Modal(document.getElementById('modalDetalhesClima'));
+            
+            const agora = new Date();
+            document.getElementById('dataClima').value = agora.toISOString().split('T')[0];
+            document.getElementById('horaClima').value = agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+
+            const userStr = localStorage.getItem("limsUser");
+            if (userStr) {
+                const user = JSON.parse(userStr);
+                document.getElementById("respClima").value = user.nome || user.usuario;
+            }
+
+            if (!globalPerms.clima_register && globalPerms.clima_view) { carregarHistoricoClima(); }
+
+            try {
+                const res = await fetch(`${API}/materiais`, { headers: { "Authorization": `Bearer ${localStorage.getItem("limsToken")}` } });
+                if (res.ok) {
+                    const materiais = await res.json();
+                    const sel = document.getElementById("equipamentoClima");
+                    materiais.forEach(m => {
+                        if (m.categoria_uso === 'EQUIPAMENTO') {
+                            sel.innerHTML += `<option value="${m.nome}">${m.codigo ? m.codigo + ' - ' : ''}${m.nome}</option>`;
+                        }
+                    });
+                }
+            } catch (e) {}
+        });
+
+        function selecionarAmbiente(ambiente, el) {
+            ambienteSelecionado = ambiente;
+            document.querySelectorAll('.card-ambiente').forEach(c => c.classList.remove('active'));
+            if(el) el.classList.add('active');
+            
+            document.getElementById('badgeAmbiente').innerText = ambiente;
+            document.getElementById('placeholderRegistro').style.display = "none";
+            document.getElementById('painelRegistro').style.display = "block";
+        }
+
+        async function salvarClima() {
+            const idEdit = document.getElementById("climaIdEdit").value;
+            const isUpdate = idEdit !== "";
+
+            const getVal = (id) => {
+                const val = document.getElementById(id).value;
+                return val ? parseFloat(val.replace(',', '.')) : null;
+            };
+
+            const payload = {
+                codigo: isUpdate ? undefined : ("CLI-" + Date.now().toString().slice(-6)),
+                ambiente: ambienteSelecionado,
+                equipamento: document.getElementById('equipamentoClima').value,
+                data_fmt: document.getElementById('dataClima').value + " " + document.getElementById('horaClima').value,
+                responsavel: document.getElementById('respClima').value,
+                temp_atual: getVal('tempAtual'), temp_min: getVal('tempMin'), temp_max: getVal('tempMax'),
+                umid_atual: getVal('umidAtual'), umid_min: getVal('umidMin'), umid_max: getVal('umidMax'),
+                observacoes: document.getElementById('obsClima').value
+            };
+
+            if (!payload.equipamento) return alert("Selecione o Equipamento Utilizado!");
+            if (payload.temp_atual === null && payload.umid_atual === null) return alert("Preencha pelo menos um valor atual!");
+
+            try {
+                const url = isUpdate ? `${API}/clima/${idEdit}` : `${API}/clima/salvar`;
+                const method = isUpdate ? "PUT" : "POST";
+
+                const res = await fetch(url, {
+                    method: method, 
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("limsToken")}` 
+                    }, 
+                    body: JSON.stringify(payload)
+                });
+                
+                if(res.ok) {
+                    alert(isUpdate ? "Leitura atualizada com sucesso!" : "Leitura salva com sucesso!");
+                    location.reload();
+                } else {
+                    const errData = await res.json();
+                    alert("Erro ao gravar: " + (errData.error || "Desconhecido"));
+                }
+            } catch (e) { alert("Erro de conexão."); }
+        }
+
+        // ==========================================
+        // 🔥 NOVAS FUNÇÕES: VER, EDITAR E EXCLUIR
+        // ==========================================
+        function verDetalhes(dataEncoded) {
+            const d = JSON.parse(decodeURIComponent(dataEncoded));
+            const fmt = (val) => val !== null ? parseFloat(val).toFixed(1) : '-';
+            
+            document.getElementById('corpoModalDetalhes').innerHTML = `
+                <div class="p-3 bg-white border rounded shadow-sm">
+                    <p class="mb-1"><span class="text-muted small fw-bold">CÓDIGO:</span> <span class="fw-bold">${d.codigo}</span></p>
+                    <p class="mb-1"><span class="text-muted small fw-bold">AMBIENTE:</span> ${d.ambiente}</p>
+                    <p class="mb-1"><span class="text-muted small fw-bold">EQUIPAMENTO:</span> ${d.equipamento}</p>
+                    <p class="mb-1"><span class="text-muted small fw-bold">DATA / HORA:</span> <span class="text-primary fw-bold">${d.data_fmt}</span></p>
+                    <p class="mb-3"><span class="text-muted small fw-bold">RESPONSÁVEL:</span> ${d.responsavel}</p>
+                    
+                    <div class="row text-center mb-2">
+                        <div class="col-6">
+                            <div class="border rounded p-2 bg-light">
+                                <span class="d-block small text-danger fw-bold"><i class="bi bi-thermometer"></i> TEMP.</span>
+                                <span class="fw-bold text-dark fs-5">${fmt(d.temp_atual)}°C</span><br>
+                                <span class="small text-muted">Min: ${fmt(d.temp_min)}° / Máx: ${fmt(d.temp_max)}°</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-2 bg-light">
+                                <span class="d-block small text-primary fw-bold"><i class="bi bi-droplet"></i> UMID.</span>
+                                <span class="fw-bold text-dark fs-5">${fmt(d.umid_atual)}%</span><br>
+                                <span class="small text-muted">Min: ${fmt(d.umid_min)}% / Máx: ${fmt(d.umid_max)}%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mb-0 mt-3 pt-2 border-top"><span class="text-muted small fw-bold d-block">OBSERVAÇÕES:</span> ${d.observacoes || 'Nenhuma observação registrada.'}</p>
+                </div>
+            `;
+            modalDetalhes.show();
+        }
+
+        function editarLeitura(dataEncoded) {
+            const d = JSON.parse(decodeURIComponent(dataEncoded));
+            
+            // Joga para a primeira aba
+            const tabRegistro = new bootstrap.Tab(document.getElementById('registro-tab'));
+            tabRegistro.show();
+
+            // Preenche o formulário
+            document.getElementById('climaIdEdit').value = d.id;
+            
+            // Simula clique no card para ativar visualmente
+            document.querySelectorAll('.card-ambiente').forEach(c => {
+                if(c.innerText.includes(d.ambiente)) selecionarAmbiente(d.ambiente, c);
+            });
+            if(!ambienteSelecionado) selecionarAmbiente(d.ambiente, null);
+
+            document.getElementById('equipamentoClima').value = d.equipamento || "";
+            
+            const partesData = d.data_fmt.split(' ');
+            if(partesData.length === 2) {
+                const [dia, mes, ano] = partesData[0].split('/');
+                document.getElementById('dataClima').value = `${ano}-${mes}-${dia}`;
+                document.getElementById('horaClima').value = partesData[1];
+            }
+
+            document.getElementById('tempAtual').value = d.temp_atual || "";
+            document.getElementById('tempMin').value = d.temp_min || "";
+            document.getElementById('tempMax').value = d.temp_max || "";
+            
+            document.getElementById('umidAtual').value = d.umid_atual || "";
+            document.getElementById('umidMin').value = d.umid_min || "";
+            document.getElementById('umidMax').value = d.umid_max || "";
+            
+            document.getElementById('obsClima').value = d.observacoes || "";
+
+            // Muda o visual do botão
+            const btn = document.getElementById('btnSalvarClima');
+            btn.innerHTML = '<i class="bi bi-arrow-repeat me-1"></i> Atualizar Leitura';
+            btn.classList.replace('btn-info', 'btn-primary');
+            document.getElementById('btnCancelarEdit').style.display = 'block';
+            window.scrollTo(0,0);
+        }
+
+        function cancelarEdicao() {
+            document.getElementById('climaIdEdit').value = "";
+            document.querySelectorAll('.card-ambiente').forEach(c => c.classList.remove('active'));
+            document.getElementById('placeholderRegistro').style.display = "block";
+            document.getElementById('painelRegistro').style.display = "none";
+            
+            const btn = document.getElementById('btnSalvarClima');
+            btn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Registrar Leitura';
+            btn.classList.replace('btn-primary', 'btn-info');
+            document.getElementById('btnCancelarEdit').style.display = 'none';
+        }
+
+        async function excluirLeitura(id) {
+            if(!confirm("⚠️ Tem a certeza que deseja APAGAR esta leitura?\nEsta ação não pode ser desfeita.")) return;
+            
+            try {
+                const res = await fetch(`${API}/clima/${id}`, {
+                    method: "DELETE",
+                    headers: { "Authorization": `Bearer ${localStorage.getItem("limsToken")}` }
+                });
+                if(res.ok) {
+                    alert("Registro excluído permanentemente.");
+                    carregarHistoricoClima();
+                } else {
+                    alert("Erro ao excluir registro.");
+                }
+            } catch (e) { alert("Erro de conexão."); }
+        }
+
+        async function carregarHistoricoClima() {
+            const tbody = document.getElementById("tabelaHistoricoClima");
+            tbody.innerHTML = "<tr><td colspan='9' class='text-muted py-4'><span class='spinner-border spinner-border-sm text-info me-2'></span> Carregando...</td></tr>";
+            
+            try {
+                const res = await fetch(`${API}/clima/historico`, { headers: { "Authorization": `Bearer ${localStorage.getItem("limsToken")}` }});
+                const dados = await res.json();
+                
+                if(dados.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='9' class='text-muted py-4'>Nenhum registro encontrado.</td></tr>"; return;
+                }
+
+                tbody.innerHTML = dados.map(d => {
+                    const fmt = (val) => val !== null ? parseFloat(val).toFixed(1) : '-';
+                    const userString = encodeURIComponent(JSON.stringify(d));
+                    
+                    // Só mostra os botões de Editar/Excluir para quem tem permissão de registrar (Analistas/Admin)
+                    const btnEdit = globalPerms.clima_register ? `<button onclick="editarLeitura('${userString}')" class="btn btn-sm btn-outline-primary ms-1" title="Editar"><i class="bi bi-pencil"></i></button>` : '';
+                    const btnDel = globalPerms.clima_register ? `<button onclick="excluirLeitura(${d.id})" class="btn btn-sm btn-outline-danger ms-1" title="Excluir"><i class="bi bi-trash"></i></button>` : '';
+
+                    return `
+                    <tr>
+                        <td class="text-start ps-3 text-muted">${d.data_fmt}</td>
+                        <td class="text-start fw-bold text-dark">${d.ambiente}</td>
+                        <td class="small text-muted">${d.equipamento || '-'}</td>
+                        <td class="fw-bold text-danger border-start">${fmt(d.temp_atual)}°C</td>
+                        <td class="small text-muted opacity-75">${fmt(d.temp_min)}° / ${fmt(d.temp_max)}°</td>
+                        <td class="fw-bold text-primary border-start">${fmt(d.umid_atual)}%</td>
+                        <td class="small text-muted opacity-75 border-end">${fmt(d.umid_min)}% / ${fmt(d.umid_max)}%</td>
+                        <td class="small">${d.responsavel}</td>
+                        <td class="text-end pe-3 text-nowrap">
+                            <button onclick="verDetalhes('${userString}')" class="btn btn-sm btn-outline-info" title="Ver Detalhes"><i class="bi bi-card-text"></i></button>
+                            ${btnEdit}
+                            ${btnDel}
+                        </td>
+                    </tr>`;
+                }).join('');
+            } catch(e) { tbody.innerHTML = "<tr><td colspan='9' class='text-danger py-4'>Erro ao carregar histórico.</td></tr>"; }
+        }
+
+        async function inicializarGraficoClima() {
+            try {
+                const res = await fetch(`${API}/clima/historico`, { headers: { "Authorization": `Bearer ${localStorage.getItem("limsToken")}` }});
+                const dadosCru = await res.json();
+                dadosGlobaisClima = dadosCru.reverse(); 
+                atualizarGraficoClima(); 
+            } catch(e) { console.error("Erro ao gerar gráfico", e); }
+        }
+
+        function atualizarGraficoClima() {
+            if (dadosGlobaisClima.length === 0) return;
+
+            const ambienteFiltro = document.getElementById("filtroAmbienteGrafico").value;
+            const tipoFiltro = document.getElementById("filtroTipoGrafico").value; 
+            const ano = document.getElementById("filtroAnoClima").value;
+            const mes = document.getElementById("filtroMesClima").value;
+
+            let dadosFiltrados = dadosGlobaisClima.filter(d => {
+                const [diaD, mesD, anoD] = d.data_fmt.split(' ')[0].split('/');
+                return (d.ambiente === ambienteFiltro) && (anoD === ano) && (mes === "" || mesD === mes);
+            });
+
+            let rotulosX = [];
+            if (mes === "") {
+                rotulosX = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            } else {
+                const diasNoMes = new Date(ano, parseInt(mes, 10), 0).getDate();
+                for (let i = 1; i <= diasNoMes; i++) rotulosX.push(i.toString().padStart(2, '0') + `/${mes}`);
+            }
+
+            let somasAtual = new Array(rotulosX.length).fill(0);
+            let somasMin = new Array(rotulosX.length).fill(0);
+            let somasMax = new Array(rotulosX.length).fill(0);
+            let contagens = new Array(rotulosX.length).fill(0);
+
+            dadosFiltrados.forEach(d => {
+                const [diaD, mesD, anoD] = d.data_fmt.split(' ')[0].split('/');
+                let idx = mes === "" ? parseInt(mesD, 10) - 1 : parseInt(diaD, 10) - 1;
+                
+                const valAtual = parseFloat(tipoFiltro === 'TEMP' ? d.temp_atual : d.umid_atual);
+                const valMin = parseFloat(tipoFiltro === 'TEMP' ? d.temp_min : d.umid_min);
+                const valMax = parseFloat(tipoFiltro === 'TEMP' ? d.temp_max : d.umid_max);
+
+                if (!isNaN(valAtual)) {
+                    somasAtual[idx] += valAtual;
+                    somasMin[idx] += isNaN(valMin) ? valAtual : valMin;
+                    somasMax[idx] += isNaN(valMax) ? valAtual : valMax;
+                    contagens[idx]++;
+                }
+            });
+
+            const getMedia = (somasArr) => somasArr.map((s, i) => contagens[i] > 0 ? parseFloat((s / contagens[i]).toFixed(2)) : null);
+
+            const corPrincipal = tipoFiltro === 'TEMP' ? '#dc3545' : '#0dcaf0'; 
+
+            const datasets = [
+                { label: 'Máxima', data: getMedia(somasMax), borderColor: corPrincipal, borderDash: [5, 5], borderWidth: 2, tension: 0.3, fill: false, pointRadius: 0 },
+                { label: 'Média Atual', data: getMedia(somasAtual), borderColor: corPrincipal, backgroundColor: corPrincipal + '33', borderWidth: 4, tension: 0.3, fill: false, pointRadius: 5 },
+                { label: 'Mínima', data: getMedia(somasMin), borderColor: corPrincipal, borderDash: [5, 5], borderWidth: 2, tension: 0.3, fill: false, pointRadius: 0 }
+            ];
+
+            if (chartClima) chartClima.destroy();
+            const ctx = document.getElementById('graficoClima').getContext('2d');
+            chartClima = new Chart(ctx, {
+                type: 'line',
+                data: { labels: rotulosX, datasets: datasets },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: { y: { title: { display: true, text: tipoFiltro === 'TEMP' ? 'Temperatura (°C)' : 'Umidade (%)', font: { weight: 'bold' } } } }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

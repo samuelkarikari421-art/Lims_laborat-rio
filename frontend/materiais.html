@@ -43,9 +43,12 @@
 
                     <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
                     <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="monitoramento_tpm.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-fire text-warning me-2"></i>Controle TPM</a>
+                    <a href="monitoramento_clima.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-thermometer-sun text-danger me-2"></i>Clima (Temp/Umid)</a>
                     <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
                     <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
                     <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="laudos_ete.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-water text-info me-2"></i>Laudos ETE</a>
                     <a href="materiais.html" class="nav-link active py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
                 
                     <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
@@ -121,6 +124,7 @@
                                 <tr>
                                     <th class="ps-4">Código</th>
                                     <th>Material / Descrição</th>
+                                    <th>Categoria</th>
                                     <th>Fornecedor / Fab.</th>
                                     <th class="text-center">Validade</th>
                                     <th class="text-center border-start">Estoque Atual</th>
@@ -224,13 +228,20 @@
                     <form id="formMaterial">
                         <input type="hidden" id="mat_id">
                         <div class="row g-3">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label class="form-label small fw-bold text-muted">CÓDIGO</label>
-                                <input type="text" id="mat_codigo" class="form-control bg-light fw-bold text-primary" placeholder="Gerado Auto." readonly>
+                                <input type="text" id="mat_codigo" class="form-control bg-light fw-bold text-primary" placeholder="Auto." readonly>
                             </div>
-                            <div class="col-md-9">
+                            <div class="col-md-7">
                                 <label class="form-label small fw-bold text-muted">NOME DO MATERIAL *</label>
                                 <input type="text" id="mat_nome" class="form-control" placeholder="Ex: Luva Nitrílica M" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-muted">CATEGORIA *</label>
+                                <select id="mat_categoria_uso" class="form-select" required>
+                                    <option value="CONSUMO">Consumo (Descartável)</option>
+                                    <option value="EQUIPAMENTO">Equipamento (Fixo)</option>
+                                </select>
                             </div>
 
                             <div class="col-md-6">
@@ -260,6 +271,7 @@
                                 <label class="form-label small fw-bold text-warning text-dark">ESTOQUE MÍN. *</label>
                                 <input type="number" step="0.01" id="mat_estoque_minimo" class="form-control border-warning fw-bold text-dark" value="5" required>
                             </div>
+
                             <div class="col-md-3">
                                 <label class="form-label small fw-bold text-muted">UNIDADE *</label>
                                 <select id="mat_unidade" class="form-select" required>
@@ -272,12 +284,16 @@
                                     <option value="pç">Peça (pç)</option>
                                 </select>
                             </div>
+                            <div class="col-md-9">
+                                <label class="form-label small fw-bold text-muted">OBSERVAÇÕES GERAIS</label>
+                                <textarea id="mat_observacoes" class="form-control" rows="1" placeholder="Especificações, local de armazenamento..."></textarea>
+                            </div>
 
                             <div class="col-12 mt-3 border-top pt-3">
                                 <h6 class="fw-bold text-dark small"><i class="bi bi-paperclip"></i> Anexos (Opcional)</h6>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <label class="form-label small fw-bold text-muted"><i class="bi bi-file-earmark-pdf"></i> CERTIFICADO / CoA</label>
+                                        <label class="form-label small fw-bold text-muted"><i class="bi bi-file-earmark-pdf"></i> CERTIFICADO / MANUAL</label>
                                         <input type="file" id="mat_certificado" class="form-control form-control-sm" accept=".pdf, image/*">
                                         
                                         <div id="boxCertificadoAtual" class="mt-2 p-2 border rounded bg-light" style="display:none; font-size: 0.85rem;">
@@ -287,7 +303,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label small fw-bold text-muted"><i class="bi bi-image"></i> IMAGEM / FOTO DO MATERIAL</label>
+                                        <label class="form-label small fw-bold text-muted"><i class="bi bi-image"></i> IMAGEM DO ITEM</label>
                                         <input type="file" id="mat_imagem" class="form-control form-control-sm" accept="image/*, .pdf">
                                         
                                         <div id="boxImagemAtual" class="mt-2 p-2 border rounded bg-light" style="display:none; font-size: 0.85rem;">
@@ -297,11 +313,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="col-12 mt-3">
-                                <label class="form-label small fw-bold text-muted">OBSERVAÇÕES</label>
-                                <textarea id="mat_observacoes" class="form-control" rows="2" placeholder="Especificações, local de armazenamento..."></textarea>
                             </div>
                         </div>
                         <div class="d-flex justify-content-end mt-4 pt-3 border-top">
@@ -383,7 +394,6 @@
         let removerImagem = false;
         let globalPerms = {};
 
-        // Blindagem de Leitura de Datas
         function normalizarDataInsumos(dataString) {
             if (!dataString) return null;
             if (dataString.includes('/')) {
@@ -397,7 +407,6 @@
             return null;
         }
 
-        // Motor de Travas
         function aplicarTravaTela() {
             const userStr = localStorage.getItem("limsUser");
             if (!userStr) return;
@@ -511,10 +520,10 @@
             tbody.innerHTML = "";
 
             const thAcoes = document.querySelector(".col-acoes");
-            if (thAcoes) thAcoes.style.display = 'table-cell'; // Sempre exibe pois todos têm botão "Detalhes"
+            if (thAcoes) thAcoes.style.display = 'table-cell';
 
             if(lista.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='8' class='text-center py-4 text-muted'>Nenhum material encontrado.</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='9' class='text-center py-4 text-muted'>Nenhum material encontrado.</td></tr>";
                 return;
             }
 
@@ -534,7 +543,11 @@
                     ? `<span class="badge ${statusVal.classe} shadow-sm w-100">${statusVal.texto}</span><br><small class="text-muted" style="font-size: 0.7rem">${dataFmt}</small>` 
                     : `<span class="badge bg-light text-muted border w-100">Não inf.</span>`;
 
-                // Botão Detalhes (Visualizar)
+                // Badge da Categoria
+                const catBadge = m.categoria_uso === 'EQUIPAMENTO' 
+                    ? '<span class="badge bg-secondary border shadow-sm">Equipamento</span>' 
+                    : '<span class="badge bg-info text-dark border shadow-sm">Consumo</span>';
+
                 let botoesAcao = `<button class="btn btn-sm btn-outline-info shadow-sm" onclick="abrirEdicao(${m.id}, true)" title="Detalhes"><i class="bi bi-eye"></i></button>`;
                 
                 if(globalPerms.mat_edit || globalPerms.materiais_edit) {
@@ -550,6 +563,7 @@
                     <tr class="${rowClass}">
                         <td class="ps-4 fw-bold text-primary">${m.codigo || '-'}</td>
                         <td class="fw-bold text-dark">${m.nome}</td>
+                        <td>${catBadge}</td>
                         <td>${m.fabricante || '-'}</td>
                         <td class="text-center align-middle" style="min-width: 100px;">${badgeValidadeHTML}</td>
                         <td class="text-center border-start ${qtdClass} fs-6" title="${tooltipEstoque}">${qtd} <small class="text-muted fw-normal">${m.unidade}</small></td>
@@ -561,10 +575,9 @@
             });
         }
 
-        // Função para habilitar ou desabilitar campos dependendo do modo (Leitura ou Edição)
         function habilitarCamposMaterial(isReadOnly) {
             const campos = [
-                "mat_nome", "mat_fabricante", "mat_lote", "mat_data", 
+                "mat_nome", "mat_categoria_uso", "mat_fabricante", "mat_lote", "mat_data", 
                 "mat_validade", "mat_quantidade", "mat_estoque_minimo", 
                 "mat_unidade", "mat_observacoes"
             ];
@@ -576,11 +589,9 @@
             
             document.getElementById("btnSalvarMaterial").style.display = isReadOnly ? 'none' : 'inline-block';
             
-            // Esconder inputs de upload no modo leitura
             document.getElementById("mat_certificado").style.display = isReadOnly ? 'none' : 'block';
             document.getElementById("mat_imagem").style.display = isReadOnly ? 'none' : 'block';
             
-            // Esconder apenas os botões de remover, manter os de visualizar
             const btnsRemover = document.querySelectorAll(".btn-remover-anexo");
             btnsRemover.forEach(btn => btn.style.display = isReadOnly ? 'none' : 'inline-block');
         }
@@ -589,6 +600,7 @@
             document.getElementById("formMaterial").reset();
             document.getElementById("mat_id").value = "";
             document.getElementById("mat_codigo").value = ""; 
+            document.getElementById("mat_categoria_uso").value = "CONSUMO"; 
             document.getElementById("mat_estoque_minimo").value = "5"; 
             document.getElementById("mat_validade").value = "";
             
@@ -619,6 +631,7 @@
 
             document.getElementById("mat_codigo").value = mat.codigo || "MAT-0";
             document.getElementById("mat_nome").value = mat.nome || "";
+            document.getElementById("mat_categoria_uso").value = mat.categoria_uso || "CONSUMO";
             document.getElementById("mat_fabricante").value = mat.fabricante || "";
             document.getElementById("mat_lote").value = mat.lote || "";
             document.getElementById("mat_data").value = mat.data_recebimento ? mat.data_recebimento.split('T')[0] : "";
@@ -677,6 +690,7 @@
 
             const payload = {
                 nome: document.getElementById("mat_nome").value,
+                categoria_uso: document.getElementById("mat_categoria_uso").value,
                 fabricante: document.getElementById("mat_fabricante").value,
                 lote: document.getElementById("mat_lote").value,
                 data_recebimento: document.getElementById("mat_data").value,
@@ -792,7 +806,7 @@
                 const res = await fetch(`${API}/materiais/uso`);
                 listaHistoricoUso = await res.json();
                 filtrarUso();
-                atualizarGraficoConsumo(); // Se estiver carregado, atualiza o gráfico também
+                atualizarGraficoConsumo(); 
             } catch(e) { console.error("Erro ao carregar histórico:", e); }
         }
 
@@ -860,7 +874,7 @@
         }
 
         // ==========================================
-        // 🔥 NOVA ABA: GRÁFICO DE CONSUMO MENSAL
+        // ABA CONSUMO
         // ==========================================
         function atualizarGraficoConsumo() {
             const ano = document.getElementById("filtroConsumoAno").value;

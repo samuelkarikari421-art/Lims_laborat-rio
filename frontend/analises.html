@@ -68,9 +68,12 @@
 
                     <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
                     <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="monitoramento_tpm.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-fire text-warning me-2"></i>Controle TPM</a>
+                    <a href="monitoramento_clima.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-thermometer-sun text-danger me-2"></i>Clima (Temp/Umid)</a>
                     <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
                     <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
                     <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="laudos_ete.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-water text-info me-2"></i>Laudos ETE</a>
                     <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
                 
                     <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
@@ -149,7 +152,7 @@
                                     <i class="bi bi-stopwatch fs-3 text-primary"></i>
                                 </div>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body p-4">
                                 <form id="formAnalises">
                                     <input type="hidden" id="amostraIdSelecionada">
                                     
@@ -208,6 +211,54 @@
                                         </div>
                                     </div>
 
+                                    <div class="card bg-white border border-secondary shadow-sm mb-4" id="painelGLP">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                                                <h6 class="fw-bold text-secondary mb-0"><i class="bi bi-eyedropper"></i> Rastreabilidade e Consumo (GLP)</h6>
+                                                <div class="form-check form-switch mb-0">
+                                                    <input class="form-check-input" type="checkbox" id="chkHabilitarInsumosAnalise" onchange="toggleInsumosAreaAnalise()">
+                                                    <label class="form-check-label small fw-bold text-dark" for="chkHabilitarInsumosAnalise">Ativar Painel</label>
+                                                </div>
+                                            </div>
+                                            
+                                            <div id="areaInsumosAnalise" style="display: none;">
+                                                <div class="row g-2 align-items-end mb-3">
+                                                    <div class="col-md-2">
+                                                        <label class="form-label small fw-bold">Tipo</label>
+                                                        <select id="usoTipoItemAnalise" class="form-select form-select-sm" onchange="mudarTipoInsumoUsoAnalise()">
+                                                            <option value="REAGENTE">Reagente</option>
+                                                            <option value="SOLUCAO">Solução</option>
+                                                            <option value="MATERIAL">Mat. Consumo</option>
+                                                            <option value="EQUIPAMENTO">Equipamento</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="form-label small fw-bold">Código/Busca</label>
+                                                        <input type="text" id="usoBuscaCodAnalise" class="form-control form-control-sm" placeholder="Cód..." oninput="buscarInsumoPorCodigo('usoBuscaCodAnalise', 'usoSelectInsumoAnalise')">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label small fw-bold" id="usoLabelInsumoAnalise">Selecione o Item</label>
+                                                        <select id="usoSelectInsumoAnalise" class="form-select form-select-sm" onchange="sincronizarCodigo('usoSelectInsumoAnalise', 'usoBuscaCodAnalise')"></select>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <label class="form-label small fw-bold">Qtd</label>
+                                                        <input type="number" step="0.01" id="usoQtdAnalise" class="form-control form-control-sm">
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <button type="button" class="btn btn-secondary btn-sm w-100 fw-bold" onclick="adicionarItemUsoAnalise()"><i class="bi bi-plus"></i> Add</button>
+                                                    </div>
+                                                </div>
+
+                                                <table class="table table-sm table-bordered mb-0 text-center align-middle" style="font-size: 0.85rem;">
+                                                    <thead class="table-light"><tr><th>Tipo</th><th>Item / Equipamento</th><th>Quantidade / Ação</th><th width="40px">X</th></tr></thead>
+                                                    <tbody id="tabelaItensUsoAnalise">
+                                                        <tr><td colspan="4" class="text-muted py-2">Nenhum registro lançado.</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <table class="table align-middle">
                                         <thead class="table-light">
                                             <tr>
@@ -222,7 +273,7 @@
                                         <tbody id="tabelaInputs"></tbody>
                                     </table>
 
-                                    <div class="mt-3">
+                                    <div class="mt-4 border-top pt-3">
                                         <label class="form-label fw-bold small">Observações da Análise</label>
                                         <textarea id="obsAnalise" class="form-control" rows="2" placeholder="Descreva qualquer anomalia sensorial..." oninput="salvarAutoSave()"></textarea>
                                     </div>
@@ -234,7 +285,7 @@
                                 </form>
                             </div>
                         </div>
-                        <div id="placeholder" class="text-center py-5 bg-white rounded shadow-sm border">
+                        <div id="placeholder" class="text-center py-5 bg-white rounded shadow-sm border mt-3">
                             <i class="bi bi-clipboard-data display-1 text-light"></i>
                             <p class="mt-3 text-muted">Selecione uma amostra da fila para iniciar a análise.</p>
                         </div>
@@ -309,6 +360,14 @@
                         </thead>
                         <tbody id="tabelaDetalhesAnalise"></tbody>
                     </table>
+                    
+                    <div class="p-4" id="detalhesRastreabilidadeArea" style="display: none;">
+                        <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3"><i class="bi bi-eyedropper"></i> Insumos e Equipamentos (Rastreabilidade)</h6>
+                        <table class="table table-sm table-bordered text-center align-middle bg-white mb-0" style="font-size: 0.85rem;">
+                            <thead class="table-light"><tr><th>Tipo</th><th class="text-start ps-3">Item Consumido / Utilizado</th><th>Qtd</th></tr></thead>
+                            <tbody id="tabelaDetalhesRastreabilidade"></tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer bg-white">
                     <button type="button" class="btn btn-secondary fw-bold px-4" data-bs-dismiss="modal">Fechar</button>
@@ -340,6 +399,12 @@
         let globalAnexosRascunho = {}; 
         let globalPerms = {};
 
+        // Arrays Globais de Estoque
+        let itensUsoAnalise = [];
+        let reagentesGlobais = [];
+        let solucoesGlobais = [];
+        let materiaisGlobais = [];
+
         const fileToBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader(); reader.readAsDataURL(file);
             reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error);
@@ -359,18 +424,17 @@
                 globalPerms.fifo_execute = true;
             }
 
-            // Se não tiver permissão para executar/preencher, trava a tela de digitação
             if (!globalPerms.fifo_execute) {
                 const styleReg = document.createElement('style');
                 styleReg.innerHTML = ` 
-                    #painelEnsaiosExtras, #botoesAcaoFooter, .coluna-acao, .btn-remover-linha, .btn-anexo-wrapper { display: none !important; } 
+                    #painelEnsaiosExtras, #botoesAcaoFooter, .coluna-acao, .btn-remover-linha, .btn-anexo-wrapper, #painelGLP { display: none !important; } 
                     .input-dado, #obsAnalise { pointer-events: none !important; background-color: #e9ecef !important; color: #6c757d !important; }
                 `;
                 document.head.appendChild(styleReg);
             }
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             aplicarTravaTela();
             document.getElementById("buscaHistorico").addEventListener("input", aplicarFiltrosHistorico);
             document.getElementById("filtroDataHistorico").addEventListener("change", aplicarFiltrosHistorico);
@@ -382,6 +446,14 @@
                 }
             });
 
+            // Carrega inventário primeiro
+            try {
+                const resR = await fetch(`${API}/reagentes`); reagentesGlobais = await resR.json();
+                const resS = await fetch(`${API}/solucoes`); solucoesGlobais = await resS.json();
+                const resM = await fetch(`${API}/materiais`); materiaisGlobais = await resM.json();
+                mudarTipoInsumoUsoAnalise();
+            } catch(e) { console.error("Erro ao carregar estoques:", e); }
+
             const analiseSalva = localStorage.getItem("lims_analise_ativa");
             if (analiseSalva && globalPerms.fifo_execute) {
                 restaurarAnaliseNaTela(JSON.parse(analiseSalva));
@@ -390,6 +462,132 @@
             carregarPendentes();
         });
 
+        // ==========================================
+        // 🔥 LÓGICA DE RASTREABILIDADE (GLP)
+        // ==========================================
+        window.toggleInsumosAreaAnalise = function() {
+            const isChecked = document.getElementById("chkHabilitarInsumosAnalise").checked;
+            document.getElementById("areaInsumosAnalise").style.display = isChecked ? "block" : "none";
+            if (!isChecked) {
+                itensUsoAnalise = [];
+                atualizarTabelaItensUsoAnalise();
+                salvarAutoSave();
+            }
+        }
+
+        window.mudarTipoInsumoUsoAnalise = function() {
+            const tipo = document.getElementById("usoTipoItemAnalise").value;
+            const sel = document.getElementById("usoSelectInsumoAnalise");
+            const inputQtd = document.getElementById("usoQtdAnalise");
+
+            document.getElementById("usoBuscaCodAnalise").value = "";
+            sel.innerHTML = '<option value="">Selecione...</option>';
+
+            if (tipo === 'EQUIPAMENTO') {
+                inputQtd.value = "";
+                inputQtd.disabled = true;
+                inputQtd.placeholder = "-";
+                document.getElementById("usoLabelInsumoAnalise").innerText = "Equipamento Utilizado";
+                materiaisGlobais.forEach(m => {
+                    if (m.categoria_uso === 'EQUIPAMENTO') {
+                        sel.innerHTML += `<option value="${m.id}" data-codigo="${(m.codigo||'').toUpperCase()}" data-nome="${m.nome}" data-unidade="${m.unidade}">${m.codigo ? m.codigo+' - ' : ''}${m.nome}</option>`;
+                    }
+                });
+            } else {
+                inputQtd.disabled = false;
+                inputQtd.placeholder = "";
+                if (tipo === 'REAGENTE') {
+                    document.getElementById("usoLabelInsumoAnalise").innerText = "Reagente do Estoque";
+                    reagentesGlobais.forEach(r => sel.innerHTML += `<option value="${r.id}" data-codigo="${(r.codigo||'').toUpperCase()}" data-nome="${r.nome}" data-unidade="${r.unidade || ''}">${r.codigo ? r.codigo+' - ' : ''}${r.nome} (Estq: ${r.quantidade})</option>`);
+                } else if (tipo === 'SOLUCAO') {
+                    document.getElementById("usoLabelInsumoAnalise").innerText = "Solução do Estoque";
+                    solucoesGlobais.forEach(s => { if (parseFloat(s.saldo_total || s.salto_total) > 0) sel.innerHTML += `<option value="${s.id}" data-codigo="${(s.codigo||'').toUpperCase()}" data-nome="${s.nome}" data-unidade="${s.unidade}">${s.codigo ? s.codigo+' - ' : ''}${s.nome} (Estq: ${s.saldo_total || s.salto_total})</option>`; });
+                } else {
+                    document.getElementById("usoLabelInsumoAnalise").innerText = "Material de Consumo";
+                    materiaisGlobais.forEach(m => { 
+                        if (parseFloat(m.quantidade) > 0 && m.categoria_uso !== 'EQUIPAMENTO') { 
+                            sel.innerHTML += `<option value="${m.id}" data-codigo="${(m.codigo||'').toUpperCase()}" data-nome="${m.nome}" data-unidade="${m.unidade}">${m.codigo ? m.codigo+' - ' : ''}${m.nome} (Estq: ${m.quantidade})</option>`; 
+                        }
+                    });
+                }
+            }
+        }
+
+        window.buscarInsumoPorCodigo = function(inputId, selectId) {
+            const inputCod = document.getElementById(inputId).value.trim().toUpperCase(); const sel = document.getElementById(selectId);
+            if (!inputCod) { sel.value = ""; return; }
+            let encontrou = false;
+            for (let i = 0; i < sel.options.length; i++) { 
+                const codDropdown = sel.options[i].getAttribute("data-codigo");
+                if (codDropdown && codDropdown.includes(inputCod)) { sel.value = sel.options[i].value; encontrou = true; break; } 
+            }
+            if(!encontrou) sel.value = "";
+        }
+
+        window.sincronizarCodigo = function(selectId, inputId) {
+            const sel = document.getElementById(selectId); const input = document.getElementById(inputId);
+            if (sel.selectedIndex > 0) { const cod = sel.options[sel.selectedIndex].getAttribute("data-codigo"); input.value = cod ? cod : ""; } else { input.value = ""; }
+        }
+
+        window.adicionarItemUsoAnalise = function() {
+            const tipo = document.getElementById("usoTipoItemAnalise").value; 
+            const sel = document.getElementById("usoSelectInsumoAnalise"); 
+            const qtd = document.getElementById("usoQtdAnalise").value;
+
+            if(!sel.value) return alert("Selecione um item ou equipamento.");
+            
+            if(tipo !== 'EQUIPAMENTO' && (!qtd || parseFloat(qtd) <= 0)) {
+                return alert("Informe uma quantidade válida para o consumo.");
+            }
+
+            const qtdFinal = tipo === 'EQUIPAMENTO' ? 0 : parseFloat(qtd);
+
+            itensUsoAnalise.push({ 
+                tipo: tipo, 
+                id: sel.value, 
+                nome_exibicao: sel.options[sel.selectedIndex].getAttribute('data-nome'), 
+                qtd_usada: qtdFinal, 
+                unidade: sel.options[sel.selectedIndex].getAttribute('data-unidade') 
+            });
+            
+            document.getElementById("usoQtdAnalise").value = ""; 
+            document.getElementById("usoBuscaCodAnalise").value = ""; 
+            sel.value = ""; 
+            atualizarTabelaItensUsoAnalise();
+            salvarAutoSave();
+        }
+
+        function atualizarTabelaItensUsoAnalise() {
+            const tbody = document.getElementById("tabelaItensUsoAnalise"); tbody.innerHTML = "";
+            if(itensUsoAnalise.length === 0) { 
+                tbody.innerHTML = `<tr><td colspan='4' class='text-center text-muted py-2'>Nenhum registro lançado.</td></tr>`; 
+                return; 
+            }
+            itensUsoAnalise.forEach((s, index) => {
+                let badge = "";
+                let qtdDisplay = "";
+
+                if (s.tipo === 'REAGENTE') {
+                    badge = '<span class="badge bg-secondary">Reagente</span>';
+                    qtdDisplay = `<span class="text-danger fw-bold">-${s.qtd_usada} ${s.unidade}</span>`;
+                } else if (s.tipo === 'SOLUCAO') {
+                    badge = '<span class="badge bg-primary">Solução</span>';
+                    qtdDisplay = `<span class="text-danger fw-bold">-${s.qtd_usada} ${s.unidade}</span>`;
+                } else if (s.tipo === 'EQUIPAMENTO') {
+                    badge = '<span class="badge bg-dark">Equipamento</span>';
+                    qtdDisplay = `<span class="text-muted fw-bold">Uso em Bancada</span>`;
+                } else {
+                    badge = '<span class="badge bg-info text-dark">Material</span>';
+                    qtdDisplay = `<span class="text-danger fw-bold">-${s.qtd_usada} ${s.unidade}</span>`;
+                }
+
+                tbody.innerHTML += `<tr><td>${badge}</td><td class="fw-bold">${s.nome_exibicao}</td><td>${qtdDisplay}</td><td class="text-center"><i class="bi bi-x-circle text-danger btn-excluir" style="cursor:pointer;" onclick="itensUsoAnalise.splice(${index}, 1); atualizarTabelaItensUsoAnalise(); salvarAutoSave();"></i></td></tr>`;
+            });
+        }
+
+        // ==========================================
+        // LÓGICA DE HISTÓRICO
+        // ==========================================
         function aplicarFiltrosHistorico() {
             const termo = document.getElementById("buscaHistorico").value.toLowerCase();
             const dataEscolhida = document.getElementById("filtroDataHistorico").value; 
@@ -435,7 +633,6 @@
                 const badgeStatus = item.status === 'CONFORME' ? 'bg-success' : (item.status === 'REPROVADA' ? 'bg-danger' : 'bg-warning text-dark');
                 const idParaBusca = item.amostra_id; 
 
-                // Se o usuário não puder ver detalhes, esconde o botão da tabela
                 const btnDetalhes = globalPerms.fifo_view ? `
                     <button class="btn btn-sm btn-outline-info shadow-sm btn-detalhes" 
                             onclick="verDetalhesAnalise('${idParaBusca}', '${item.amostra_cod}')" 
@@ -508,7 +705,6 @@
                         <small class="text-muted">Entrada: ${a.data_entrada_fmt}</small>
                     `;
                     
-                    // Bloqueia clique se o usuário não puder executar/preencher (Só Visualizador)
                     if(globalPerms.fifo_execute) {
                         btn.onclick = () => iniciarTrabalho(a);
                     } else {
@@ -531,6 +727,7 @@
             const dataStart = await resStart.json();
 
             globalAnexosRascunho = {}; 
+            itensUsoAnalise = [];
             const baseData = { amostra: amostra, hora_inicio: dataStart.hora_inicio, rascunho: null };
             localStorage.setItem("lims_analise_ativa", JSON.stringify(baseData));
             await renderizarTelaBase(baseData, false);
@@ -678,6 +875,14 @@
                 document.getElementById("avisoRecuperacao").classList.remove("d-none");
                 document.getElementById("obsAnalise").value = dadosAnalise.rascunho.obs;
                 if(dadosAnalise.rascunho.anexosSalvos) globalAnexosRascunho = dadosAnalise.rascunho.anexosSalvos;
+                
+                if(dadosAnalise.rascunho.rastreabilidade) {
+                    itensUsoAnalise = dadosAnalise.rascunho.rastreabilidade;
+                    if(itensUsoAnalise.length > 0) {
+                        document.getElementById("chkHabilitarInsumosAnalise").checked = true;
+                        toggleInsumosAreaAnalise();
+                    }
+                }
 
                 dadosAnalise.rascunho.resultados.forEach((r, i) => {
                     const isExtra = r.metodo.includes('Ad-Hoc');
@@ -686,6 +891,7 @@
             } else {
                 document.getElementById("avisoRecuperacao").classList.add("d-none");
                 globalAnexosRascunho = {};
+                itensUsoAnalise = [];
                 
                 const resTemp = await fetch(`${API}/analises/template/${amostra.id}`);
                 const specs = await resTemp.json();
@@ -717,9 +923,10 @@
                 });
             }, 300);
 
-            if(!isRecuperacao) salvarAutoSave(); 
-
-            buscarCalculosNaRede(amostra.codigo_amostra || amostra.codigo);
+            if(!isRecuperacao) {
+                salvarAutoSave(); 
+                buscarCalculosNaRede(amostra.codigo_amostra || amostra.codigo);
+            }
         }
 
         function restaurarAnaliseNaTela(dadosAnalise) { renderizarTelaBase(dadosAnalise, true); }
@@ -746,7 +953,8 @@
             const rascunhoAtual = {
                 obs: document.getElementById("obsAnalise").value,
                 resultados: resultadosRascunho,
-                anexosSalvos: globalAnexosRascunho
+                anexosSalvos: globalAnexosRascunho,
+                rastreabilidade: itensUsoAnalise // Salva a rastreabilidade no rascunho
             };
 
             const analiseAtiva = JSON.parse(localStorage.getItem("lims_analise_ativa"));
@@ -821,6 +1029,13 @@
                 obsFinal = `[Ensaios Adicionais Executados: ${nomesExtras}] \n${obsOriginal}`;
             }
 
+            // 🔥 MÁGICA DOS EQUIPAMENTOS NA OBSERVAÇÃO
+            const equipamentos = itensUsoAnalise.filter(i => i.tipo === 'EQUIPAMENTO');
+            if (equipamentos.length > 0) {
+                const nomesEquips = equipamentos.map(e => e.nome_exibicao).join(', ');
+                obsFinal += (obsFinal ? "\n\n" : "") + "Equipamentos Utilizados (Rastreabilidade): " + nomesEquips;
+            }
+
             const resultados = inputs.map(inp => {
                 const tr = inp.closest('tr');
                 const paramNome = tr.dataset.param;
@@ -835,7 +1050,20 @@
                 };
             });
 
-            const payload = { amostra_id: document.getElementById("amostraIdSelecionada").value, observacoes: obsFinal, resultados: resultados };
+            // Filtro exclusivo para consumo real (baixa de estoque)
+            const reagUsados = itensUsoAnalise.filter(i => i.tipo === 'REAGENTE').map(i => ({ reagente_id: i.id, qtd_usada: i.qtd_usada })); 
+            const solUsadas = itensUsoAnalise.filter(i => i.tipo === 'SOLUCAO').map(i => ({ solucao_id: i.id, qtd_usada: i.qtd_usada })); 
+            const matUsados = itensUsoAnalise.filter(i => i.tipo === 'MATERIAL').map(i => ({ material_id: i.id, qtd_usada: i.qtd_usada })); 
+
+            const payload = { 
+                amostra_id: document.getElementById("amostraIdSelecionada").value, 
+                observacoes: obsFinal, 
+                resultados: resultados,
+                rastreabilidade_glp: itensUsoAnalise, // O array inteiro desce para compor o Detalhe
+                reagentes_usados: reagUsados,
+                solucoes_usadas: solUsadas,
+                materiais_usados: matUsados
+            };
 
             try {
                 const res = await fetch(`${API}/analises/finalizar`, {
@@ -867,8 +1095,10 @@
             try {
                 const res = await fetch(`${API}/analises/detalhes/${idParaBusca}`);
                 if (!res.ok) return alert("Erro ao buscar detalhes no servidor.");
-                const detalhes = await res.json(); 
+                const data = await res.json(); 
                 
+                const detalhes = data.resultados || data; // Ajuste para caso a API retorne objeto complexo ou array direto
+
                 document.getElementById("detalheAmostraCod").innerText = (String(idParaBusca).startsWith("ANL")) ? `${idParaBusca} (Amostra: ${amostraCod})` : amostraCod;
                 const tbody = document.getElementById("tabelaDetalhesAnalise");
                 tbody.innerHTML = "";
@@ -906,6 +1136,26 @@
                     `;
                 });
 
+                // Tabela Extra de Rastreabilidade (se a API retornar os dados_brutos)
+                const rastArea = document.getElementById("detalhesRastreabilidadeArea");
+                if (data.dados_brutos && data.dados_brutos.rastreabilidade && data.dados_brutos.rastreabilidade.length > 0) {
+                    const tbodyRast = document.getElementById("tabelaDetalhesRastreabilidade");
+                    tbodyRast.innerHTML = "";
+                    data.dados_brutos.rastreabilidade.forEach(item => {
+                        let badge = "";
+                        let qtdText = "";
+                        if(item.tipo === 'EQUIPAMENTO') { badge = "Equipamento"; qtdText = "Uso em Bancada"; }
+                        else if(item.tipo === 'REAGENTE') { badge = "Reagente"; qtdText = `-${item.qtd_usada} ${item.unidade}`; }
+                        else if(item.tipo === 'SOLUCAO') { badge = "Solução"; qtdText = `-${item.qtd_usada} ${item.unidade}`; }
+                        else { badge = "Mat. Consumo"; qtdText = `-${item.qtd_usada} ${item.unidade}`; }
+                        
+                        tbodyRast.innerHTML += `<tr><td><span class="badge bg-secondary">${badge}</span></td><td class="fw-bold text-dark text-start ps-3">${item.nome_exibicao}</td><td class="text-danger fw-bold">${qtdText}</td></tr>`;
+                    });
+                    rastArea.style.display = "block";
+                } else {
+                    rastArea.style.display = "none";
+                }
+
                 new bootstrap.Modal(document.getElementById('modalDetalhesAnalise')).show();
             } catch (error) { console.error(error); }
         }
@@ -923,12 +1173,39 @@
                 if(recebidos.length === 0) return;
 
                 let aplicouAlgo = false;
+                let itensRastreabilidadeExtra = []; // Guarda os insumos vindos da rede
                 const linhas = document.querySelectorAll('.linha-dado');
                 
                 recebidos.forEach(pacote => {
                     const textoCalc = pacote.analise.toLowerCase();
                     const valorNumerico = pacote.resultado.split(' ')[0];
 
+                    // 🔥 MÁGICA: Extrai a rastreabilidade de dentro dos dados brutos
+                    if (pacote.dados_brutos) {
+                        try {
+                            const db = typeof pacote.dados_brutos === 'string' ? JSON.parse(pacote.dados_brutos) : pacote.dados_brutos;
+                            if (db.rastreabilidade && Array.isArray(db.rastreabilidade)) {
+                                db.rastreabilidade.forEach(itemGLP => {
+                                    // Evita duplicar se a API devolver o mesmo item em cálculos diferentes
+                                    const jaExiste = itensUsoAnalise.find(i => i.id == itemGLP.id && i.tipo == itemGLP.tipo) || 
+                                                     itensRastreabilidadeExtra.find(i => i.id == itemGLP.id && i.tipo == itemGLP.tipo);
+                                    
+                                    if (!jaExiste) {
+                                        itensRastreabilidadeExtra.push(itemGLP);
+                                    } else {
+                                        // Se for reagente/material, SOMA a quantidade usada nos vários cálculos
+                                        if (itemGLP.tipo !== 'EQUIPAMENTO') {
+                                            let itemAlvo = itensUsoAnalise.find(i => i.id == itemGLP.id && i.tipo == itemGLP.tipo);
+                                            if (!itemAlvo) itemAlvo = itensRastreabilidadeExtra.find(i => i.id == itemGLP.id && i.tipo == itemGLP.tipo);
+                                            itemAlvo.qtd_usada = parseFloat(itemAlvo.qtd_usada) + parseFloat(itemGLP.qtd_usada);
+                                        }
+                                    }
+                                });
+                            }
+                        } catch(e) { console.error("Erro ao ler rastreabilidade da rede", e); }
+                    }
+
+                    // Injeta o valor do cálculo no input correspondente
                     linhas.forEach(tr => {
                         const paramNome = tr.dataset.param.toLowerCase();
                         let encontrou = false;
@@ -951,6 +1228,20 @@
                         }
                     });
                 });
+
+                // Se houver insumos viajando pela rede, junta-os com os da tela e liga o painel GLP!
+                if (itensRastreabilidadeExtra.length > 0) {
+                    itensUsoAnalise = [...itensUsoAnalise, ...itensRastreabilidadeExtra];
+                    document.getElementById("chkHabilitarInsumosAnalise").checked = true;
+                    toggleInsumosAreaAnalise();
+                    atualizarTabelaItensUsoAnalise();
+                    aplicouAlgo = true;
+                }
+
+                if (aplicouAlgo) {
+                    salvarAutoSave();
+                }
+
             } catch(e) { console.error("Erro na busca de rede:", e); }
         }
     </script>

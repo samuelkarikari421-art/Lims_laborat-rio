@@ -72,9 +72,12 @@
 
                     <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
                     <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="monitoramento_tpm.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-fire text-warning me-2"></i>Controle TPM</a>
+                    <a href="monitoramento_clima.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-thermometer-sun text-danger me-2"></i>Clima (Temp/Umid)</a>
                     <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
                     <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
                     <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="laudos_ete.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-water text-info me-2"></i>Laudos ETE</a>
                     <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
                 
                     <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
@@ -177,7 +180,8 @@
             
             <div class="tab-pane fade show active" id="tab-diarios" role="tabpanel">
                 <div class="row mb-3 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
-                    <div class="col-md-5">
+                    
+                    <div class="col-md-5" id="containerFiltroUsuario">
                         <label class="form-label fw-bold text-muted small mb-1">Filtrar por Colaborador</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light"><i class="bi bi-person-badge"></i></span>
@@ -186,11 +190,13 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    
+                    <div class="col-md-3" id="containerFiltroMes">
                         <label class="form-label fw-bold text-muted small mb-1">Mês/Ano</label>
                         <input type="month" id="filtroMesAno" class="form-control" onchange="filtrarPontos()">
                     </div>
-                    <div class="col-md-4">
+                    
+                    <div class="col-md-4" id="containerFiltroTotal">
                         <label class="form-label fw-bold text-muted small mb-1">Total de Horas no Filtro</label>
                         <div class="form-control bg-light text-primary fw-bold text-center" id="lblTotalHorasFiltro">0h 0m</div>
                     </div>
@@ -373,12 +379,15 @@
             const perfilUser = String(usuarioLogado.perfil || "").toUpperCase().trim();
             const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
 
-            const podeVerPonto = isAdmin || (usuarioLogado.permissoes && usuarioLogado.permissoes.ponto_view === true);
-            const podeEditarPonto = isAdmin || (usuarioLogado.permissoes && usuarioLogado.permissoes.ponto_edit === true);
+            // 🔥 NOVA REGRA: A chave mestre para ver todos os usuários é a permissão de ASSINAR ponto.
             const podeAssinarPonto = isAdmin || (usuarioLogado.permissoes && usuarioLogado.permissoes.ponto_sign === true);
+            const podeVerTodosPontos = podeAssinarPonto; 
+            
+            const podeEditarPonto = isAdmin || (usuarioLogado.permissoes && usuarioLogado.permissoes.ponto_edit === true);
             const precisaBaterPonto = perfilUser === 'APRENDIZ' || (usuarioLogado.permissoes && usuarioLogado.permissoes.registra_ponto === true);
 
-            if (!podeVerPonto && !precisaBaterPonto) {
+            // Acesso básico à tela: Ou o utilizador precisa de bater o ponto ou tem privilégios.
+            if (!podeVerTodosPontos && !precisaBaterPonto && !podeEditarPonto) {
                 alert("Acesso Negado: Sem permissão para ver esta tela.");
                 window.location.href = 'dashboard.html';
             }
@@ -397,11 +406,16 @@
                     document.getElementById('painelRelogio').style.display = 'flex';
                 }
 
-                // Oculta abas de histórico de RH de quem não é do RH e não tem acesso de view
-                if (!podeVerPonto && !podeEditarPonto && !podeAssinarPonto) {
-                    document.getElementById("nav-diarios").style.display = 'none';
-                    document.getElementById("nav-assinados").style.display = 'none';
-                    document.getElementById("tab-diarios").classList.remove('show', 'active');
+                // Oculta o Filtro de Usuários caso a pessoa NÃO tenha poder de assinar folha
+                if (!podeVerTodosPontos) {
+                    const containerFiltro = document.getElementById("containerFiltroUsuario");
+                    if (containerFiltro) containerFiltro.style.display = 'none';
+                    
+                    const containerMes = document.getElementById("containerFiltroMes");
+                    if (containerMes) containerMes.classList.replace('col-md-3', 'col-md-6');
+                    
+                    const containerTotal = document.getElementById("containerFiltroTotal");
+                    if (containerTotal) containerTotal.classList.replace('col-md-4', 'col-md-6');
                 }
             }
 
@@ -451,7 +465,14 @@
                     };
                     
                     try {
-                        const res = await fetch(`${API}/ponto`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                        const res = await fetch(`${API}/ponto`, { 
+                            method: 'POST', 
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${localStorage.getItem("limsToken")}`
+                            }, 
+                            body: JSON.stringify(payload) 
+                        });
                         if(res.ok) {
                             carregarPontos();
                             alert(`✅ Ponto de ${tipo} registado com sucesso às ${horaFmt}!`);
@@ -492,7 +513,14 @@
                 if(!confirm("Deseja registrar a sua ENTRADA agora?")) return;
                 const payload = { usuario_id: usuarioLogado.id, data_registro: getTodayDataISO(), hora_entrada: getCurrentTime(), hora_saida: null, observacoes: "Registro via Painel", tipo_registro: "Automático (Colaborador)" };
                 try {
-                    const res = await fetch(`${API}/ponto`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    const res = await fetch(`${API}/ponto`, { 
+                        method: 'POST', 
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem("limsToken")}`
+                        }, 
+                        body: JSON.stringify(payload) 
+                    });
                     if(res.ok) carregarPontos(); else alert("Erro ao registrar entrada.");
                 } catch(e) { console.error(e); }
             }
@@ -505,7 +533,14 @@
                 if (!pontoDeHoje) return alert("Erro: Entrada não encontrada.");
                 const payload = { usuario_id: usuarioLogado.id, data_registro: hoje, hora_entrada: pontoDeHoje.hora_entrada, hora_saida: getCurrentTime(), observacoes: pontoDeHoje.observacoes, tipo_registro: "Automático (Colaborador)" };
                 try {
-                    const res = await fetch(`${API}/ponto/${pontoDeHoje.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    const res = await fetch(`${API}/ponto/${pontoDeHoje.id}`, { 
+                        method: 'PUT', 
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem("limsToken")}`
+                        }, 
+                        body: JSON.stringify(payload) 
+                    });
                     if(res.ok) carregarPontos(); else alert("Erro ao registrar saída.");
                 } catch(e) { console.error(e); }
             }
@@ -551,14 +586,20 @@
                             selForm.innerHTML += opt; selRel.innerHTML += opt; selFiltro.innerHTML += opt;
                         });
 
-                        if (!podeVerPonto) { selFiltro.value = usuarioLogado.id; selFiltro.disabled = true; }
+                        // Se a pessoa não pode ver os outros, o filtro dela própria já fica cravado no próprio ID
+                        if (!podeVerTodosPontos) { 
+                            selFiltro.value = usuarioLogado.id; 
+                            selFiltro.disabled = true; 
+                        }
                     }
                 } catch(e) { console.error(e); }
             }
 
             async function carregarPontos() {
                 try {
-                    const res = await fetch(`${API}/ponto`);
+                    const res = await fetch(`${API}/ponto`, {
+                        headers: { "Authorization": `Bearer ${localStorage.getItem("limsToken")}` }
+                    });
                     listaGlobalPontos = await res.json();
                     filtrarPontos();
                     atualizarBotoesRapidos(); 
@@ -581,7 +622,9 @@
                 let totalMinutosGeral = 0;
 
                 const filtrados = listaGlobalPontos.filter(p => {
-                    if (!podeVerPonto && p.usuario_id !== usuarioLogado.id) return false;
+                    // Segurança Local: Só exibe da própria pessoa se ela não puder ver de todos
+                    if (!podeVerTodosPontos && p.usuario_id !== usuarioLogado.id) return false; 
+                    
                     const matchUsuario = usuarioSelecionado === "" || p.usuario_id.toString() === usuarioSelecionado;
                     let matchData = mesAno ? p.data_registro_raw.startsWith(mesAno) : true;
                     if(matchUsuario && matchData) totalMinutosGeral += calcularDiferencaHoras(p.hora_entrada, p.hora_saida).mins;
@@ -657,14 +700,24 @@
                 const method = id ? 'PUT' : 'POST';
 
                 try {
-                    const res = await fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    const res = await fetch(url, { 
+                        method: method, 
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem("limsToken")}`
+                        }, 
+                        body: JSON.stringify(payload) 
+                    });
                     if(res.ok) { modalPonto.hide(); carregarPontos(); } else { alert("Erro ao gravar ponto."); }
                 } catch(err) { console.error(err); }
             });
 
             window.excluirPonto = async function(id) {
                 if(!confirm("Tem certeza que deseja excluir este registro de ponto?")) return;
-                await fetch(`${API}/ponto/${id}`, { method: 'DELETE' });
+                await fetch(`${API}/ponto/${id}`, { 
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem("limsToken")}` }
+                });
                 carregarPontos();
             }
 
@@ -741,7 +794,10 @@
                 try {
                     const res = await fetch(`${API}/ponto/relatorio/salvar`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem("limsToken")}` 
+                        },
                         body: JSON.stringify({ usuario_id: uid, mesano: mesAno, responsavel_id: responsavelId })
                     });
 
@@ -769,7 +825,9 @@
             // ==========================================
             window.carregarFolhasAssinadas = async function() {
                 try {
-                    const res = await fetch(`${API}/ponto/folhas-assinadas`);
+                    const res = await fetch(`${API}/ponto/folhas-assinadas`, {
+                        headers: { "Authorization": `Bearer ${localStorage.getItem("limsToken")}` }
+                    });
                     const folhas = await res.json();
                     
                     const tbody = document.getElementById("tabelaFolhasAssinadas");
@@ -781,7 +839,8 @@
                         return;
                     }
 
-                    const folhasVisiveis = podeVerPonto ? folhas : folhas.filter(f => f.usuario_id === usuarioLogado.id);
+                    // Blindagem extra no Frontend para os PDFs
+                    const folhasVisiveis = podeVerTodosPontos ? folhas : folhas.filter(f => f.usuario_id === usuarioLogado.id);
 
                     folhasVisiveis.forEach(f => {
                         const badgePerfil = f.perfil === 'APRENDIZ' ? 'bg-warning text-dark' : 'bg-secondary';
@@ -817,7 +876,10 @@
             window.excluirFolhaAssinada = async function(id) {
                 if(!confirm("Atenção: Tem a certeza que deseja excluir esta folha oficial do arquivo digital?")) return;
                 try {
-                    await fetch(`${API}/ponto/folhas-assinadas/${id}`, { method: 'DELETE' });
+                    await fetch(`${API}/ponto/folhas-assinadas/${id}`, { 
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${localStorage.getItem("limsToken")}` } 
+                    });
                     carregarFolhasAssinadas();
                 } catch (err) { console.error(err); }
             }

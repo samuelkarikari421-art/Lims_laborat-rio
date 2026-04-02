@@ -43,9 +43,12 @@
 
                     <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
                     <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="monitoramento_tpm.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-fire text-warning me-2"></i>Controle TPM</a>
+                    <a href="monitoramento_clima.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-thermometer-sun text-danger me-2"></i>Clima (Temp/Umid)</a>
                     <a href="reagentes.html" class="nav-link active py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
                     <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
                     <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="laudos_ete.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-water text-info me-2"></i>Laudos ETE</a>
                     <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
                 
                     <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
@@ -87,6 +90,9 @@
             <li class="nav-item" id="nav-consumo-tab">
                 <button class="nav-link fw-bold text-success" id="consumo-tab" data-bs-toggle="tab" data-bs-target="#consumo-pane" type="button" onclick="atualizarGraficoConsumo()"><i class="bi bi-bar-chart-steps"></i> Consumo por Mês</button>
             </li>
+            <li class="nav-item">
+                <button class="nav-link fw-bold text-dark" id="mapas-tab" data-bs-toggle="tab" data-bs-target="#mapas-pane" type="button" onclick="carregarMapasPF()"><i class="bi bi-file-earmark-check"></i> Mapas PF</button>
+            </li>
         </ul>
 
         <div class="tab-content">
@@ -98,7 +104,7 @@
                 </div>
 
                 <div class="row mb-4 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label fw-bold text-muted small mb-1">Buscar Reagente</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
@@ -119,6 +125,14 @@
                             <option value="">Todos</option>
                             <option value="PROXIMO">Próximo do Vencimento</option>
                             <option value="VENCIDO">Vencidos</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold text-muted small mb-1">Controle PF</label>
+                        <select id="filtroPF" class="form-select" onchange="filtrarTabela()">
+                            <option value="">Todos</option>
+                            <option value="sim">Sim</option>
+                            <option value="nao">Não</option>
                         </select>
                     </div>
                 </div>
@@ -212,6 +226,30 @@
                     </div>
                 </div>
             </div>
+
+            <div class="tab-pane fade" id="mapas-pane">
+                <div class="d-flex justify-content-end mb-3">
+                    <button class="btn btn-dark shadow-sm fw-bold px-4" onclick="abrirModalMapa()">
+                        <i class="bi bi-upload"></i> Novo Mapa PF
+                    </button>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Data de Envio</th>
+                                <th>Tipo</th>
+                                <th>Nome do Arquivo</th>
+                                <th>Registrado em</th>
+                                <th class="text-end pe-4">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaMapasPF"></tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -276,7 +314,14 @@
                                 </select>
                             </div>
 
-                            <div class="col-12 mt-3">
+                            <div class="col-md-4 mt-3">
+                                <label class="form-label small fw-bold text-danger">CONTROLADO PF? *</label>
+                                <select id="rea_controlado_pf" class="form-select border-danger fw-bold" required>
+                                    <option value="false">Não</option>
+                                    <option value="true">Sim</option>
+                                </select>
+                            </div>
+                            <div class="col-md-8 mt-3">
                                 <label class="form-label small fw-bold text-muted">CAS NUMBER / INFORMAÇÕES DE RISCO</label>
                                 <textarea id="rea_observacoes" class="form-control" rows="2" placeholder="Notas sobre armazenamento, FISPQ..."></textarea>
                             </div>
@@ -284,6 +329,43 @@
                         <div class="d-flex justify-content-end mt-4 pt-3 border-top">
                             <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Cancelar</button>
                             <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm" id="btnSalvarReagente">Gravar Reagente</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalMapaPF" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-file-earmark-arrow-up"></i> Registrar Mapa PF</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formMapaPF">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">TIPO DE MAPA *</label>
+                            <select id="mapa_tipo" class="form-select" required>
+                                <option value="Mensal">Mensal</option>
+                                <option value="Trimestral">Trimestral</option>
+                                <option value="Anual">Anual</option>
+                                <option value="Outro">Outro / Especial</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">DATA DE ENVIO (Siproquim) *</label>
+                            <input type="date" id="mapa_data_envio" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">ARQUIVO (PDF/DOC/DOCX) *</label>
+                            <input type="file" id="mapa_arquivo" class="form-control" accept=".pdf,.doc,.docx" required>
+                            <small class="text-muted">Tamanho máximo recomendado: 5MB</small>
+                        </div>
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-dark px-4 fw-bold">Salvar Mapa</button>
                         </div>
                     </form>
                 </div>
@@ -299,19 +381,18 @@
         let listaReagentes = [];
         let listaHistoricoUso = [];
         let modalObj;
+        let modalMapaObj; 
         let chartConsumoInstance = null;
         let globalPerms = {};
 
         // 🔥 FUNÇÃO DE BLINDAGEM DE DATAS (Resolve o problema do Gráfico)
         function normalizarData(dataString) {
             if (!dataString) return null;
-            // Se vier formato DD/MM/YYYY
             if (dataString.includes('/')) {
                 const [data] = dataString.split(' ');
                 const [d, m, a] = data.split('/');
                 return { ano: a, mes: m, dia: d };
             }
-            // Se vier formato ISO (YYYY-MM-DD...)
             if (dataString.includes('-')) {
                 const [data] = dataString.split('T');
                 const [a, m, d] = data.split('-');
@@ -352,6 +433,8 @@
         document.addEventListener("DOMContentLoaded", () => {
             aplicarTravaTela();
             modalObj = new bootstrap.Modal(document.getElementById('modalReagente'));
+            modalMapaObj = new bootstrap.Modal(document.getElementById('modalMapaPF')); 
+            
             carregarReagentes();
             
             if(globalPerms.reag_baixa || globalPerms.reag_edit) {
@@ -383,6 +466,7 @@
             const termo = document.getElementById("buscaReagente").value.toLowerCase();
             const filtroQtd = document.getElementById("filtroEstoque").value;
             const filtroVal = document.getElementById("filtroValidade").value;
+            const filtroPF = document.getElementById("filtroPF").value;
 
             const agora = new Date();
 
@@ -405,7 +489,12 @@
                     if (filtroVal === "VENCIDO") matchVal = diasRestantes <= 0;
                 }
 
-                return matchTexto && matchQtd && matchVal;
+                let matchPF = true;
+                const isPF = r.controlado_pf === true || r.controlado_pf === "1" || String(r.controlado_pf).toLowerCase() === "true";
+                if (filtroPF === "sim") matchPF = isPF;
+                if (filtroPF === "nao") matchPF = !isPF;
+
+                return matchTexto && matchQtd && matchVal && matchPF;
             });
 
             renderizarTabela(filtrados);
@@ -447,6 +536,9 @@
                     else if(diasRestantes <= 30) { valClass = "text-warning text-dark fw-bold"; badgeValidade = '<span class="badge bg-warning text-dark ms-1">A Vencer</span>'; }
                 }
 
+                const isPF = r.controlado_pf === true || r.controlado_pf === "1" || String(r.controlado_pf).toLowerCase() === "true";
+                const badgePF = isPF ? '<span class="badge bg-dark ms-1" title="Controlado pela Polícia Federal">PF</span>' : '';
+
                 const rowClass = (qtd <= 0 || (r.validade && new Date(r.validade) < agora)) ? "table-danger" : "";
 
                 let botoesAcao = '';
@@ -468,7 +560,7 @@
                 tbody.innerHTML += `
                     <tr class="${rowClass}">
                         <td class="ps-4 fw-bold text-primary">${r.codigo || '-'}</td>
-                        <td class="fw-bold text-dark">${r.nome} <br><small class="fw-normal text-muted">${r.grau_pureza || ''}</small></td>
+                        <td class="fw-bold text-dark">${r.nome} ${badgePF}<br><small class="fw-normal text-muted">${r.grau_pureza || ''}</small></td>
                         <td>${r.fabricante || '-'}</td>
                         <td class="${valClass}">${r.validade_fmt || '-'} ${badgeValidade}</td>
                         <td class="text-center border-start ${qtdClass} fs-6" title="Estoque Mínimo: ${minEstoque}">${qtd} <small class="text-muted fw-normal">${r.unidade}</small></td>
@@ -481,11 +573,12 @@
         }
 
         // ==========================================
-        // CADASTRAR / EDITAR
+        // CADASTRAR / EDITAR REAGENTE
         // ==========================================
         function abrirModalNovo() {
             document.getElementById("formReagente").reset();
             document.getElementById("rea_id").value = "";
+            document.getElementById("rea_controlado_pf").value = "false";
             document.getElementById("modalTitle").innerHTML = '<i class="bi bi-droplet-half"></i> Novo Reagente';
             modalObj.show();
         }
@@ -508,6 +601,10 @@
             document.getElementById("rea_quantidade").value = rea.quantidade;
             document.getElementById("rea_estoque_minimo").value = rea.estoque_minimo || 0;
             document.getElementById("rea_unidade").value = rea.unidade;
+            
+            const isPF = rea.controlado_pf === true || rea.controlado_pf === "1" || String(rea.controlado_pf).toLowerCase() === "true";
+            document.getElementById("rea_controlado_pf").value = isPF ? "true" : "false";
+            
             document.getElementById("rea_observacoes").value = rea.observacoes || "";
 
             modalObj.show();
@@ -533,6 +630,7 @@
                 quantidade: document.getElementById("rea_quantidade").value,
                 estoque_minimo: document.getElementById("rea_estoque_minimo").value,
                 unidade: document.getElementById("rea_unidade").value,
+                controlado_pf: document.getElementById("rea_controlado_pf").value === "true",
                 observacoes: document.getElementById("rea_observacoes").value
             };
 
@@ -565,7 +663,7 @@
         });
 
         // ==========================================
-        // REGISTRAR DESCARTE
+        // REGISTRAR DESCARTE E HISTÓRICO
         // ==========================================
         async function descartarReagente(id, nome, unidade) {
             const qtdStr = prompt(`Quantos "${unidade}" de ${nome} você deseja descartar/consumir do estoque?`);
@@ -596,9 +694,6 @@
             } catch(e) { console.error(e); alert("Erro de conexão com o servidor."); }
         }
 
-        // ==========================================
-        // HISTÓRICO DE USO (RESOLVIDO)
-        // ==========================================
         async function carregarHistoricoUso() {
             try {
                 const res = await fetch(`${API}/reagentes/uso`); 
@@ -615,7 +710,6 @@
             const mesEscolhido = document.getElementById("filtroMesUso").value;
 
             const filtrados = listaHistoricoUso.filter(u => {
-                // Blindagem de chaves (a API pode estar mandando "nome_reagente" em vez de "reagente_nome")
                 const nomeItem = u.reagente_nome || u.nome_reagente || u.nome || '';
                 const obs = u.motivo || u.observacao || '';
                 
@@ -651,7 +745,6 @@
             }
             
             lista.forEach(u => {
-                // Extração Segura de Dados
                 const dataRaw = u.data_uso || u.data_descarte || u.data_registro || u.created_at || '';
                 const nData = normalizarData(dataRaw);
                 const dataFmt = nData ? `${nData.dia}/${nData.mes}/${nData.ano}` : '-';
@@ -693,7 +786,7 @@
         }
 
         // ==========================================
-        // 🔥 GRÁFICO DE CONSUMO MENSAL (RESOLVIDO)
+        // GRÁFICO DE CONSUMO MENSAL
         // ==========================================
         function atualizarGraficoConsumo() {
             const anoSelecionado = document.getElementById("filtroConsumoAno").value;
@@ -706,12 +799,11 @@
                 const dataRaw = u.data_uso || u.data_descarte || u.data_registro || u.created_at || '';
                 const nData = normalizarData(dataRaw);
                 
-                // Se conseguimos ler a data e ela pertence ao ano selecionado
                 if (nData && nData.ano === anoSelecionado) {
                     const rId = String(u.reagente_id || u.id_reagente || u.item_id || u.id_item || '');
                     
                     if (materialId === "" || rId === materialId) {
-                        const mesIndex = parseInt(nData.mes) - 1; // 0 para Janeiro, 11 para Dezembro
+                        const mesIndex = parseInt(nData.mes) - 1; 
                         const qtd = parseFloat(u.quantidade || u.qtd || u.qtd_usada || 0);
                         
                         totaisMes[mesIndex] += qtd;
@@ -766,17 +858,150 @@
             });
         }
 
-        // ==========================================
-        // EXCLUIR REAGENTE DO BANCO
-        // ==========================================
         async function excluirReagente(id) {
             if(!confirm("Tem certeza que deseja EXCLUIR permanentemente este reagente do banco?")) return;
-            
             try {
                 const res = await fetch(`${API}/reagentes/${id}`, { method: 'DELETE' });
                 if(res.ok) carregarReagentes();
                 else alert("Erro ao excluir. O reagente pode estar em uso no histórico.");
             } catch(e) { console.error(e); }
+        }
+
+        // ==========================================
+        // NOVA LÓGICA: MAPAS PF
+        // ==========================================
+        function abrirModalMapa() {
+            document.getElementById("formMapaPF").reset();
+            modalMapaObj.show();
+        }
+
+        async function carregarMapasPF() {
+            try {
+                // Rota CORRIGIDA
+                const res = await fetch(`${API}/reagentes/mapas-pf`); 
+                if(res.ok) {
+                    const mapas = await res.json();
+                    renderizarTabelaMapas(mapas);
+                } else {
+                    renderizarTabelaMapas([]);
+                }
+            } catch (e) { 
+                console.error("Erro ao carregar mapas:", e); 
+                renderizarTabelaMapas([]);
+            }
+        }
+
+        function renderizarTabelaMapas(lista) {
+            const tbody = document.getElementById("tabelaMapasPF");
+            tbody.innerHTML = "";
+
+            if(!lista || lista.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='5' class='text-center py-4 text-muted'>Nenhum mapa registrado.</td></tr>";
+                return;
+            }
+
+            lista.forEach(m => {
+                const dtEnvio = m.data_envio ? String(m.data_envio).split('T')[0].split('-').reverse().join('/') : '-';
+                const dtCriado = m.criado_em ? new Date(m.criado_em).toLocaleString('pt-BR') : '-';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="ps-4 fw-bold text-dark">${dtEnvio}</td>
+                        <td><span class="badge bg-secondary">${m.tipo}</span></td>
+                        <td class="text-muted small"><i class="bi bi-file-earmark-text"></i> ${m.nome_arquivo || 'Documento'}</td>
+                        <td class="small text-muted">${dtCriado}</td>
+                        <td class="text-end pe-4">
+                            <button class="btn btn-sm btn-outline-primary shadow-sm" onclick="downloadMapa('${m.arquivo_base64}', '${m.nome_arquivo}')" title="Baixar Arquivo">
+                                <i class="bi bi-download"></i>
+                            </button>
+                            <button class="btn btn-sm btn-light border text-danger shadow-sm ms-2" onclick="excluirMapa(${m.id})" title="Excluir">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        document.getElementById("formMapaPF").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById("mapa_arquivo");
+            if(fileInput.files.length === 0) return alert("Por favor, selecione um arquivo.");
+            
+            const file = fileInput.files[0];
+
+            if(file.size > 5 * 1024 * 1024) {
+                return alert("O arquivo é muito grande. O tamanho máximo permitido é 5MB.");
+            }
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Salvando...';
+            btn.disabled = true;
+
+            try {
+                const arquivoBase64 = await toBase64(file);
+                const payload = {
+                    tipo: document.getElementById("mapa_tipo").value,
+                    data_envio: document.getElementById("mapa_data_envio").value,
+                    nome_arquivo: file.name,
+                    arquivo_base64: arquivoBase64
+                };
+
+                // Rota CORRIGIDA
+                const res = await fetch(`${API}/reagentes/mapas-pf`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if(res.ok) {
+                    modalMapaObj.hide();
+                    carregarMapasPF();
+                    alert("Mapa PF registrado com sucesso!");
+                } else {
+                    alert("Erro ao salvar mapa. Verifique a configuração da API.");
+                }
+            } catch (err) { 
+                console.error(err); 
+                alert("Erro de conexão com o servidor ao salvar mapa."); 
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        function downloadMapa(base64, nome) {
+            if(!base64 || base64 === 'null') return alert("Arquivo corrompido ou não encontrado.");
+            const link = document.createElement("a");
+            link.href = base64;
+            link.download = nome || 'mapa_pf_download';
+            document.body.appendChild(link); 
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        async function excluirMapa(id) {
+            if(!confirm("Tem certeza que deseja excluir este registro de mapa PF?")) return;
+            try {
+                // Rota CORRIGIDA
+                const res = await fetch(`${API}/reagentes/mapas-pf/${id}`, { method: 'DELETE' });
+                if(res.ok) {
+                    carregarMapasPF();
+                } else {
+                    alert("Erro ao tentar excluir o mapa.");
+                }
+            } catch (e) { 
+                console.error(e); 
+            }
         }
     </script>
 </body>

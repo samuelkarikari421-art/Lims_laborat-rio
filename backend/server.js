@@ -30,6 +30,12 @@ app.use("/api/solucoes", require("./routes/solucoes"));
 app.use("/api/ponto", require("./routes/ponto"));
 app.use("/api/coas", require("./routes/coas"));
 app.use("/api/materiais", require("./routes/materiais"));
+app.use("/api/tpm", require("./routes/tpm")); // Controle de Compostos Polares (TPM)
+app.use("/api/clima", require("./routes/clima"));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// 🔥 NOVA ROTA ADICIONADA AQUI: Laudos ETE (Base64)
+app.use("/api/laudos-ete", require("./routes/laudos_ete"));
 
 // 🔥 AQUI ESTAVA O CONFLITO RESOLVIDO: Rotas separadas corretamente!
 app.use("/api/monitoramento", monitoramentoRoutes); // Gestão de Monitoramento

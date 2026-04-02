@@ -238,34 +238,50 @@ router.delete('/uso/:id', async (req, res) => {
 });
 
 // ==========================================
-// 8. MAPAS POLÍCIA FEDERAL (MANTIDO INTACTO)
+// 8. MAPAS POLÍCIA FEDERAL
 // ==========================================
-router.get("/mapas", async (req, res) => {
+
+// Listar Mapas
+router.get("/mapas-pf", async (req, res) => {
     try {
         const result = await pool.query(`
-            SELECT id, tipo, 
-                   to_char(data_envio, 'DD/MM/YYYY HH24:MI') as data_envio_fmt, 
-                   nome_arquivo, arquivo_base64 
+            SELECT id, tipo, data_envio, nome_arquivo, arquivo_base64, criado_em 
             FROM mapas_pf 
             ORDER BY data_envio DESC
         `);
         res.json(result.rows);
     } catch (err) {
+        console.error("Erro ao listar mapas PF:", err);
         res.status(500).json({ error: "Erro ao listar mapas" });
     }
 });
 
-router.post("/mapas", async (req, res) => {
+// Salvar Novo Mapa
+router.post("/mapas-pf", async (req, res) => {
     try {
         const { tipo, data_envio, nome_arquivo, arquivo_base64 } = req.body;
         await pool.query(
             `INSERT INTO mapas_pf (tipo, data_envio, nome_arquivo, arquivo_base64) VALUES ($1, $2, $3, $4)`,
             [tipo, data_envio, nome_arquivo, arquivo_base64]
         );
-        await registrarLog(req, "ANEXOU MAPA PF", `Anexou um novo ficheiro de Mapa da Polícia Federal (Tipo: ${tipo})`);
+        await registrarLog(req, "ANEXOU MAPA PF", `Anexou um novo arquivo de Mapa da Polícia Federal (Tipo: ${tipo})`);
         res.json({ success: true, message: "Mapa salvo com sucesso!" });
     } catch (err) {
+        console.error("Erro ao salvar mapa PF:", err);
         res.status(500).json({ success: false, message: "Erro ao salvar mapa." });
+    }
+});
+
+// Excluir Mapa
+router.delete("/mapas-pf/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        await pool.query("DELETE FROM mapas_pf WHERE id = $1", [id]);
+        await registrarLog(req, "EXCLUIU MAPA PF", `Removeu um Mapa da Polícia Federal (ID: ${id}) do sistema.`);
+        res.json({ success: true, message: "Mapa excluído com sucesso!" });
+    } catch (err) {
+        console.error("Erro ao excluir mapa PF:", err);
+        res.status(500).json({ success: false, message: "Erro ao excluir mapa." });
     }
 });
 

@@ -63,9 +63,12 @@
 
                     <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
                     <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="monitoramento_tpm.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-fire text-warning me-2"></i>Controle TPM</a>
+                    <a href="monitoramento_clima.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-thermometer-sun text-danger me-2"></i>Clima (Temp/Umid)</a>
                     <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
                     <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
                     <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="laudos_ete.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-water text-info me-2"></i>Laudos ETE</a>
                     <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
                 
                     <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
@@ -113,7 +116,7 @@
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link text-success" id="historico-tab" data-bs-toggle="tab" data-bs-target="#tab-historico" type="button" role="tab" onclick="renderizarHistorico()">
-                    <i class="bi bi-cloud-check"></i> Histórico da Rede (Salvo)
+                    <i class="bi bi-cloud-check"></i> Cálculos Compartilhados (Base de Dados)
                 </button>
             </li>
         </ul>
@@ -160,7 +163,46 @@
                                     </div>
                                 </div>
 
-                                <div id="painelQuimico" style="display: none;" class="mt-2 border-top pt-3">
+                                <div id="painelRastreabilidade" class="mt-3 border-top border-secondary pt-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <label class="form-label small fw-bold text-secondary mb-0"><i class="bi bi-eyedropper"></i> Rastreabilidade (GLP)</label>
+                                        <div class="form-check form-switch mb-0">
+                                            <input class="form-check-input" type="checkbox" id="chkHabilitarInsumosCalc" onchange="toggleInsumosAreaCalc()">
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="areaInsumosCalc" style="display: none;" class="bg-white border rounded p-2 mt-2">
+                                        <div class="mb-2">
+                                            <label class="form-label small fw-bold text-muted mb-1">Tipo de Item</label>
+                                            <select id="usoTipoItemCalc" class="form-select form-select-sm" onchange="mudarTipoInsumoUsoCalc()">
+                                                <option value="REAGENTE">Reagente</option>
+                                                <option value="SOLUCAO">Solução</option>
+                                                <option value="MATERIAL">Mat. Consumo</option>
+                                                <option value="EQUIPAMENTO">Equipamento</option>
+                                            </select>
+                                        </div>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-8">
+                                                <label class="form-label small fw-bold text-muted mb-1" id="usoLabelInsumoCalc">Item / Reagente</label>
+                                                <select id="usoSelectInsumoCalc" class="form-select form-select-sm"></select>
+                                            </div>
+                                            <div class="col-4">
+                                                <label class="form-label small fw-bold text-muted mb-1">Qtd</label>
+                                                <input type="number" step="0.01" id="usoQtdCalc" class="form-control form-control-sm">
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-secondary btn-sm w-100 fw-bold mb-3" onclick="adicionarItemUsoCalc()"><i class="bi bi-plus"></i> Adicionar à Lista</button>
+
+                                        <table class="table table-sm table-bordered mb-0 text-center align-middle" style="font-size: 0.75rem;">
+                                            <thead class="table-light"><tr><th>Item Utilizado</th><th>Qtd/Status</th><th width="20px">X</th></tr></thead>
+                                            <tbody id="tabelaItensUsoCalc">
+                                                <tr><td colspan="3" class="text-muted py-1">Nenhum registro.</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div id="painelQuimico" style="display: none;" class="mt-3 border-top pt-3">
                                     <label class="form-label small fw-bold text-warning text-dark px-2 rounded bg-warning bg-opacity-25 w-100 py-1"><i class="bi bi-star-fill"></i> Calculadoras Simultâneas</label>
                                     
                                     <div class="form-check form-switch mb-2">
@@ -207,6 +249,7 @@
                     </div>
 
                     <div class="col-md-8" id="areaTrabalhoCalculadoras">
+                        
                         <div id="bloco_umidade" class="card shadow-sm border-0 mb-4 calculadora-bloco" style="display: block;">
                             <div class="card-header bg-white fw-bold text-dark py-3 d-flex justify-content-between align-items-center border-bottom border-primary border-3">
                                 <span><i class="bi bi-droplet"></i> Cálculo de Umidade do Produto (Snacks)</span>
@@ -244,7 +287,7 @@
                                 </div>
                                 <div class="mt-3 text-end b-acoes-calculo">
                                     <button class="btn btn-outline-primary fw-bold me-2 btn-acao-calculo" onclick="copiarBloco('umidade', 'Umidade do Produto')"><i class="bi bi-clipboard"></i> Copiar</button>
-                                    <button class="btn btn-success fw-bold btn-acao-calculo" id="btnSalvar_umidade" onclick="salvarBloco('umidade', 'Umidade do Produto')"><i class="bi bi-cloud-upload"></i> Enviar p/ Bancada FIFO</button>
+                                    <button class="btn btn-success fw-bold btn-acao-calculo" id="btnSalvar_umidade" onclick="salvarBloco('umidade', 'Umidade do Produto')"><i class="bi bi-save"></i> Salvar Cálculo na Rede</button>
                                 </div>
                             </div>
                         </div>
@@ -289,7 +332,7 @@
                                 </div>
                                 <div class="mt-3 text-end b-acoes-calculo">
                                     <button class="btn btn-outline-primary fw-bold me-2 btn-acao-calculo" onclick="copiarBloco('umidade_palma', 'Umidade (Gordura de Palma)')"><i class="bi bi-clipboard"></i> Copiar</button>
-                                    <button class="btn btn-success fw-bold btn-acao-calculo" id="btnSalvar_umidade_palma" onclick="salvarBloco('umidade_palma', 'Umidade (Gordura de Palma)')"><i class="bi bi-cloud-upload"></i> Enviar p/ Bancada FIFO</button>
+                                    <button class="btn btn-success fw-bold btn-acao-calculo" id="btnSalvar_umidade_palma" onclick="salvarBloco('umidade_palma', 'Umidade (Gordura de Palma)')"><i class="bi bi-save"></i> Salvar Cálculo na Rede</button>
                                 </div>
                             </div>
                         </div>
@@ -337,7 +380,7 @@
                                 </div>
                                 <div class="mt-3 text-end b-acoes-calculo">
                                     <button class="btn btn-outline-primary fw-bold me-2 btn-acao-calculo" onclick="copiarBloco('acidez_aquo', 'Acidez Aquo-Solúvel')"><i class="bi bi-clipboard"></i> Copiar</button>
-                                    <button class="btn btn-warning text-dark fw-bold btn-acao-calculo" id="btnSalvar_acidez_aquo" onclick="salvarBloco('acidez_aquo', 'Acidez Aquo-Solúvel')"><i class="bi bi-cloud-upload"></i> Enviar p/ Bancada FIFO</button>
+                                    <button class="btn btn-warning text-dark fw-bold btn-acao-calculo" id="btnSalvar_acidez_aquo" onclick="salvarBloco('acidez_aquo', 'Acidez Aquo-Solúvel')"><i class="bi bi-save"></i> Salvar Cálculo na Rede</button>
                                 </div>
                             </div>
                         </div>
@@ -385,7 +428,7 @@
                                 </div>
                                 <div class="mt-3 text-end b-acoes-calculo">
                                     <button class="btn btn-outline-primary fw-bold me-2 btn-acao-calculo" onclick="copiarBloco('indice_acidez', 'Índice de Acidez Livre')"><i class="bi bi-clipboard"></i> Copiar</button>
-                                    <button class="btn btn-danger fw-bold btn-acao-calculo" id="btnSalvar_indice_acidez" onclick="salvarBloco('indice_acidez', 'Índice de Acidez Livre')"><i class="bi bi-cloud-upload"></i> Enviar p/ Bancada FIFO</button>
+                                    <button class="btn btn-danger fw-bold btn-acao-calculo" id="btnSalvar_indice_acidez" onclick="salvarBloco('indice_acidez', 'Índice de Acidez Livre')"><i class="bi bi-save"></i> Salvar Cálculo na Rede</button>
                                 </div>
                             </div>
                         </div>
@@ -433,7 +476,7 @@
                                 </div>
                                 <div class="mt-3 text-end b-acoes-calculo">
                                     <button class="btn btn-outline-primary fw-bold me-2 btn-acao-calculo" onclick="copiarBloco('indice_peroxido', 'Índice de Peróxido do Produto')"><i class="bi bi-clipboard"></i> Copiar</button>
-                                    <button class="btn btn-info text-white fw-bold btn-acao-calculo" id="btnSalvar_indice_peroxido" onclick="salvarBloco('indice_peroxido', 'Índice de Peróxido do Produto')"><i class="bi bi-cloud-upload"></i> Enviar p/ Bancada FIFO</button>
+                                    <button class="btn btn-info text-white fw-bold btn-acao-calculo" id="btnSalvar_indice_peroxido" onclick="salvarBloco('indice_peroxido', 'Índice de Peróxido do Produto')"><i class="bi bi-save"></i> Salvar Cálculo na Rede</button>
                                 </div>
                             </div>
                         </div>
@@ -476,7 +519,7 @@
                                 </div>
                                 <div class="mt-3 text-end b-acoes-calculo">
                                     <button class="btn btn-outline-primary fw-bold me-2 btn-acao-calculo" onclick="copiarBloco('impureza', 'Impurezas Insolúveis (Éter Petróleo)')"><i class="bi bi-clipboard"></i> Copiar</button>
-                                    <button class="btn btn-secondary text-white fw-bold btn-acao-calculo" id="btnSalvar_impureza" onclick="salvarBloco('impureza', 'Impurezas Insolúveis (Éter Petróleo)')"><i class="bi bi-cloud-upload"></i> Enviar p/ Bancada FIFO</button>
+                                    <button class="btn btn-secondary text-white fw-bold btn-acao-calculo" id="btnSalvar_impureza" onclick="salvarBloco('impureza', 'Impurezas Insolúveis (Éter Petróleo)')"><i class="bi bi-save"></i> Salvar Cálculo na Rede</button>
                                 </div>
                             </div>
                         </div>
@@ -519,7 +562,7 @@
                                 </div>
                                 <div class="mt-3 text-end b-acoes-calculo">
                                     <button class="btn btn-outline-primary fw-bold me-2 btn-acao-calculo" onclick="copiarBloco('densidade', 'Densidade Relativa a 25°C')"><i class="bi bi-clipboard"></i> Copiar</button>
-                                    <button class="btn btn-dark text-white fw-bold btn-acao-calculo" id="btnSalvar_densidade" onclick="salvarBloco('densidade', 'Densidade Relativa a 25°C')"><i class="bi bi-cloud-upload"></i> Enviar p/ Bancada FIFO</button>
+                                    <button class="btn btn-dark text-white fw-bold btn-acao-calculo" id="btnSalvar_densidade" onclick="salvarBloco('densidade', 'Densidade Relativa a 25°C')"><i class="bi bi-save"></i> Salvar Cálculo na Rede</button>
                                 </div>
                             </div>
                         </div>
@@ -609,6 +652,12 @@
         let isQuimicoOuAdmin = false;
         let globalPerms = {};
 
+        // Arrays Globais de Estoque
+        let itensUsoCalculo = [];
+        let reagentesGlobais = [];
+        let solucoesGlobais = [];
+        let materiaisGlobais = [];
+
         function aplicarTravaTela() {
             const userStr = localStorage.getItem("limsUser");
             if (!userStr) return window.location.href = 'login.html';
@@ -626,7 +675,6 @@
 
             isQuimicoOuAdmin = isAdmin || perfilUser === 'QUIMICO';
 
-            // 1. Bloqueio de Visão de Análise (Para mostrar a tabela completa de calculos extras)
             if (isQuimicoOuAdmin) {
                 document.getElementById("painelQuimico").style.display = "block";
                 document.getElementById("painelAnalistaBasico").style.display = "none";
@@ -635,21 +683,19 @@
                 document.getElementById("painelAnalistaBasico").style.display = "block";
             }
 
-            // 2. Trava de "calc_start": Se for falso, ele não pode digitar nada.
             if (!globalPerms.calc_start) {
                 const styleReg = document.createElement('style');
                 styleReg.innerHTML = ` 
-                    .input-calc, #calcAmostra, .form-floating input { pointer-events: none !important; background-color: #e9ecef !important; color: #6c757d !important; }
-                    .check-analise { pointer-events: none !important; opacity: 0.5; }
+                    .input-calc, #calcAmostra, .form-floating input, #areaInsumosCalc input, #areaInsumosCalc select, #areaInsumosCalc button { pointer-events: none !important; background-color: #e9ecef !important; color: #6c757d !important; }
+                    .check-analise, #chkHabilitarInsumosCalc { pointer-events: none !important; opacity: 0.5; }
+                    button[id^="btnSalvar_"] { display: none !important; }
                 `;
                 document.head.appendChild(styleReg);
             }
 
-            // 3. Trava de "calc_send": Se for falso, ele não pode enviar pra Bancada (Mas pode copiar o resultado)
             if (!globalPerms.calc_send) {
                 const styleReg2 = document.createElement('style');
                 styleReg2.innerHTML = ` 
-                    button[id^="btnSalvar_"] { display: none !important; }
                     #btnEnviarLote { display: none !important; }
                     .chk-envio { display: none !important; }
                 `;
@@ -681,6 +727,7 @@
 
         async function carregarDadosIniciais() {
             try {
+                // 1. Carrega Fila de Amostras
                 const resAm = await fetch(`${API}/amostras`);
                 const todasAmostras = await resAm.json();
                 filaAmostrasGlobais = todasAmostras.filter(a => a.status === 'PENDENTE' || a.status === 'EM ANÁLISE');
@@ -692,6 +739,14 @@
                     const nome = a.produto_nome || a.nome_produto || 'Produto';
                     sel.innerHTML += `<option value="${a.id}" data-codigo="${a.codigo}">${a.codigo} | ${nome} (Lote: ${a.lote})</option>`;
                 });
+
+                // 2. Carrega Estoques para Rastreabilidade
+                try {
+                    const resR = await fetch(`${API}/reagentes`); reagentesGlobais = await resR.json();
+                    const resS = await fetch(`${API}/solucoes`); solucoesGlobais = await resS.json();
+                    const resM = await fetch(`${API}/materiais`); materiaisGlobais = await resM.json();
+                    mudarTipoInsumoUsoCalc();
+                } catch(e) { console.error("Erro ao carregar estoques:", e); }
 
                 restaurarRascunhoLocal();
             } catch(e) { console.error("Erro ao carregar dados:", e); }
@@ -751,6 +806,104 @@
             }
         }
 
+        // ==========================================
+        // 🔥 LÓGICA DE RASTREABILIDADE (GLP) NO CÁLCULO
+        // ==========================================
+        window.toggleInsumosAreaCalc = function() {
+            const isChecked = document.getElementById("chkHabilitarInsumosCalc").checked;
+            document.getElementById("areaInsumosCalc").style.display = isChecked ? "block" : "none";
+            if (!isChecked) {
+                itensUsoCalculo = [];
+                atualizarTabelaItensUsoCalc();
+            }
+        }
+
+        window.mudarTipoInsumoUsoCalc = function() {
+            const tipo = document.getElementById("usoTipoItemCalc").value;
+            const sel = document.getElementById("usoSelectInsumoCalc");
+            const inputQtd = document.getElementById("usoQtdCalc");
+
+            sel.innerHTML = '<option value="">Selecione...</option>';
+
+            if (tipo === 'EQUIPAMENTO') {
+                inputQtd.value = "";
+                inputQtd.disabled = true;
+                inputQtd.placeholder = "-";
+                document.getElementById("usoLabelInsumoCalc").innerText = "Equipamento Utilizado";
+                materiaisGlobais.forEach(m => {
+                    if (m.categoria_uso === 'EQUIPAMENTO') {
+                        sel.innerHTML += `<option value="${m.id}" data-nome="${m.nome}" data-unidade="${m.unidade}">${m.codigo ? m.codigo+' - ' : ''}${m.nome}</option>`;
+                    }
+                });
+            } else {
+                inputQtd.disabled = false;
+                inputQtd.placeholder = "";
+                if (tipo === 'REAGENTE') {
+                    document.getElementById("usoLabelInsumoCalc").innerText = "Reagente do Estoque";
+                    reagentesGlobais.forEach(r => sel.innerHTML += `<option value="${r.id}" data-nome="${r.nome}" data-unidade="${r.unidade || ''}">${r.codigo ? r.codigo+' - ' : ''}${r.nome} (Estq: ${r.quantidade})</option>`);
+                } else if (tipo === 'SOLUCAO') {
+                    document.getElementById("usoLabelInsumoCalc").innerText = "Solução do Estoque";
+                    solucoesGlobais.forEach(s => { if (parseFloat(s.saldo_total || s.salto_total) > 0) sel.innerHTML += `<option value="${s.id}" data-nome="${s.nome}" data-unidade="${s.unidade}">${s.codigo ? s.codigo+' - ' : ''}${s.nome} (Estq: ${s.saldo_total || s.salto_total})</option>`; });
+                } else {
+                    document.getElementById("usoLabelInsumoCalc").innerText = "Material de Consumo";
+                    materiaisGlobais.forEach(m => { 
+                        if (parseFloat(m.quantidade) > 0 && m.categoria_uso !== 'EQUIPAMENTO') { 
+                            sel.innerHTML += `<option value="${m.id}" data-nome="${m.nome}" data-unidade="${m.unidade}">${m.codigo ? m.codigo+' - ' : ''}${m.nome} (Estq: ${m.quantidade})</option>`; 
+                        }
+                    });
+                }
+            }
+        }
+
+        window.adicionarItemUsoCalc = function() {
+            const tipo = document.getElementById("usoTipoItemCalc").value; 
+            const sel = document.getElementById("usoSelectInsumoCalc"); 
+            const qtd = document.getElementById("usoQtdCalc").value;
+
+            if(!sel.value) return alert("Selecione um item ou equipamento.");
+            
+            if(tipo !== 'EQUIPAMENTO' && (!qtd || parseFloat(qtd) <= 0)) {
+                return alert("Informe uma quantidade válida para o consumo.");
+            }
+
+            const qtdFinal = tipo === 'EQUIPAMENTO' ? 0 : parseFloat(qtd);
+
+            itensUsoCalculo.push({ 
+                tipo: tipo, 
+                id: sel.value, 
+                nome_exibicao: sel.options[sel.selectedIndex].getAttribute('data-nome'), 
+                qtd_usada: qtdFinal, 
+                unidade: sel.options[sel.selectedIndex].getAttribute('data-unidade') 
+            });
+            
+            document.getElementById("usoQtdCalc").value = ""; 
+            sel.value = ""; 
+            atualizarTabelaItensUsoCalc();
+            salvarRascunhoLocal();
+        }
+
+        function atualizarTabelaItensUsoCalc() {
+            const tbody = document.getElementById("tabelaItensUsoCalc"); tbody.innerHTML = "";
+            if(itensUsoCalculo.length === 0) { 
+                tbody.innerHTML = `<tr><td colspan='3' class='text-center text-muted py-2'>Nenhum registro.</td></tr>`; 
+                return; 
+            }
+            itensUsoCalculo.forEach((s, index) => {
+                let qtdDisplay = "";
+                if (s.tipo === 'EQUIPAMENTO') {
+                    qtdDisplay = `<span class="text-muted fw-bold">Uso</span>`;
+                } else {
+                    qtdDisplay = `<span class="text-danger fw-bold">-${s.qtd_usada} ${s.unidade}</span>`;
+                }
+
+                tbody.innerHTML += `<tr><td class="text-start fw-bold text-truncate" style="max-width: 140px;" title="${s.nome_exibicao}">${s.nome_exibicao}</td><td>${qtdDisplay}</td><td><i class="bi bi-x-circle text-danger" style="cursor:pointer;" onclick="itensUsoCalculo.splice(${index}, 1); atualizarTabelaItensUsoCalc(); salvarRascunhoLocal();"></i></td></tr>`;
+            });
+        }
+
+
+        // ==========================================
+        // LÓGICA DAS CALCULADORAS (VISIBILIDADE)
+        // ==========================================
         function toggleBlocos() {
             const chkUmidade = document.getElementById("chkOptUmidade").checked;
             const chkUmidadePalma = document.getElementById("chkOptUmidadePalma").checked;
@@ -893,9 +1046,9 @@
             let resultados = []; let soma = 0;
             for (let i = 1; i <= 3; i++) {
                 if (i <= numReps) {
-                    const mv = parseFloat(document.getElementById(`up_mv${i}`).value);   // m vazio
-                    const mai = parseFloat(document.getElementById(`up_mai${i}`).value); // ma i (massa da amostra inserida)
-                    const maf = parseFloat(document.getElementById(`up_maf${i}`).value); // ma f (massa final do conjunto)
+                    const mv = parseFloat(document.getElementById(`up_mv${i}`).value);
+                    const mai = parseFloat(document.getElementById(`up_mai${i}`).value);
+                    const maf = parseFloat(document.getElementById(`up_maf${i}`).value);
                     
                     if (!isNaN(mv) && !isNaN(mai) && !isNaN(maf) && ((mai + mv) - mv) !== 0) {
                         const u = (((mv + mai) - maf) / ((mai + mv) - mv)) * 100;
@@ -1081,6 +1234,7 @@
                     else estado[el.id] = el.value;
                 }
             });
+            estado['itensUsoCalculo'] = JSON.stringify(itensUsoCalculo); // Salva o array de rastreabilidade
             localStorage.setItem('limsCalculoDraft', JSON.stringify(estado));
         }
 
@@ -1091,6 +1245,11 @@
             try {
                 const estado = JSON.parse(draft);
                 for (const [id, value] of Object.entries(estado)) {
+                    if (id === 'itensUsoCalculo') {
+                        itensUsoCalculo = JSON.parse(value);
+                        atualizarTabelaItensUsoCalc();
+                        continue;
+                    }
                     const el = document.getElementById(id);
                     if (el) {
                         if (el.type === 'checkbox') el.checked = value;
@@ -1099,6 +1258,7 @@
                 }
                 
                 toggleBlocos();
+                toggleInsumosAreaCalc();
                 toggleTabelaRepsUmidade();
                 toggleRepsUmidadePalma();
                 toggleRepsAquo();
@@ -1138,6 +1298,9 @@
                 if(elMin) elMin.value = '';
                 if(elMax) elMax.value = '';
             });
+
+            document.getElementById("chkHabilitarInsumosCalc").checked = false;
+            toggleInsumosAreaCalc();
 
             recalcularTodosAtivos(); 
             salvarRascunhoLocal(); 
@@ -1195,6 +1358,14 @@
             
             const resultadoPuro = `${numValue} ${unitValue}`.trim();
             
+            // Injeta a rastreabilidade nos dados brutos para manter o histórico
+            let dbCompleto = coletarDadosBrutos(prefixo);
+            dbCompleto.rastreabilidade = itensUsoCalculo;
+
+            const reagUsados = itensUsoCalculo.filter(i => i.tipo === 'REAGENTE').map(i => ({ reagente_id: i.id, qtd_usada: i.qtd_usada })); 
+            const solUsadas = itensUsoCalculo.filter(i => i.tipo === 'SOLUCAO').map(i => ({ solucao_id: i.id, qtd_usada: i.qtd_usada })); 
+            const matUsados = itensUsoCalculo.filter(i => i.tipo === 'MATERIAL').map(i => ({ material_id: i.id, qtd_usada: i.qtd_usada })); 
+
             const payload = { 
                 data: dataStr, 
                 codigo_amostra: codAmostra, 
@@ -1203,7 +1374,11 @@
                 analises: nomeAnalise, 
                 resultado: resultadoPuro, 
                 status: status,
-                dados_brutos: JSON.stringify(coletarDadosBrutos(prefixo)) 
+                dados_brutos: JSON.stringify(dbCompleto),
+                // Se a API for preparada no futuro para receber e descontar, já envia no payload padrão
+                reagentes_usados: reagUsados,
+                solucoes_usadas: solUsadas,
+                materiais_usados: matUsados
             };
 
             const btn = document.getElementById(`btnSalvar_${prefixo}`);
@@ -1213,7 +1388,7 @@
             try {
                 const res = await fetch(`${API}/analises/calculos/historico`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
                 if(res.ok) {
-                    alert(`✅ Cálculo de ${nomeAnalise} SALVO com sucesso!`);
+                    alert(`✅ Cálculo de ${nomeAnalise} SALVO com sucesso na Base de Dados!`);
                     renderizarHistorico();
                     btn.classList.replace('btn-success', 'btn-outline-success');
                     btn.classList.replace('btn-warning', 'btn-outline-warning');
@@ -1314,7 +1489,6 @@
 
                 const amostraAtiva = filaAmostrasGlobais.find(a => a.codigo === h.codigo_amostra);
                 
-                // Trava Master do Lote: Só permite checkbox se tiver permissão e a amostra estiver ativa
                 const podeEnviarEmLote = globalPerms.calc_send && amostraAtiva && !h.enviado_bancada && h.codigo_amostra !== 'N/A' && h.codigo_amostra !== '-';
 
                 const checkboxLote = podeEnviarEmLote 
@@ -1398,7 +1572,6 @@
             let btnEnviarHTML = "";
             const amostraAtiva = filaAmostrasGlobais.find(a => a.codigo === h.codigo_amostra);
             
-            // Só exibe o botão de enviar se a pessoa tiver a chave calc_send
             if (globalPerms.calc_send && amostraAtiva && !h.enviado_bancada && h.codigo_amostra && h.codigo_amostra !== "N/A" && h.codigo_amostra !== "-") {
                 btnEnviarHTML = `<button class="btn btn-success fw-bold shadow-sm" onclick="enviarParaBancada(${h.id}, '${h.codigo_amostra}', '${h.analise}')"><i class="bi bi-send-check"></i> Enviar Resultado para a Bancada</button>`;
             } else if (h.enviado_bancada) {
@@ -1433,56 +1606,75 @@
                     const db = typeof h.dados_brutos === 'string' ? JSON.parse(h.dados_brutos) : h.dados_brutos;
                     
                     html += `<h6 class="fw-bold mt-4"><i class="bi bi-file-earmark-bar-graph"></i> Tabela de Auditoria (Dados Brutos)</h6>`;
-                    html += `<table class="table table-sm table-bordered mt-2"><tbody>`;
+                    html += `<table class="table table-sm table-bordered mt-2 text-center align-middle"><tbody>`;
 
                     const analise = h.analise.toLowerCase();
 
                     if (analise.includes('umidade gordura') || analise.includes('palma')) {
-                        if(db.up_mai1) html += `<tr><td class="bg-light w-25"><strong>Réplica 1:</strong></td><td>Massa Vazio (mv): ${db.up_mv1} g <br> Massa Inicial (mai): ${db.up_mai1} g <br> Massa Final (maf): ${db.up_maf1} g</td></tr>`;
-                        if(db.up_mai2) html += `<tr><td class="bg-light"><strong>Réplica 2:</strong></td><td>Massa Vazio (mv): ${db.up_mv2} g <br> Massa Inicial (mai): ${db.up_mai2} g <br> Massa Final (maf): ${db.up_maf2} g</td></tr>`;
-                        if(db.up_mai3) html += `<tr><td class="bg-light"><strong>Réplica 3:</strong></td><td>Massa Vazio (mv): ${db.up_mv3} g <br> Massa Inicial (mai): ${db.up_mai3} g <br> Massa Final (maf): ${db.up_maf3} g</td></tr>`;
+                        if(db.up_mai1) html += `<tr><td class="bg-light w-25 fw-bold">Réplica 1</td><td>Massa Vazio (mv): ${db.up_mv1} g <br> Massa Inicial (mai): ${db.up_mai1} g <br> Massa Final (maf): ${db.up_maf1} g</td></tr>`;
+                        if(db.up_mai2) html += `<tr><td class="bg-light fw-bold">Réplica 2</td><td>Massa Vazio (mv): ${db.up_mv2} g <br> Massa Inicial (mai): ${db.up_mai2} g <br> Massa Final (maf): ${db.up_maf2} g</td></tr>`;
+                        if(db.up_mai3) html += `<tr><td class="bg-light fw-bold">Réplica 3</td><td>Massa Vazio (mv): ${db.up_mv3} g <br> Massa Inicial (mai): ${db.up_mai3} g <br> Massa Final (maf): ${db.up_maf3} g</td></tr>`;
                     }
                     else if (analise.includes('umidade') || analise.includes('secagem')) {
-                        html += `<tr><td class="bg-light w-50"><strong>Nº de Réplicas (Cadinhos):</strong></td><td>${db.qtdReplicatas || '-'}</td></tr>`;
-                        if(db.r1_a) html += `<tr><td class="bg-light"><strong>Réplica 1:</strong></td><td>Massa Inicial: ${db.r1_a} g <br> Massa Final: ${db.r1_b} g</td></tr>`;
-                        if(db.r2_a) html += `<tr><td class="bg-light"><strong>Réplica 2:</strong></td><td>Massa Inicial: ${db.r2_a} g <br> Massa Final: ${db.r2_b} g</td></tr>`;
-                        if(db.r3_a) html += `<tr><td class="bg-light"><strong>Réplica 3:</strong></td><td>Massa Inicial: ${db.r3_a} g <br> Massa Final: ${db.r3_b} g</td></tr>`;
-                        if(db.r4_a) html += `<tr><td class="bg-light"><strong>Réplica 4:</strong></td><td>Massa Inicial: ${db.r4_a} g <br> Massa Final: ${db.r4_b} g</td></tr>`;
+                        html += `<tr><td class="bg-light w-50 fw-bold">Nº de Réplicas (Cadinhos)</td><td>${db.qtdReplicatas || '-'}</td></tr>`;
+                        if(db.r1_a) html += `<tr><td class="bg-light fw-bold">Réplica 1</td><td>Massa Inicial: ${db.r1_a} g <br> Massa Final: ${db.r1_b} g</td></tr>`;
+                        if(db.r2_a) html += `<tr><td class="bg-light fw-bold">Réplica 2</td><td>Massa Inicial: ${db.r2_a} g <br> Massa Final: ${db.r2_b} g</td></tr>`;
+                        if(db.r3_a) html += `<tr><td class="bg-light fw-bold">Réplica 3</td><td>Massa Inicial: ${db.r3_a} g <br> Massa Final: ${db.r3_b} g</td></tr>`;
+                        if(db.r4_a) html += `<tr><td class="bg-light fw-bold">Réplica 4</td><td>Massa Inicial: ${db.r4_a} g <br> Massa Final: ${db.r4_b} g</td></tr>`;
                     } 
                     else if (analise.includes('aquo') || analise.includes('solúvel')) {
-                        html += `<tr><td class="bg-light w-50"><strong>Constantes Fixas:</strong></td><td>Branco (vb): ${db.aq_vb} mL <br> Concentração (c): ${db.aq_c} <br> Fator (fc): ${db.aq_fc}</td></tr>`;
-                        if(db.aq_m1) html += `<tr><td class="bg-light"><strong>Réplica 1:</strong></td><td>Massa: ${db.aq_m1} g <br> Vol Gasto: ${db.aq_v1} mL</td></tr>`;
-                        if(db.aq_m2) html += `<tr><td class="bg-light"><strong>Réplica 2:</strong></td><td>Massa: ${db.aq_m2} g <br> Vol Gasto: ${db.aq_v2} mL</td></tr>`;
-                        if(db.aq_m3) html += `<tr><td class="bg-light"><strong>Réplica 3:</strong></td><td>Massa: ${db.aq_m3} g <br> Vol Gasto: ${db.aq_v3} mL</td></tr>`;
+                        html += `<tr><td class="bg-light w-50 fw-bold">Constantes Fixas</td><td>Branco (vb): ${db.aq_vb} mL <br> Concentração (c): ${db.aq_c} <br> Fator (fc): ${db.aq_fc}</td></tr>`;
+                        if(db.aq_m1) html += `<tr><td class="bg-light fw-bold">Réplica 1</td><td>Massa: ${db.aq_m1} g <br> Vol Gasto: ${db.aq_v1} mL</td></tr>`;
+                        if(db.aq_m2) html += `<tr><td class="bg-light fw-bold">Réplica 2</td><td>Massa: ${db.aq_m2} g <br> Vol Gasto: ${db.aq_v2} mL</td></tr>`;
+                        if(db.aq_m3) html += `<tr><td class="bg-light fw-bold">Réplica 3</td><td>Massa: ${db.aq_m3} g <br> Vol Gasto: ${db.aq_v3} mL</td></tr>`;
                     }
                     else if (analise.includes('índice de acidez') || analise.includes('acidez livre')) {
-                        html += `<tr><td class="bg-light w-50"><strong>Constantes Fixas:</strong></td><td>Branco (vb): ${db.ia_vb} mL <br> Concentração (c): ${db.ia_c} <br> Fator (fc): ${db.ia_fc}</td></tr>`;
-                        if(db.ia_m1) html += `<tr><td class="bg-light"><strong>Réplica 1:</strong></td><td>Massa: ${db.ia_m1} g <br> Vol Gasto: ${db.ia_v1} mL</td></tr>`;
-                        if(db.ia_m2) html += `<tr><td class="bg-light"><strong>Réplica 2:</strong></td><td>Massa: ${db.ia_m2} g <br> Vol Gasto: ${db.ia_v2} mL</td></tr>`;
-                        if(db.ia_m3) html += `<tr><td class="bg-light"><strong>Réplica 3:</strong></td><td>Massa: ${db.ia_m3} g <br> Vol Gasto: ${db.ia_v3} mL</td></tr>`;
+                        html += `<tr><td class="bg-light w-50 fw-bold">Constantes Fixas</td><td>Branco (vb): ${db.ia_vb} mL <br> Concentração (c): ${db.ia_c} <br> Fator (fc): ${db.ia_fc}</td></tr>`;
+                        if(db.ia_m1) html += `<tr><td class="bg-light fw-bold">Réplica 1</td><td>Massa: ${db.ia_m1} g <br> Vol Gasto: ${db.ia_v1} mL</td></tr>`;
+                        if(db.ia_m2) html += `<tr><td class="bg-light fw-bold">Réplica 2</td><td>Massa: ${db.ia_m2} g <br> Vol Gasto: ${db.ia_v2} mL</td></tr>`;
+                        if(db.ia_m3) html += `<tr><td class="bg-light fw-bold">Réplica 3</td><td>Massa: ${db.ia_m3} g <br> Vol Gasto: ${db.ia_v3} mL</td></tr>`;
                     }
                     else if (analise.includes('peróxido')) {
-                        html += `<tr><td class="bg-light w-50"><strong>Constantes Fixas:</strong></td><td>Branco (vb): ${db.ip_vb} mL <br> Concentração (c): ${db.ip_c} <br> Fator (fc): ${db.ip_fc}</td></tr>`;
-                        if(db.ip_m1) html += `<tr><td class="bg-light"><strong>Réplica 1:</strong></td><td>Massa: ${db.ip_m1} g <br> Vol Gasto: ${db.ip_v1} mL</td></tr>`;
-                        if(db.ip_m2) html += `<tr><td class="bg-light"><strong>Réplica 2:</strong></td><td>Massa: ${db.ip_m2} g <br> Vol Gasto: ${db.ip_v2} mL</td></tr>`;
-                        if(db.ip_m3) html += `<tr><td class="bg-light"><strong>Réplica 3:</strong></td><td>Massa: ${db.ip_m3} g <br> Vol Gasto: ${db.ip_v3} mL</td></tr>`;
+                        html += `<tr><td class="bg-light w-50 fw-bold">Constantes Fixas</td><td>Branco (vb): ${db.ip_vb} mL <br> Concentração (c): ${db.ip_c} <br> Fator (fc): ${db.ip_fc}</td></tr>`;
+                        if(db.ip_m1) html += `<tr><td class="bg-light fw-bold">Réplica 1</td><td>Massa: ${db.ip_m1} g <br> Vol Gasto: ${db.ip_v1} mL</td></tr>`;
+                        if(db.ip_m2) html += `<tr><td class="bg-light fw-bold">Réplica 2</td><td>Massa: ${db.ip_m2} g <br> Vol Gasto: ${db.ip_v2} mL</td></tr>`;
+                        if(db.ip_m3) html += `<tr><td class="bg-light fw-bold">Réplica 3</td><td>Massa: ${db.ip_m3} g <br> Vol Gasto: ${db.ip_v3} mL</td></tr>`;
                     }
                     else if (analise.includes('impureza')) {
-                        if(db.im_m1) html += `<tr><td class="bg-light w-25"><strong>Réplica 1:</strong></td><td>Massa Inicial (m): ${db.im_m1} g <br> Massa Vazio (mv): ${db.im_mv1} g <br> Massa Final (mf): ${db.im_mf1} g</td></tr>`;
-                        if(db.im_m2) html += `<tr><td class="bg-light"><strong>Réplica 2:</strong></td><td>Massa Inicial (m): ${db.im_m2} g <br> Massa Vazio (mv): ${db.im_mv2} g <br> Massa Final (mf): ${db.im_mf2} g</td></tr>`;
-                        if(db.im_m3) html += `<tr><td class="bg-light"><strong>Réplica 3:</strong></td><td>Massa Inicial (m): ${db.im_m3} g <br> Massa Vazio (mv): ${db.im_mv3} g <br> Massa Final (mf): ${db.im_mf3} g</td></tr>`;
+                        if(db.im_m1) html += `<tr><td class="bg-light w-25 fw-bold">Réplica 1</td><td>Massa Inicial (m): ${db.im_m1} g <br> Massa Vazio (mv): ${db.im_mv1} g <br> Massa Final (mf): ${db.im_mf1} g</td></tr>`;
+                        if(db.im_m2) html += `<tr><td class="bg-light fw-bold">Réplica 2</td><td>Massa Inicial (m): ${db.im_m2} g <br> Massa Vazio (mv): ${db.im_mv2} g <br> Massa Final (mf): ${db.im_mf2} g</td></tr>`;
+                        if(db.im_m3) html += `<tr><td class="bg-light fw-bold">Réplica 3</td><td>Massa Inicial (m): ${db.im_m3} g <br> Massa Vazio (mv): ${db.im_mv3} g <br> Massa Final (mf): ${db.im_mf3} g</td></tr>`;
                     }
                     else if (analise.includes('densidade')) {
-                        if(db.den_mpv1) html += `<tr><td class="bg-light w-25"><strong>Réplica 1:</strong></td><td>Pic Vazio (mpv): ${db.den_mpv1} g <br> Pic+H2O (mph2o): ${db.den_mph2o1} g <br> Pic+Amostra (mpa): ${db.den_mpa1} g</td></tr>`;
-                        if(db.den_mpv2) html += `<tr><td class="bg-light"><strong>Réplica 2:</strong></td><td>Pic Vazio (mpv): ${db.den_mpv2} g <br> Pic+H2O (mph2o): ${db.den_mph2o2} g <br> Pic+Amostra (mpa): ${db.den_mpa2} g</td></tr>`;
-                        if(db.den_mpv3) html += `<tr><td class="bg-light"><strong>Réplica 3:</strong></td><td>Pic Vazio (mpv): ${db.den_mpv3} g <br> Pic+H2O (mph2o): ${db.den_mph2o3} g <br> Pic+Amostra (mpa): ${db.den_mpa3} g</td></tr>`;
+                        if(db.den_mpv1) html += `<tr><td class="bg-light w-25 fw-bold">Réplica 1</td><td>Pic Vazio (mpv): ${db.den_mpv1} g <br> Pic+H2O (mph2o): ${db.den_mph2o1} g <br> Pic+Amostra (mpa): ${db.den_mpa1} g</td></tr>`;
+                        if(db.den_mpv2) html += `<tr><td class="bg-light fw-bold">Réplica 2</td><td>Pic Vazio (mpv): ${db.den_mpv2} g <br> Pic+H2O (mph2o): ${db.den_mph2o2} g <br> Pic+Amostra (mpa): ${db.den_mpa2} g</td></tr>`;
+                        if(db.den_mpv3) html += `<tr><td class="bg-light fw-bold">Réplica 3</td><td>Pic Vazio (mpv): ${db.den_mpv3} g <br> Pic+H2O (mph2o): ${db.den_mph2o3} g <br> Pic+Amostra (mpa): ${db.den_mpa3} g</td></tr>`;
                     } else {
                         for (let key in db) {
-                            html += `<tr><td class="bg-light"><strong>${key}</strong></td><td>${db[key]}</td></tr>`;
+                            if(key !== "rastreabilidade") {
+                                html += `<tr><td class="bg-light fw-bold">${key}</td><td>${db[key]}</td></tr>`;
+                            }
                         }
                     }
-
                     html += `</tbody></table>`;
+
+                    // 🔥 Adiciona a Tabela de Rastreabilidade se houver insumos gravados
+                    if (db.rastreabilidade && Array.isArray(db.rastreabilidade) && db.rastreabilidade.length > 0) {
+                        html += `<h6 class="fw-bold mt-4"><i class="bi bi-eyedropper"></i> Rastreabilidade e Insumos Consumidos</h6>`;
+                        html += `<table class="table table-sm table-bordered mt-2 text-center align-middle">
+                                    <thead class="table-light"><tr><th>Tipo</th><th class="text-start">Item</th><th>Quantidade</th></tr></thead><tbody>`;
+                        db.rastreabilidade.forEach(item => {
+                            let badge = "";
+                            let qtdText = "";
+                            if(item.tipo === 'EQUIPAMENTO') { badge = "Equipamento"; qtdText = "Uso em Bancada"; }
+                            else if(item.tipo === 'REAGENTE') { badge = "Reagente"; qtdText = `-${item.qtd_usada} ${item.unidade}`; }
+                            else if(item.tipo === 'SOLUCAO') { badge = "Solução"; qtdText = `-${item.qtd_usada} ${item.unidade}`; }
+                            else { badge = "Mat. Consumo"; qtdText = `-${item.qtd_usada} ${item.unidade}`; }
+                            html += `<tr><td><span class="badge bg-secondary">${badge}</span></td><td class="fw-bold text-dark text-start">${item.nome_exibicao}</td><td class="text-danger fw-bold">${qtdText}</td></tr>`;
+                        });
+                        html += `</tbody></table>`;
+                    }
+
                 } catch (e) {
                     html += `<div class="alert alert-danger border-0">Erro ao descodificar os dados brutos deste cálculo.</div>`;
                 }

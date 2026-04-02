@@ -2,7 +2,10 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../db");
 
+// ==========================================
+// ROTA 1: ESTATÍSTICAS GERAIS DO DASHBOARD
 // A Rota atende: /api/dashboard/estatisticas
+// ==========================================
 router.get("/estatisticas", async (req, res) => {
     try {
         // 🔥 LÓGICA DO FILTRO DE PRODUTOS
@@ -64,7 +67,7 @@ router.get("/estatisticas", async (req, res) => {
         `);
         const reagentesAlerta = parseInt(reagentesRes.rows[0].count);
 
-        // 🔥 NOVO: Materiais em Alerta (Estático, não usa filtro de produto)
+        // Materiais em Alerta (Estático, não usa filtro de produto)
         const materiaisRes = await pool.query(`
             SELECT COUNT(*) FROM materiais 
             WHERE quantidade <= COALESCE(estoque_minimo, 0)
@@ -134,7 +137,7 @@ router.get("/estatisticas", async (req, res) => {
                 laudos_mes: laudosMes,       
                 amostras_fila: amostrasFila, 
                 reagentes_alerta: reagentesAlerta,
-                materiais_alerta: materiaisAlerta // 🔥 ENVIANDO O NOVO DADO
+                materiais_alerta: materiaisAlerta 
             },
             desempenho_produtos: grafProdutosRes.rows,
             tendencia_mensal: grafTendenciaRes.rows
@@ -143,6 +146,39 @@ router.get("/estatisticas", async (req, res) => {
     } catch (err) {
         console.error("Erro ao gerar estatísticas do Dashboard:", err);
         res.status(500).json({ error: "Erro interno no servidor" });
+    }
+});
+
+// ==========================================
+// 🔥 ROTA 2: DADOS OTIMIZADOS DO GRÁFICO DE ÁGUA
+// A Rota atende: /api/dashboard/agua
+// ==========================================
+router.get("/agua", async (req, res) => {
+    try {
+        // Puxa apenas as colunas vitais para o gráfico, ignorando "observacoes", "cor", "odor" etc.
+        const query = `
+            SELECT 
+                id,
+                ponto_coleta, 
+                data_coleta, 
+                data_registro, 
+                ph, 
+                cloro, 
+                dureza, 
+                condutividade, 
+                tds, 
+                acidez, 
+                residuo_evaporacao
+            FROM monitoramento_agua
+            ORDER BY COALESCE(data_coleta, data_registro) ASC
+        `;
+        
+        const result = await pool.query(query);
+        res.json(result.rows);
+
+    } catch (err) {
+        console.error("Erro ao puxar dados da Água para o Dashboard:", err);
+        res.status(500).json({ error: "Erro ao carregar dados da água" });
     }
 });
 

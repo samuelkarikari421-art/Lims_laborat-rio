@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Laudos ETE - LIMS Kari Kari</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body>
+
+    <nav class="sidebar">
+        <button id="btnToggle" class="btn-toggle-sidebar"><i class="bi bi-list"></i></button>
+        
+        <div class="sidebar-header">
+            <img src="assets/img/logo.png" alt="Logo Kari Kari" class="sidebar-logo">
+            <div class="brand-subtitle">Lab KariKari LIMS</div>
+        </div>
+
+        <div class="sidebar-menu">
+            <a href="#submenuLab" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-flask"></i> <span class="menu-text fw-bold">Laboratório</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse show" id="submenuLab">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <div class="sidebar-label mt-2 mb-1" style="font-size: 0.7rem;">Controle de Qualidade</div>
+                    <a href="dashboard.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                    <a href="amostras.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box-seam me-2"></i>Amostras</a>
+                    
+                    <a href="#submenuAnalises" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center py-1" style="font-size: 0.85rem;">
+                        <span><i class="bi bi-clipboard-data me-2"></i>Análises</span>
+                        <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
+                    </a>
+                    <div class="collapse" id="submenuAnalises">
+                        <div class="ps-3 ms-2 border-start border-secondary my-1">
+                            <a href="analises.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Bancada FIFO</a>
+                            <a href="calculos.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Cálculos</a>
+                            <a href="investigacao.html" class="nav-link py-1 text-muted" style="font-size: 0.8rem;">Investigação</a>
+                        </div>
+                    </div>
+
+                    <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
+                    <a href="monitoramento_agua.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="monitoramento_tpm.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-fire text-warning me-2"></i>Controle TPM</a>
+                    <a href="monitoramento_clima.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-thermometer-sun text-danger me-2"></i>Clima (Temp/Umid)</a>
+                    <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
+                    <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
+                    <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    
+                    <a href="laudos_ete.html" class="nav-link active py-1" style="font-size: 0.85rem;"><i class="bi bi-water text-primary me-2"></i>Laudos ETE</a>
+                    
+                    <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
+                    <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
+                    <a href="relatorios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up me-2"></i>Relatórios</a>
+                    <a href="produtos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-tags me-2"></i>Produtos</a>
+                    <a href="ponto.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-clock-history me-2"></i>Ponto</a>
+                    <a href="usuarios.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-people me-2"></i>Usuários</a>
+                </div>
+            </div>
+
+            <a href="#submenuPD" data-bs-toggle="collapse" class="nav-link d-flex justify-content-between align-items-center mt-2">
+                <span><i class="bi bi-lightbulb"></i> <span class="menu-text fw-bold">P&D</span></span>
+                <i class="bi bi-chevron-down" style="font-size: 0.8rem;"></i>
+            </a>
+            <div class="collapse" id="submenuPD">
+                <div class="ps-3 ms-2 border-start border-secondary my-1">
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-tools me-2"></i>Projetos</a>
+                    <a href="#" class="nav-link py-1 text-muted" style="font-size: 0.85rem;"><i class="bi bi-journal-text me-2"></i>Fórmulas</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="sidebar-footer"><button onclick="window.location.href='login.html'" class="btn-logout"><i class="bi bi-box-arrow-left me-2"></i> <span>Sair</span></button></div>
+    </nav>
+
+    <div class="main-content">
+        <h2 class="fw-bold mb-4"><i class="bi bi-water text-primary"></i> Gestão de Laudos ETE</h2>
+
+        <div class="d-flex justify-content-end mb-3">
+            <button class="btn btn-primary shadow-sm fw-bold px-4" id="btnNovoLaudo" onclick="abrirModalNovo()">
+                <i class="bi bi-plus-lg"></i> Novo Registro ETE
+            </button>
+        </div>
+
+        <div class="row mb-4 bg-white p-3 rounded shadow-sm border-0 mx-0 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label fw-bold text-muted small mb-1">Buscar Laudo</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                    <input type="text" id="buscaLaudo" class="form-control border-start-0" placeholder="Nº do Laudo, Laboratório ou Ponto..." oninput="filtrarTabela()">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold text-muted small mb-1">Status</label>
+                <select id="filtroStatus" class="form-select" onchange="filtrarTabela()">
+                    <option value="">Todos</option>
+                    <option value="CONFORME">Conforme</option>
+                    <option value="NAO_CONFORME">Não Conforme</option>
+                    <option value="AGUARDANDO">Aguardando Resultado</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold text-muted small mb-1">Período (Mês da Coleta)</label>
+                <input type="month" id="filtroMes" class="form-control" onchange="filtrarTabela()">
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0" style="overflow-x: auto;">
+                <table class="table table-hover align-middle mb-0" style="min-width: 900px;">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Data Coleta</th>
+                            <th>Nº do Laudo</th>
+                            <th>Ponto de Coleta</th>
+                            <th>Laboratório Externo</th>
+                            <th>Status</th>
+                            <th class="text-center">Anexo (PDF)</th>
+                            <th class="text-center pe-4 col-acoes">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaLaudos"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalLaudo" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold" id="modalTitle"><i class="bi bi-water"></i> Novo Laudo ETE</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formLaudo">
+                        <input type="hidden" id="ete_id">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted">DATA DA COLETA *</label>
+                                <input type="date" id="ete_data_coleta" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted">Nº DO LAUDO</label>
+                                <input type="text" id="ete_numero" class="form-control" placeholder="Ex: L-2026/001">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted">STATUS *</label>
+                                <select id="ete_status" class="form-select fw-bold" required>
+                                    <option value="AGUARDANDO">Aguardando Resultado</option>
+                                    <option value="CONFORME" class="text-success">Conforme</option>
+                                    <option value="NAO_CONFORME" class="text-danger">Não Conforme</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">PONTO DE COLETA *</label>
+                                <input type="text" id="ete_ponto" class="form-control" placeholder="Ex: Saída Efluente Final, Lagoa 1..." required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">LABORATÓRIO RESPONSÁVEL</label>
+                                <input type="text" id="ete_laboratorio" class="form-control" placeholder="Nome do laboratório terceirizado">
+                            </div>
+
+                            <div class="col-md-12 mt-3">
+                                <label class="form-label small fw-bold text-muted">ANEXAR LAUDO (PDF)</label>
+                                <input type="file" id="ete_arquivo" class="form-control" accept=".pdf, .jpg, .jpeg, .png">
+                                <small class="text-muted">Se já estiver salvo na rede, deixe em branco ou adicione o link nas observações.</small>
+                            </div>
+
+                            <div class="col-12 mt-3">
+                                <label class="form-label small fw-bold text-muted">OBSERVAÇÕES / PARÂMETROS ALTERADOS</label>
+                                <textarea id="ete_observacoes" class="form-control" rows="2" placeholder="Ex: DBO levemente acima, reanálise solicitada..."></textarea>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mt-4 pt-3 border-top">
+                            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm" id="btnSalvarLaudo">Gravar Laudo</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/sidebar.js"></script>
+    
+    <script>
+        const API = window.location.origin + "/api";
+        let listaLaudos = [];
+        let modalObj;
+        let globalPerms = {};
+
+        function normalizarData(dataString) {
+            if (!dataString) return null;
+            if (dataString.includes('/')) {
+                const [data] = dataString.split(' ');
+                const [d, m, a] = data.split('/');
+                return { ano: a, mes: m, dia: d };
+            }
+            if (dataString.includes('-')) {
+                const [data] = dataString.split('T');
+                const [a, m, d] = data.split('-');
+                return { ano: a, mes: m, dia: d };
+            }
+            return null;
+        }
+
+        function formatarDataBR(dataString) {
+            const n = normalizarData(dataString);
+            return n ? `${n.dia}/${n.mes}/${n.ano}` : '-';
+        }
+
+        function aplicarTravaTela() {
+            const userStr = localStorage.getItem("limsUser");
+            if (!userStr) return;
+            const user = JSON.parse(userStr);
+            const perfilUser = String(user.perfil || "").toUpperCase().trim();
+            const isAdmin = (perfilUser === 'ADMIN' || perfilUser === 'ADMINISTRADOR');
+            
+            globalPerms = user.permissoes || {};
+            
+            if (isAdmin) {
+                globalPerms.ete_reg = true;
+                globalPerms.ete_edit = true;
+                globalPerms.ete_del = true;
+            }
+
+            if (!globalPerms.ete_reg) {
+                const btnNovo = document.getElementById("btnNovoLaudo");
+                if (btnNovo) btnNovo.style.display = 'none';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            aplicarTravaTela();
+            modalObj = new bootstrap.Modal(document.getElementById('modalLaudo'));
+            carregarLaudos();
+        });
+
+        async function carregarLaudos() {
+            try {
+                const res = await fetch(`${API}/laudos-ete`);
+                if(res.ok) {
+                    listaLaudos = await res.json();
+                } else {
+                    listaLaudos = [];
+                }
+                filtrarTabela();
+            } catch (e) { 
+                console.error("Erro ao carregar laudos ETE:", e); 
+            }
+        }
+
+        function filtrarTabela() {
+            const termo = document.getElementById("buscaLaudo").value.toLowerCase();
+            const filtroStatus = document.getElementById("filtroStatus").value;
+            const filtroMes = document.getElementById("filtroMes").value; 
+
+            const filtrados = listaLaudos.filter(l => {
+                const texto = `${l.numero || ''} ${l.ponto || ''} ${l.laboratorio || ''}`.toLowerCase();
+                const matchTexto = texto.includes(termo);
+                
+                const matchStatus = filtroStatus === "" || l.status === filtroStatus;
+
+                let matchMes = true;
+                if (filtroMes) {
+                    const nData = normalizarData(l.data_coleta);
+                    if (nData) {
+                        const mesAnoStr = `${nData.ano}-${nData.mes}`;
+                        matchMes = mesAnoStr === filtroMes;
+                    } else {
+                        matchMes = false;
+                    }
+                }
+
+                return matchTexto && matchStatus && matchMes;
+            });
+
+            renderizarTabela(filtrados);
+        }
+
+        function renderizarTabela(lista) {
+            const tbody = document.getElementById("tabelaLaudos");
+            tbody.innerHTML = "";
+
+            const thAcoes = document.querySelector(".col-acoes");
+            if (!globalPerms.ete_edit && !globalPerms.ete_del) {
+                if(thAcoes) thAcoes.style.display = 'none';
+            } else {
+                if(thAcoes) thAcoes.style.display = 'table-cell';
+            }
+
+            if(lista.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='7' class='text-center py-4 text-muted'>Nenhum laudo ETE encontrado.</td></tr>";
+                return;
+            }
+
+            lista.forEach(l => {
+                let statusBadge = "";
+                if(l.status === 'CONFORME') statusBadge = '<span class="badge bg-success">Conforme</span>';
+                else if(l.status === 'NAO_CONFORME') statusBadge = '<span class="badge bg-danger">Não Conforme</span>';
+                else statusBadge = '<span class="badge bg-warning text-dark">Aguardando</span>';
+
+                // 🔥 Nova lógica de botão de download via Base64
+                const nomeArquivoDownload = l.numero ? `Laudo_${l.numero.replace(/\//g, '-')}.pdf` : `Laudo_ETE_${l.id}.pdf`;
+                let anexoHtml = (l.arquivo_base64 && l.arquivo_base64 !== 'null')
+                    ? `<button class="btn btn-sm btn-outline-danger" onclick="downloadLaudo('${l.arquivo_base64}', '${nomeArquivoDownload}')" title="Baixar PDF"><i class="bi bi-file-earmark-pdf-fill"></i> PDF</button>` 
+                    : '<span class="text-muted small">Sem anexo</span>';
+
+                let botoesAcao = '';
+                if(globalPerms.ete_edit) {
+                    botoesAcao += `<button class="btn btn-sm btn-outline-primary shadow-sm" onclick="abrirEdicao(${l.id})" title="Editar"><i class="bi bi-pencil-square"></i></button>`;
+                }
+                if(globalPerms.ete_del) {
+                    botoesAcao += `<button class="btn btn-sm btn-light border text-danger shadow-sm ms-2" onclick="excluirLaudo(${l.id})" title="Excluir"><i class="bi bi-trash"></i></button>`;
+                }
+
+                let tdAcoes = botoesAcao !== '' ? `<td class="text-center pe-4 text-nowrap col-acoes">${botoesAcao}</td>` : '';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="ps-4 fw-bold text-dark">${formatarDataBR(l.data_coleta)}</td>
+                        <td class="fw-bold text-primary">${l.numero || '-'}</td>
+                        <td>${l.ponto || '-'}</td>
+                        <td class="text-muted">${l.laboratorio || 'Interno'}</td>
+                        <td>${statusBadge}</td>
+                        <td class="text-center">${anexoHtml}</td>
+                        ${tdAcoes}
+                    </tr>
+                `;
+            });
+        }
+
+        // Função para forçar o download do Base64
+        window.downloadLaudo = function(base64, nome) {
+            if(!base64 || base64 === 'null') return alert("Arquivo corrompido ou não encontrado.");
+            const link = document.createElement("a");
+            link.href = base64;
+            link.download = nome;
+            document.body.appendChild(link); 
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function abrirModalNovo() {
+            document.getElementById("formLaudo").reset();
+            document.getElementById("ete_id").value = "";
+            document.getElementById("modalTitle").innerHTML = '<i class="bi bi-water"></i> Novo Laudo ETE';
+            modalObj.show();
+        }
+
+        function abrirEdicao(id) {
+            const l = listaLaudos.find(x => x.id === id);
+            if (!l) return;
+
+            document.getElementById("formLaudo").reset();
+            document.getElementById("ete_id").value = l.id;
+            document.getElementById("modalTitle").innerHTML = '<i class="bi bi-pencil-square"></i> Editar Laudo ETE';
+
+            document.getElementById("ete_data_coleta").value = l.data_coleta ? String(l.data_coleta).split('T')[0] : "";
+            document.getElementById("ete_numero").value = l.numero || "";
+            document.getElementById("ete_status").value = l.status || "AGUARDANDO";
+            document.getElementById("ete_ponto").value = l.ponto || "";
+            document.getElementById("ete_laboratorio").value = l.laboratorio || "";
+            document.getElementById("ete_observacoes").value = l.observacoes || "";
+
+            modalObj.show();
+        }
+
+        // 🔥 Conversor para Base64
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        document.getElementById("formLaudo").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("btnSalvarLaudo");
+            const btnTextoOriginal = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> A gravar...';
+            btn.disabled = true;
+
+            const idEdicao = document.getElementById("ete_id").value;
+            const arquivoInput = document.getElementById("ete_arquivo");
+            
+            let arquivoBase64 = null;
+
+            if (arquivoInput.files.length > 0) {
+                const file = arquivoInput.files[0];
+                if(file.size > 5 * 1024 * 1024) {
+                    btn.innerHTML = btnTextoOriginal; btn.disabled = false;
+                    return alert("O arquivo é muito grande. O tamanho máximo permitido é 5MB.");
+                }
+                arquivoBase64 = await toBase64(file);
+            }
+            
+            // Monta o Payload JSON
+            const payload = {
+                data_coleta: document.getElementById("ete_data_coleta").value,
+                numero: document.getElementById("ete_numero").value,
+                status: document.getElementById("ete_status").value,
+                ponto: document.getElementById("ete_ponto").value,
+                laboratorio: document.getElementById("ete_laboratorio").value,
+                observacoes: document.getElementById("ete_observacoes").value,
+                arquivo_base64: arquivoBase64
+            };
+
+            try {
+                let url = `${API}/laudos-ete`;
+                let method = 'POST';
+
+                if (idEdicao) {
+                    url = `${API}/laudos-ete/${idEdicao}`;
+                    method = 'PUT'; 
+                }
+
+                // Integração via JSON
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if(res.ok) {
+                    modalObj.hide();
+                    carregarLaudos();
+                    alert("Laudo ETE salvo com sucesso!");
+                } else {
+                    const err = await res.json();
+                    alert("Erro ao gravar: " + (err.error || "Verifique os dados enviados."));
+                }
+            } catch(err) {
+                console.error(err); 
+                alert("Erro de conexão com a API.");
+            } finally {
+                btn.innerHTML = btnTextoOriginal; 
+                btn.disabled = false;
+            }
+        });
+
+        async function excluirLaudo(id) {
+            if(!confirm("Tem certeza que deseja excluir permanentemente este laudo?")) return;
+            
+            try {
+                const res = await fetch(`${API}/laudos-ete/${id}`, { method: 'DELETE' });
+                if(res.ok) {
+                    carregarLaudos();
+                } else {
+                    alert("Erro ao excluir. Tente novamente.");
+                }
+            } catch(e) { 
+                console.error(e); 
+            }
+        }
+    </script>
+</body>
+</html>

@@ -72,7 +72,7 @@ router.get("/pendentes", async (req, res) => {
 router.get("/pendentes/:codigo/calculos", async (req, res) => {
     try {
         const result = await pool.query(`
-            SELECT analise, resultado 
+            SELECT analise, resultado, dados_brutos 
             FROM calculos_historico 
             WHERE codigo_amostra = $1 AND enviado_bancada = TRUE 
             ORDER BY id ASC
@@ -101,13 +101,19 @@ router.get("/template/:amostraId", async (req, res) => {
     } catch (err) { res.status(500).send("Erro interno"); }
 });
 
-// FINALIZAR E SALVAR ANÁLISE
+// FINALIZAR E SALVAR ANÁLISE (E REGISTRAR RASTREABILIDADE)
 router.post("/finalizar", async (req, res) => {
+    const client = await pool.connect();
     try {
-        const { amostra_id, observacoes, resultados } = req.body;
-        if (!resultados || resultados.length === 0) return res.status(400).json({ success: false, message: "Nenhum parâmetro recebido." });
+        await client.query('BEGIN'); // Inicia a transação de banco de dados
 
-        await pool.query(`DELETE FROM analises WHERE amostra_id = $1`, [amostra_id]);
+        const { amostra_id, observacoes, resultados, rastreabilidade_glp } = req.body;
+        if (!resultados || resultados.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(400).json({ success: false, message: "Nenhum parâmetro recebido." });
+        }
+
+        await client.query(`DELETE FROM analises WHERE amostra_id = $1`, [amostra_id]);
         let laudoReprovado = false;
 
         for (const r of resultados) {
@@ -126,33 +132,72 @@ router.post("/finalizar", async (req, res) => {
 
             if (!conforme) laudoReprovado = true;
 
-            const insertAnalise = await pool.query(`
+            const insertAnalise = await client.query(`
                 INSERT INTO analises (amostra_id, parametro, metodo, valor_min, valor_max, unidade, valor_encontrado, conforme)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id
             `, [amostra_id, r.parametro, r.metodo, r.valor_min, r.valor_max, r.unidade, r.valor_encontrado, conforme]);
 
             if (!conforme && r.anexos && r.anexos.length > 0) {
                 for (const anexo of r.anexos) {
-                    await pool.query(`INSERT INTO analises_anexos (analise_id, nome_arquivo, arquivo_base64) VALUES ($1, $2, $3)`, [insertAnalise.rows[0].id, anexo.nome_arquivo, anexo.arquivo_base64]);
+                    await client.query(`INSERT INTO analises_anexos (analise_id, nome_arquivo, arquivo_base64) VALUES ($1, $2, $3)`, [insertAnalise.rows[0].id, anexo.nome_arquivo, anexo.arquivo_base64]);
                 }
             }
         }
 
         const statusFinal = laudoReprovado ? 'REPROVADA' : 'CONFORME';
-        await pool.query(`UPDATE amostras SET status = $1, obs_analise = $2, data_conclusao = CURRENT_TIMESTAMP WHERE id = $3`, [statusFinal, observacoes, amostra_id]);
+        await client.query(`UPDATE amostras SET status = $1, obs_analise = $2, data_conclusao = CURRENT_TIMESTAMP WHERE id = $3`, [statusFinal, observacoes, amostra_id]);
 
-        const checkLaudo = await pool.query(`SELECT id, amostra_id FROM laudos WHERE amostra_id = $1`, [amostra_id]);
+        const checkLaudo = await client.query(`SELECT id, amostra_id FROM laudos WHERE amostra_id = $1`, [amostra_id]);
         
         const hoje = new Date();
         const codigo_gerado = `ANL-${hoje.getFullYear()}${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(amostra_id).padStart(4, '0')}`;
         
-        if (checkLaudo.rows.length === 0) await pool.query(`INSERT INTO laudos (amostra_id, resultado, data_emissao) VALUES ($1, $2, CURRENT_TIMESTAMP)`, [amostra_id, statusFinal]);
-        else await pool.query(`UPDATE laudos SET resultado = $1, data_emissao = CURRENT_TIMESTAMP WHERE amostra_id = $2`, [statusFinal, amostra_id]);
+        if (checkLaudo.rows.length === 0) await client.query(`INSERT INTO laudos (amostra_id, resultado, data_emissao) VALUES ($1, $2, CURRENT_TIMESTAMP)`, [amostra_id, statusFinal]);
+        else await client.query(`UPDATE laudos SET resultado = $1, data_emissao = CURRENT_TIMESTAMP WHERE amostra_id = $2`, [statusFinal, amostra_id]);
 
+        // 🔥 REGISTRAR RASTREABILIDADE E BAIXA DE ESTOQUE
+        let usuarioNome = "Sistema";
+        try {
+            const authHeader = req.headers.authorization;
+            if (authHeader) {
+                const token = authHeader.split(' ')[1];
+                const decoded = jwt.verify(token, SECRET);
+                const userRes = await client.query("SELECT nome FROM usuarios WHERE id = $1", [decoded.id]);
+                if (userRes.rows.length > 0) usuarioNome = userRes.rows[0].nome;
+            }
+        } catch (e) {}
+
+        if (rastreabilidade_glp && Array.isArray(rastreabilidade_glp)) {
+            for (let item of rastreabilidade_glp) {
+                const idInsumo = parseInt(item.id);
+                const qtd = parseFloat(item.qtd_usada);
+
+                if (item.tipo === 'REAGENTE' && qtd > 0) {
+                    await client.query(`UPDATE reagentes SET quantidade = quantidade - $1 WHERE id = $2`, [qtd, idInsumo]);
+                    await client.query(`INSERT INTO reagentes_uso (reagente_id, quantidade_consumida, usuario_nome) VALUES ($1, $2, $3)`, [idInsumo, qtd, usuarioNome]);
+                } 
+                else if (item.tipo === 'SOLUCAO' && qtd > 0) {
+                    await client.query(`UPDATE solucoes SET saldo_total = saldo_total - $1 WHERE id = $2`, [qtd, idInsumo]);
+                    await client.query(`INSERT INTO solucoes_uso (solucao_id, quantidade_usada, usuario_nome) VALUES ($1, $2, $3)`, [idInsumo, qtd, usuarioNome]);
+                } 
+                else if (item.tipo === 'MATERIAL' && qtd > 0) {
+                    await client.query(`UPDATE materiais SET quantidade = quantidade - $1 WHERE id = $2`, [qtd, idInsumo]);
+                    await client.query(`INSERT INTO materiais_uso (material_id, quantidade, unidade, setor, observacoes, usuario_nome) VALUES ($1, $2, $3, $4, $5, $6)`, [idInsumo, qtd, item.unidade, "Laboratório Físico-Químico", `Consumo em Bancada (Amostra: ${codigo_gerado})`, usuarioNome]);
+                }
+                // Se for 'EQUIPAMENTO', não faz update nem insert de uso financeiro, pois já está no texto de observação
+            }
+        }
+
+        await client.query('COMMIT'); // Salva as alterações
         await registrarLog(req, laudoReprovado ? "REPROVOU AMOSTRA" : "APROVOU AMOSTRA", `Finalizou a análise do código: ${codigo_gerado}`);
         res.json({ success: true, codigo_analise: codigo_gerado });
 
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    } catch (err) { 
+        await client.query('ROLLBACK'); // Desfaz se algo der errado
+        res.status(500).json({ success: false, message: err.message }); 
+    } finally {
+        client.release(); // Libera o pool de conexões
+    }
 });
 
 // HISTÓRICO DE ANÁLISES FINALIZADAS

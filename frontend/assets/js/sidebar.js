@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Se NÃO for Admin, aplica a tesoura no menu
     if (!isAdmin) {
         
-        // 🔥 MAPA RETROCOMPATÍVEL: Lê as chaves novas e as antigas para ninguém ficar travado!
+        // 🔥 MAPA RETROCOMPATÍVEL: Lê as permissões e decide o que mostrar!
         const menuMapping = {
             'dashboard.html': p.dashboard_view,
             'amostras.html': p.amostras_view || p.amostras_create || p.amostras_edit || p.amostras_delete,
@@ -40,9 +40,12 @@ document.addEventListener("DOMContentLoaded", () => {
             'investigacao.html': p.inv_view || p.inv_start || p.investigacao_view,
             'laudos.html': p.laudos_view,
             'monitoramento_agua.html': p.agua_view || p.agua_start || p.agua_edit,
+            'monitoramento_tpm.html': p.tpm_view || p.tpm_register,
+            'monitoramento_clima.html': p.clima_view || p.clima_register,
             'reagentes.html': p.reag_reg || p.reag_edit || p.reag_baixa || p.reag_del || p.reagentes_edit,
             'solucoes.html': p.sol_create || p.sol_edit || p.sol_baixa || p.sol_desc || p.sol_del || p.solucoes_edit,
             'coas.html': p.coa_reg || p.coa_down || p.coa_del || p.coas_view,
+            'laudos_ete.html': p.ete_view || p.ete_reg || p.ete_edit || p.ete_del, // 🔥 NOVA TELA DE ETE ADICIONADA AQUI!
             'materiais.html': p.mat_reg || p.mat_uso || p.mat_edit || p.mat_del || p.materiais_edit,
             'monitoramento.html': p.monitoramento_view,
             'relatorios.html': p.dashboard_view || p.monitoramento_view,

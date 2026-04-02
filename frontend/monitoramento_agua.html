@@ -6,6 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .input-aprovado { border-color: #198754 !important; background-color: #f1fcf6 !important; color: #198754 !important; }
         .input-reprovado { border-color: #dc3545 !important; background-color: #fdf2f3 !important; color: #dc3545 !important; }
@@ -15,6 +16,12 @@
         .input-calc { font-family: 'Courier New', Courier, monospace; font-weight: bold; }
         .form-switch .form-check-input { width: 2.5em; height: 1.25em; cursor: pointer; }
         .form-switch .form-check-label { cursor: pointer; padding-top: 3px; margin-left: 10px; }
+        
+        .dropdown-menu-custom { max-height: 400px; overflow-y: auto; overflow-x: hidden; padding: 10px 5px; width: 100%; border-radius: 8px; }
+        .item-produto { padding: 8px 15px; border-radius: 5px; transition: background 0.2s; }
+        .item-produto:hover { background-color: #f8f9fa; }
+        .chk-agua-ponto, .chk-agua-param { cursor: pointer; flex-shrink: 0; }
+        .chart-container { position: relative; height: 350px; min-width: 100%; } 
     </style>
 </head>
 <body>
@@ -52,9 +59,12 @@
 
                     <a href="laudos.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-check me-2"></i>Laudos</a>
                     <a href="monitoramento_agua.html" class="nav-link active py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet text-info me-2"></i>Monitor. Água</a>
+                    <a href="monitoramento_tpm.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-fire text-warning me-2"></i>Controle TPM</a>
+                    <a href="monitoramento_clima.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-thermometer-sun text-danger me-2"></i>Clima (Temp/Umid)</a>
                     <a href="reagentes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-droplet-half me-2"></i>Reagentes</a>
                     <a href="solucoes.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-eyedropper me-2"></i>Soluções</a>
                     <a href="coas.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-file-earmark-pdf me-2"></i>CoAs Externos</a>
+                    <a href="laudos_ete.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-water text-info me-2"></i>Laudos ETE</a>
                     <a href="materiais.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-box2 me-2"></i>Materiais</a>
                 
                     <a href="monitoramento.html" class="nav-link py-1" style="font-size: 0.85rem;"><i class="bi bi-graph-up-arrow me-2"></i>Tendências</a>
@@ -97,6 +107,9 @@
             </li>
             <li class="nav-item">
                 <button class="nav-link fw-bold text-success" data-bs-toggle="tab" data-bs-target="#historico-pane" type="button" onclick="carregarHistoricoAgua()"><i class="bi bi-clock-history"></i> Histórico de Controles</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link fw-bold text-info text-dark" data-bs-toggle="tab" data-bs-target="#grafico-pane" type="button" onclick="carregarDadosAguaGrafico()"><i class="bi bi-graph-up-arrow"></i> Análise Gráfica</button>
             </li>
         </ul>
 
@@ -392,10 +405,10 @@
 
                                 <div class="mt-4 p-3 bg-light border border-secondary rounded shadow-sm">
                                     <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
-                                        <h6 class="fw-bold text-secondary mb-0"><i class="bi bi-eyedropper"></i> Insumos Consumidos nesta Análise</h6>
+                                        <h6 class="fw-bold text-secondary mb-0"><i class="bi bi-eyedropper"></i> Rastreabilidade e Consumo (GLP)</h6>
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox" id="chkHabilitarInsumos" onchange="toggleInsumosArea()">
-                                            <label class="form-check-label small fw-bold text-dark" for="chkHabilitarInsumos">Registrar Baixa no Estoque</label>
+                                            <label class="form-check-label small fw-bold text-dark" for="chkHabilitarInsumos">Ativar Painel de Rastreabilidade</label>
                                         </div>
                                     </div>
                                     
@@ -406,18 +419,19 @@
                                                 <select id="usoTipoItem" class="form-select" onchange="mudarTipoInsumoUso()">
                                                     <option value="REAGENTE">Reagente</option>
                                                     <option value="SOLUCAO">Solução</option>
-                                                    <option value="MATERIAL">Material</option>
+                                                    <option value="MATERIAL">Mat. Consumo</option>
+                                                    <option value="EQUIPAMENTO">Equipamento</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3">
                                                 <label class="form-label small fw-bold">Código/Busca</label>
                                                 <input type="text" id="usoBuscaCod" class="form-control" placeholder="Cód..." oninput="buscarInsumoPorCodigo('usoBuscaCod', 'usoSelectInsumo')">
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-4">
                                                 <label class="form-label small fw-bold" id="usoLabelInsumo">Selecione o Item</label>
                                                 <select id="usoSelectInsumo" class="form-select" onchange="sincronizarCodigo('usoSelectInsumo', 'usoBuscaCod')"></select>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-1">
                                                 <label class="form-label small fw-bold">Qtd</label>
                                                 <input type="number" step="0.01" id="usoQtd" class="form-control">
                                             </div>
@@ -427,9 +441,9 @@
                                         </div>
 
                                         <table class="table table-sm table-bordered mb-0 bg-white text-center">
-                                            <thead class="table-secondary"><tr><th>Tipo</th><th>Item Consumido</th><th>Quantidade</th><th width="40px">X</th></tr></thead>
+                                            <thead class="table-secondary"><tr><th>Tipo</th><th>Item / Equipamento</th><th>Quantidade / Ação</th><th width="40px">X</th></tr></thead>
                                             <tbody id="tabelaItensUso">
-                                                <tr><td colspan="4" class="text-muted small py-2">Nenhum insumo registrado.</td></tr>
+                                                <tr><td colspan="4" class="text-muted small py-2">Nenhum registro lançado.</td></tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -482,6 +496,90 @@
                     </div>
                 </div>
             </div>
+
+            <div class="tab-pane fade" id="grafico-pane">
+                <div class="card shadow-sm border-0 border-top border-info border-3">
+                    <div class="card-header bg-white fw-bold py-3 d-flex justify-content-between align-items-center">
+                        <span class="text-info text-dark fs-5"><i class="bi bi-graph-up"></i> Análise de Tendências</span>
+                        <button class="btn btn-sm btn-outline-info fw-bold text-dark" onclick="carregarDadosAguaGrafico()"><i class="bi bi-arrow-clockwise"></i> Sincronizar Água</button>
+                    </div>
+                    <div class="card-body bg-light p-4">
+                        
+                        <div class="row g-3 mb-2 p-3 bg-white rounded shadow-sm align-items-end">
+                            
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-geo-alt"></i> Pontos de Coleta</label>
+                                <div class="dropdown">
+                                    <button class="btn btn-light border border-secondary w-100 text-start d-flex justify-content-between align-items-center" type="button" id="btnDropAguaPonto" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                        <span id="txtAguaPonto" class="fw-bold text-secondary text-truncate" style="max-width: 85%;">Todos os Pontos</span>
+                                        <i class="bi bi-chevron-down text-muted"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-custom shadow border-0" aria-labelledby="btnDropAguaPonto">
+                                        <li class="px-3 pb-2 mb-2 border-bottom sticky-top bg-white">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <input class="form-check-input border-secondary m-0" type="checkbox" id="chkTodosAguaPonto" checked onchange="toggleTodosAguaPonto()">
+                                                <label class="form-check-label fw-bold text-dark mb-0" for="chkTodosAguaPonto" style="cursor: pointer;">Selecionar Todos</label>
+                                            </div>
+                                        </li>
+                                        <div id="listaFiltroAguaPontos"></div>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-activity"></i> Parâmetros</label>
+                                <div class="dropdown">
+                                    <button class="btn btn-light border border-info w-100 text-start d-flex justify-content-between align-items-center" type="button" id="btnDropAguaParam" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                        <span id="txtAguaParam" class="fw-bold text-info text-truncate" style="max-width: 85%;">Condutividade</span>
+                                        <i class="bi bi-chevron-down text-muted"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-custom shadow border-0" aria-labelledby="btnDropAguaParam">
+                                        <div id="listaFiltroAguaParams"></div>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-calendar-event"></i> Ano</label>
+                                <select id="dashAguaAno" class="form-select border-secondary" onchange="atualizarGraficoAgua()">
+                                    <option value="2026" selected>2026</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-calendar-month"></i> Detalhe</label>
+                                <select id="dashAguaMes" class="form-select border-secondary" onchange="atualizarGraficoAgua()">
+                                    <option value="" selected>📊 Visão Anual (Média dos Meses)</option>
+                                    <option value="01">Janeiro (Dias)</option>
+                                    <option value="02">Fevereiro (Dias)</option>
+                                    <option value="03">Março (Dias)</option>
+                                    <option value="04">Abril (Dias)</option>
+                                    <option value="05">Maio (Dias)</option>
+                                    <option value="06">Junho (Dias)</option>
+                                    <option value="07">Julho (Dias)</option>
+                                    <option value="08">Agosto (Dias)</option>
+                                    <option value="09">Setembro (Dias)</option>
+                                    <option value="10">Outubro (Dias)</option>
+                                    <option value="11">Novembro (Dias)</option>
+                                    <option value="12">Dezembro (Dias)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-2 px-2">
+                            <span id="txtInfoGraficoAgua" class="small fw-bold text-muted"><i class="bi bi-arrow-repeat"></i> Carregando dados do servidor...</span>
+                        </div>
+
+                        <div class="bg-white p-3 rounded border shadow-sm chart-container">
+                            <canvas id="graficoAguaDashboard"></canvas>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -522,8 +620,8 @@
                     </table>
 
                     <div class="mt-4">
-                        <p class="mb-1 text-muted small fw-bold">Observações</p>
-                        <div class="p-3 bg-white border rounded text-dark" id="detObs" style="min-height: 60px;">---</div>
+                        <p class="mb-1 text-muted small fw-bold">Observações / Rastreabilidade</p>
+                        <div class="p-3 bg-white border rounded text-dark" id="detObs" style="min-height: 60px; white-space: pre-wrap;">---</div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -547,6 +645,20 @@
         let materiaisGlobais = [];
         
         let idEdicaoAgua = null;
+
+        // Variaveis globais de Água (Gráfico)
+        let dadosAguaGrafico = [];
+        let chartAguaInstance = null;
+
+        const dicParametrosAgua = {
+            ph: { nome: 'pH', cor: '#0dcaf0' },
+            condutividade: { nome: 'Cond. (µS/cm)', cor: '#6f42c1' },
+            tds: { nome: 'TDS (ppm)', cor: '#d63384' },
+            cloro: { nome: 'Cloro (mg/L)', cor: '#198754' },
+            dureza: { nome: 'Dureza (mg/L)', cor: '#ffc107' },
+            acidez: { nome: 'Acidez (mg/L)', cor: '#fd7e14' },
+            residuo_evaporacao: { nome: 'Resíduo (mg/L)', cor: '#6c757d' }
+        };
 
         function aplicarTravaTela() {
             const userStr = localStorage.getItem("limsUser");
@@ -646,6 +758,20 @@
                    String(data.getDate()).padStart(2, '0') + "-" + 
                    String(data.getHours()).padStart(2, '0') + 
                    String(data.getMinutes()).padStart(2, '0');
+        }
+
+        function normalizarDataDash(dataString) {
+            if (!dataString) return null;
+            let str = String(dataString).trim();
+            if (str.includes('/')) {
+                let p = str.split(' ')[0].split('/');
+                if (p.length === 3) return { dia: p[0].padStart(2,'0'), mes: p[1].padStart(2,'0'), ano: p[2] };
+            }
+            if (str.includes('-')) {
+                let p = str.split('T')[0].split(' ')[0].split('-');
+                if (p.length === 3) return { ano: p[0], mes: p[1].padStart(2,'0'), dia: p[2].substring(0,2).padStart(2,'0') };
+            }
+            return null;
         }
 
         document.addEventListener("DOMContentLoaded", async () => {
@@ -805,9 +931,6 @@
             if(icon) icon.innerHTML = '<span class="badge bg-light text-muted border py-2 w-100">AGUARDANDO</span>';
         }
 
-        // ===============================================
-        // CALCULADORAS AUTO-TRANSFER
-        // ===============================================
         window.toggleRepsCloro = function() {
             const numReps = parseInt(document.getElementById("cl_qtdReps").value);
             document.getElementById("row_cl_r2").style.display = numReps >= 2 ? "table-row" : "none";
@@ -992,7 +1115,7 @@
         }
 
         // ===============================================
-        // LÓGICA DE INSUMOS CONSUMIDOS NA ÁGUA E EDIÇÃO
+        // 🔥 LÓGICA DE INSUMOS E EQUIPAMENTOS
         // ===============================================
         window.toggleInsumosArea = function() {
             const isChecked = document.getElementById("chkHabilitarInsumos").checked;
@@ -1006,18 +1129,38 @@
         window.mudarTipoInsumoUso = function() {
             const tipo = document.getElementById("usoTipoItem").value;
             const sel = document.getElementById("usoSelectInsumo");
+            const inputQtd = document.getElementById("usoQtd");
+
             document.getElementById("usoBuscaCod").value = "";
             sel.innerHTML = '<option value="">Selecione...</option>';
 
-            if (tipo === 'REAGENTE') {
-                document.getElementById("usoLabelInsumo").innerText = "Reagente do Estoque";
-                reagentesGlobais.forEach(r => sel.innerHTML += `<option value="${r.id}" data-codigo="${(r.codigo||'').toUpperCase()}" data-nome="${r.nome}" data-unidade="${r.unidade || ''}">${r.codigo ? r.codigo+' - ' : ''}${r.nome} (Estq: ${r.quantidade})</option>`);
-            } else if (tipo === 'SOLUCAO') {
-                document.getElementById("usoLabelInsumo").innerText = "Solução do Estoque";
-                solucoesGlobais.forEach(s => { if (parseFloat(s.saldo_total || s.salto_total) > 0) sel.innerHTML += `<option value="${s.id}" data-codigo="${(s.codigo||'').toUpperCase()}" data-nome="${s.nome}" data-unidade="${s.unidade}">${s.codigo ? s.codigo+' - ' : ''}${s.nome} (Estq: ${s.saldo_total || s.salto_total})</option>`; });
+            if (tipo === 'EQUIPAMENTO') {
+                inputQtd.value = "";
+                inputQtd.disabled = true;
+                inputQtd.placeholder = "-";
+                document.getElementById("usoLabelInsumo").innerText = "Equipamento Utilizado";
+                materiaisGlobais.forEach(m => {
+                    if (m.categoria_uso === 'EQUIPAMENTO') {
+                        sel.innerHTML += `<option value="${m.id}" data-codigo="${(m.codigo||'').toUpperCase()}" data-nome="${m.nome}" data-unidade="${m.unidade}">${m.codigo ? m.codigo+' - ' : ''}${m.nome}</option>`;
+                    }
+                });
             } else {
-                document.getElementById("usoLabelInsumo").innerText = "Material do Estoque";
-                materiaisGlobais.forEach(m => { if (parseFloat(m.quantidade) > 0) sel.innerHTML += `<option value="${m.id}" data-codigo="${(m.codigo||'').toUpperCase()}" data-nome="${m.nome}" data-unidade="${m.unidade}">${m.codigo ? m.codigo+' - ' : ''}${m.nome} (Estq: ${m.quantidade})</option>`; });
+                inputQtd.disabled = false;
+                inputQtd.placeholder = "";
+                if (tipo === 'REAGENTE') {
+                    document.getElementById("usoLabelInsumo").innerText = "Reagente do Estoque";
+                    reagentesGlobais.forEach(r => sel.innerHTML += `<option value="${r.id}" data-codigo="${(r.codigo||'').toUpperCase()}" data-nome="${r.nome}" data-unidade="${r.unidade || ''}">${r.codigo ? r.codigo+' - ' : ''}${r.nome} (Estq: ${r.quantidade})</option>`);
+                } else if (tipo === 'SOLUCAO') {
+                    document.getElementById("usoLabelInsumo").innerText = "Solução do Estoque";
+                    solucoesGlobais.forEach(s => { if (parseFloat(s.saldo_total || s.salto_total) > 0) sel.innerHTML += `<option value="${s.id}" data-codigo="${(s.codigo||'').toUpperCase()}" data-nome="${s.nome}" data-unidade="${s.unidade}">${s.codigo ? s.codigo+' - ' : ''}${s.nome} (Estq: ${s.saldo_total || s.salto_total})</option>`; });
+                } else {
+                    document.getElementById("usoLabelInsumo").innerText = "Material de Consumo";
+                    materiaisGlobais.forEach(m => { 
+                        if (parseFloat(m.quantidade) > 0 && m.categoria_uso !== 'EQUIPAMENTO') { 
+                            sel.innerHTML += `<option value="${m.id}" data-codigo="${(m.codigo||'').toUpperCase()}" data-nome="${m.nome}" data-unidade="${m.unidade}">${m.codigo ? m.codigo+' - ' : ''}${m.nome} (Estq: ${m.quantidade})</option>`; 
+                        }
+                    });
+                }
             }
         }
 
@@ -1041,25 +1184,55 @@
             const tipo = document.getElementById("usoTipoItem").value; 
             const sel = document.getElementById("usoSelectInsumo"); 
             const qtd = document.getElementById("usoQtd").value;
-            if(!sel.value || !qtd || parseFloat(qtd) <= 0) return alert("Selecione um item e informe uma quantidade válida.");
-            itensUsoAgua.push({ tipo: tipo, id: sel.value, nome_exibicao: sel.options[sel.selectedIndex].getAttribute('data-nome'), qtd_usada: parseFloat(qtd), unidade: sel.options[sel.selectedIndex].getAttribute('data-unidade') });
-            document.getElementById("usoQtd").value = ""; document.getElementById("usoBuscaCod").value = ""; sel.value = ""; 
+
+            if(!sel.value) return alert("Selecione um item ou equipamento.");
+            
+            // Bloqueio de segurança para não tentar salvar sem quantidade se não for equipamento
+            if(tipo !== 'EQUIPAMENTO' && (!qtd || parseFloat(qtd) <= 0)) {
+                return alert("Informe uma quantidade válida para o consumo.");
+            }
+
+            const qtdFinal = tipo === 'EQUIPAMENTO' ? 0 : parseFloat(qtd);
+
+            itensUsoAgua.push({ 
+                tipo: tipo, 
+                id: sel.value, 
+                nome_exibicao: sel.options[sel.selectedIndex].getAttribute('data-nome'), 
+                qtd_usada: qtdFinal, 
+                unidade: sel.options[sel.selectedIndex].getAttribute('data-unidade') 
+            });
+            
+            document.getElementById("usoQtd").value = ""; 
+            document.getElementById("usoBuscaCod").value = ""; 
+            sel.value = ""; 
             atualizarTabelaItensUso();
         }
 
         function atualizarTabelaItensUso() {
             const tbody = document.getElementById("tabelaItensUso"); tbody.innerHTML = "";
             if(itensUsoAgua.length === 0) { 
-                tbody.innerHTML = `<tr><td colspan='4' class='text-center text-muted small py-2'>Nenhum insumo registrado.</td></tr>`; 
+                tbody.innerHTML = `<tr><td colspan='4' class='text-center text-muted small py-2'>Nenhum registro lançado.</td></tr>`; 
                 return; 
             }
             itensUsoAgua.forEach((s, index) => {
                 let badge = "";
-                if (s.tipo === 'REAGENTE') badge = '<span class="badge bg-secondary">Reagente</span>';
-                else if (s.tipo === 'SOLUCAO') badge = '<span class="badge bg-primary">Solução</span>';
-                else badge = '<span class="badge bg-info text-dark">Material</span>';
+                let qtdDisplay = "";
 
-                tbody.innerHTML += `<tr><td>${badge}</td><td class="fw-bold">${s.nome_exibicao}</td><td class="text-danger fw-bold">-${s.qtd_usada} ${s.unidade}</td><td class="text-center"><i class="bi bi-x-circle text-danger btn-excluir" style="cursor:pointer;" onclick="itensUsoAgua.splice(${index}, 1); atualizarTabelaItensUso()"></i></td></tr>`;
+                if (s.tipo === 'REAGENTE') {
+                    badge = '<span class="badge bg-secondary">Reagente</span>';
+                    qtdDisplay = `<span class="text-danger fw-bold">-${s.qtd_usada} ${s.unidade}</span>`;
+                } else if (s.tipo === 'SOLUCAO') {
+                    badge = '<span class="badge bg-primary">Solução</span>';
+                    qtdDisplay = `<span class="text-danger fw-bold">-${s.qtd_usada} ${s.unidade}</span>`;
+                } else if (s.tipo === 'EQUIPAMENTO') {
+                    badge = '<span class="badge bg-dark">Equipamento</span>';
+                    qtdDisplay = `<span class="text-muted fw-bold">Uso em Bancada</span>`;
+                } else {
+                    badge = '<span class="badge bg-info text-dark">Material</span>';
+                    qtdDisplay = `<span class="text-danger fw-bold">-${s.qtd_usada} ${s.unidade}</span>`;
+                }
+
+                tbody.innerHTML += `<tr><td>${badge}</td><td class="fw-bold">${s.nome_exibicao}</td><td>${qtdDisplay}</td><td class="text-center"><i class="bi bi-x-circle text-danger btn-excluir" style="cursor:pointer;" onclick="itensUsoAgua.splice(${index}, 1); atualizarTabelaItensUso()"></i></td></tr>`;
             });
         }
 
@@ -1168,9 +1341,18 @@
             const horaStr = document.getElementById("horaColeta").value;
             const dataFmt = dataStr.split('-').reverse().join('/') + " " + horaStr;
 
+            // Filtro exclusivo para consumo (baixa de estoque)
             const reagUsados = itensUsoAgua.filter(i => i.tipo === 'REAGENTE').map(i => ({ reagente_id: i.id, qtd_usada: i.qtd_usada })); 
             const solUsadas = itensUsoAgua.filter(i => i.tipo === 'SOLUCAO').map(i => ({ solucao_id: i.id, qtd_usada: i.qtd_usada })); 
             const matUsados = itensUsoAgua.filter(i => i.tipo === 'MATERIAL').map(i => ({ material_id: i.id, qtd_usada: i.qtd_usada })); 
+
+            // 🔥 MÁGICA DOS EQUIPAMENTOS: Injeta no texto de observações automaticamente
+            let obsFinal = observacoes;
+            const equipamentos = itensUsoAgua.filter(i => i.tipo === 'EQUIPAMENTO');
+            if (equipamentos.length > 0) {
+                const nomesEquips = equipamentos.map(e => e.nome_exibicao).join(', ');
+                obsFinal += (obsFinal ? "\n\n" : "") + "Equipamentos Utilizados (Rastreabilidade): " + nomesEquips;
+            }
 
             const codAuto = document.getElementById('codigoRegistro').value;
 
@@ -1191,7 +1373,7 @@
                 residuo_evaporacao: residuo, residuo: residuo, resultado_residuo: residuo,
                 
                 cor: null, odor: null,
-                observacoes: observacoes,
+                observacoes: obsFinal, // Enviando as observações enriquecidas com os equipamentos
                 status: statusGeral,
                 status_geral: statusGeral,
                 
@@ -1199,8 +1381,6 @@
                 solucoes_usadas: solUsadas,
                 materiais_usados: matUsados
             };
-
-            console.log("🚀 Payload enviado para a API:", JSON.stringify(payload, null, 2));
 
             try {
                 let url = `${API}/monitoramento/agua/salvar`;
@@ -1250,11 +1430,9 @@
                         const errData = await res.json();
                         errorMsg = errData.error || errData.message || errorMsg;
                     } catch(e) {}
-                    console.error("Erro da API ao Excluir:", errorMsg);
                     alert("Erro ao excluir o registro:\n\n" + errorMsg);
                 }
             } catch(e) { 
-                console.error("Falha de Rede:", e); 
                 alert("Erro de conexão com o servidor. O Banco de Dados pode ter rejeitado a requisição.");
             }
         };
@@ -1333,7 +1511,6 @@
                     `;
                 });
             } catch (error) { 
-                console.error("Erro em carregarHistoricoAgua:", error);
                 const tbody = document.getElementById("tabelaHistoricoAgua");
                 tbody.innerHTML = "<tr><td colspan='11' class='text-danger py-4'><i class='bi bi-exclamation-triangle'></i> Erro ao carregar os dados. Verifique o console para mais detalhes.</td></tr>"; 
             }
@@ -1400,6 +1577,210 @@
             const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
             modal.show();
         };
+
+        // ==========================================
+        // 🔥 MOTOR 4: GRÁFICOS DE ÁGUA (NOVA ABA) 🔥
+        // ==========================================
+        function toggleTodosAguaPonto() {
+            const checked = document.getElementById("chkTodosAguaPonto").checked;
+            document.querySelectorAll(".chk-agua-ponto").forEach(chk => chk.checked = checked);
+            atualizarTextoAguaPonto(); atualizarGraficoAgua();
+        }
+
+        function verificarSelecaoAguaPonto() {
+            const total = document.querySelectorAll(".chk-agua-ponto").length;
+            const sel = document.querySelectorAll(".chk-agua-ponto:checked").length;
+            document.getElementById("chkTodosAguaPonto").checked = (sel === total && total > 0);
+            atualizarTextoAguaPonto(); atualizarGraficoAgua();
+        }
+
+        function atualizarTextoAguaPonto() {
+            const sel = document.querySelectorAll(".chk-agua-ponto:checked");
+            const total = document.querySelectorAll(".chk-agua-ponto").length;
+            const span = document.getElementById("txtAguaPonto");
+            if (sel.length === total || total === 0) span.innerText = "Todos os Pontos (Média)";
+            else if (sel.length === 1) span.innerText = sel[0].nextElementSibling.innerText;
+            else span.innerText = `${sel.length} pontos selecionados`;
+        }
+
+        function verificarSelecaoAguaParam() {
+            atualizarTextoAguaParam(); atualizarGraficoAgua();
+        }
+
+        function atualizarTextoAguaParam() {
+            const sel = document.querySelectorAll(".chk-agua-param:checked");
+            const span = document.getElementById("txtAguaParam");
+            if (sel.length === 0) span.innerText = "Nenhum Parâmetro";
+            else if (sel.length <= 2) span.innerText = Array.from(sel).map(c => c.nextElementSibling.innerText).join(', ');
+            else span.innerText = `${sel.length} parâmetros`;
+        }
+
+        async function carregarDadosAguaGrafico() {
+            const pontosOficiais = [
+                "Poço Artesiano Principal",
+                "Caixa D'água (Fábrica)",
+                "Torneira - Produção Linha 1",
+                "Torneira 1 - Laboratório",
+                "Torneira 2 - Laboratório",
+                "Deionizador de Água (Laboratório)"
+            ];
+            
+            const divPontos = document.getElementById("listaFiltroAguaPontos");
+            divPontos.innerHTML = "";
+            pontosOficiais.forEach((p, idx) => { 
+                divPontos.innerHTML += `
+                    <div class="item-produto d-flex align-items-start gap-2 px-3 py-1">
+                        <input class="form-check-input chk-agua-ponto border-secondary mt-1 flex-shrink-0 m-0" type="checkbox" value="${p}" checked id="ptAgua_${idx}" onchange="verificarSelecaoAguaPonto()">
+                        <label class="form-check-label w-100 text-dark" for="ptAgua_${idx}" style="cursor:pointer; font-size: 0.9rem;">${p}</label>
+                    </div>`; 
+            });
+
+            const divParams = document.getElementById("listaFiltroAguaParams");
+            divParams.innerHTML = "";
+            Object.keys(dicParametrosAgua).forEach(key => {
+                const info = dicParametrosAgua[key];
+                // Deixa apenas 'condutividade' marcada por padrão para não poluir o gráfico no início
+                const isChecked = key === 'condutividade' ? 'checked' : ''; 
+                divParams.innerHTML += `
+                    <div class="item-produto d-flex align-items-start gap-2 px-3 py-1">
+                        <input class="form-check-input chk-agua-param border-secondary mt-1 flex-shrink-0 m-0" type="checkbox" value="${key}" ${isChecked} id="paramAgua_${key}" onchange="verificarSelecaoAguaParam()">
+                        <label class="form-check-label w-100 fw-bold" for="paramAgua_${key}" style="cursor:pointer; font-size: 0.9rem; color: ${info.cor};">${info.nome}</label>
+                    </div>`; 
+            });
+
+            atualizarTextoAguaPonto();
+            atualizarTextoAguaParam();
+
+            try {
+                let res = await fetch(`${API}/monitoramento/agua/historico`, {
+                    headers: { "Authorization": `Bearer ${localStorage.getItem("limsToken")}` }
+                }).catch(() => null);
+
+                if (res && res.ok) {
+                    const dataRaw = await res.json();
+                    
+                    if (Array.isArray(dataRaw)) {
+                        dadosAguaGrafico = dataRaw;
+                    } else if (dataRaw && Array.isArray(dataRaw.data)) {
+                        dadosAguaGrafico = dataRaw.data;
+                    } else if (dataRaw && Array.isArray(dataRaw.registros)) {
+                        dadosAguaGrafico = dataRaw.registros;
+                    } else {
+                        dadosAguaGrafico = [];
+                    }
+                    
+                    document.getElementById("txtInfoGraficoAgua").innerHTML = `<span class="text-success"><i class="bi bi-check-circle"></i> Leitura concluída com sucesso.</span>`;
+                    
+                    const pontosBanco = dadosAguaGrafico.map(d => (d.ponto_coleta || d.ponto || "").trim()).filter(Boolean);
+                    const pontosExtras = [...new Set(pontosBanco)].filter(p => !pontosOficiais.includes(p));
+                    
+                    if (pontosExtras.length > 0) {
+                        pontosExtras.forEach((p, idx) => { 
+                            divPontos.innerHTML += `
+                            <div class="item-produto d-flex align-items-start gap-2 px-3 py-1 bg-light">
+                                <input class="form-check-input chk-agua-ponto border-secondary mt-1 flex-shrink-0 m-0" type="checkbox" value="${p}" checked id="ptExtra_${idx}" onchange="verificarSelecaoAguaPonto()">
+                                <label class="form-check-label w-100 text-muted fst-italic" for="ptExtra_${idx}" style="cursor:pointer; font-size: 0.85rem;">${p}</label>
+                            </div>`; 
+                        });
+                        atualizarTextoAguaPonto();
+                    }
+                } else {
+                    dadosAguaGrafico = [];
+                    document.getElementById("txtInfoGraficoAgua").innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-triangle"></i> Falha ao buscar histórico de água.</span>`;
+                }
+            } catch (e) { 
+                dadosAguaGrafico = []; 
+                document.getElementById("txtInfoGraficoAgua").innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-triangle"></i> Erro interno de carregamento.</span>`;
+            }
+
+            atualizarGraficoAgua();
+        }
+
+        function atualizarGraficoAgua() {
+            const ano = document.getElementById("dashAguaAno").value;
+            const mes = document.getElementById("dashAguaMes").value;
+            
+            const pontosSelecionados = Array.from(document.querySelectorAll(".chk-agua-ponto:checked")).map(c => c.value.trim());
+            const paramsSelecionados = Array.from(document.querySelectorAll(".chk-agua-param:checked")).map(c => c.value);
+
+            let rotulosX = [];
+            let novosDatasets = [];
+
+            if (pontosSelecionados.length === 0 || paramsSelecionados.length === 0) {
+                document.getElementById("txtInfoGraficoAgua").innerHTML = `<span class="text-warning"><i class="bi bi-info-circle"></i> Selecione pontos e parâmetros para desenhar o gráfico.</span>`;
+                if (chartAguaInstance) chartAguaInstance.destroy();
+                return;
+            }
+
+            let dadosFiltrados = dadosAguaGrafico.filter(d => {
+                const nData = normalizarDataDash(d.data_coleta || d.data_registro || d.created_at || d.data_hora || d.data_fmt);
+                if(!nData) return false;
+                
+                const pColeta = (d.ponto_coleta || d.ponto || "").trim();
+                const matchAno = nData.ano === ano;
+                const matchPonto = pontosSelecionados.includes(pColeta);
+                
+                return matchAno && matchPonto;
+            });
+
+            document.getElementById("txtInfoGraficoAgua").innerHTML = `<i class="bi bi-bar-chart"></i> <strong>${dadosFiltrados.length}</strong> registro(s) encontrado(s) no banco de dados para os filtros acima.`;
+
+            if (mes === "") { 
+                rotulosX = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']; 
+            } else {
+                const diasNoMes = new Date(ano, parseInt(mes, 10), 0).getDate(); 
+                for(let i=1; i<=diasNoMes; i++) rotulosX.push(i.toString().padStart(2, '0') + `/${mes}`);
+            }
+
+            paramsSelecionados.forEach(param => {
+                let somas = new Array(rotulosX.length).fill(0);
+                let contagens = new Array(rotulosX.length).fill(0);
+
+                dadosFiltrados.forEach(d => {
+                    const nData = normalizarDataDash(d.data_coleta || d.data_registro || d.created_at || d.data_hora || d.data_fmt);
+                    
+                    let valStr = String(d[param] || "").replace(',', '.');
+                    let val = parseFloat(valStr); 
+                    
+                    if (!isNaN(val) && ((mes === "" && nData.ano === ano) || (mes !== "" && nData.mes === mes))) {
+                        let idx = mes === "" ? parseInt(nData.mes, 10) - 1 : parseInt(nData.dia, 10) - 1;
+                        somas[idx] += val;
+                        contagens[idx]++;
+                    }
+                });
+
+                let dadosY = somas.map((s, i) => contagens[i] > 0 ? (s / contagens[i]).toFixed(2) : null);
+                let infoParam = dicParametrosAgua[param];
+
+                novosDatasets.push({
+                    label: `Média de ${infoParam.nome}`,
+                    data: dadosY,
+                    borderColor: infoParam.cor,
+                    backgroundColor: infoParam.cor + '33',
+                    borderWidth: 3,
+                    pointBackgroundColor: infoParam.cor,
+                    pointRadius: 6, 
+                    pointHoverRadius: 8,
+                    fill: false, 
+                    spanGaps: true 
+                });
+            });
+
+            if (chartAguaInstance) chartAguaInstance.destroy();
+            chartAguaInstance = new Chart(document.getElementById('graficoAguaDashboard').getContext('2d'), {
+                type: 'line', data: { labels: rotulosX, datasets: novosDatasets },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    interaction: { mode: 'index', intersect: false }, 
+                    scales: { 
+                        x: { grid: { display: false } }, 
+                        y: { beginAtZero: true, suggestedMax: 10 } 
+                    }, 
+                    plugins: { legend: { position: 'top' } } 
+                }
+            });
+        }
 
     </script>
 </body>
